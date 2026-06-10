@@ -14,7 +14,7 @@ body {
   text-align: center;
 }
 
-h1 { color: #38bdf8; font-size: 50px; }
+h1 { color: #38bdf8; }
 
 .section { padding: 20px; }
 
@@ -30,116 +30,152 @@ h1 { color: #38bdf8; font-size: 50px; }
 
 .button:hover { background: #16a34a; }
 
-.card {
+.box {
+  display: inline-block;
+  padding: 15px;
   margin: 10px;
+  background: #111827;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.reward {
+  margin-top: 10px;
+  font-size: 18px;
+  color: #fbbf24;
 }
 </style>
 </head>
 
 <body>
 
-<h1>MVEAR</h1>
-<p>Learn by playing quizzes 🎮</p>
+<h1>🎮 MVEAR</h1>
+<p>Learn by playing games & quizzes</p>
 
 <div class="section">
 
-<h2>Choose a Stage</h2>
-
-<button class="button" onclick="startStage('moral')">🌟 Moral Values</button>
-<button class="button" onclick="startStage('env')">🌱 Environment</button>
-<button class="button" onclick="startStage('habit')">🧠 Good Habits</button>
+<h2>🏆 Rewards</h2>
+<p id="stars">⭐ Stars: 0</p>
+<p id="level">📊 Level: 1</p>
+<p id="badge">🏅 Badge: Beginner</p>
 
 </div>
 
+<!-- GAME MENU -->
+<div class="section">
+<h2>Choose a Game</h2>
+
+<button class="button" onclick="startCleanGame()">🌱 Clean Environment</button>
+<button class="button" onclick="startMemory()">🧠 Memory Game</button>
+<button class="button" onclick="startQuiz()">🎯 Quiz Mode</button>
+</div>
+
+<!-- GAME AREA -->
 <div class="section">
 
-<h2 id="question">Select a stage to start</h2>
+<h2 id="title">Select a game</h2>
 
-<div id="options"></div>
+<div id="gameArea"></div>
 
 <p id="result"></p>
-<p id="score"></p>
 
 </div>
 
 <script>
 
-const stages = {
+let stars = 0;
+let level = 1;
 
-moral: [
-  {q:"Helping others is?", o:["Good","Bad","Useless"], a:0},
-  {q:"Lying is?", o:["Good","Bad","Helpful"], a:1},
-  {q:"Respect elders is?", o:["Good","Bad","Wrong"], a:0},
-  {q:"Sharing toys is?", o:["Good","Bad","Dangerous"], a:0},
-  {q:"Stealing is?", o:["Good","Bad","Nice"], a:1}
-],
+function updateRewards(){
+  document.getElementById("stars").innerText = "⭐ Stars: " + stars;
 
-env: [
-  {q:"Planting trees helps?", o:["Air","Pollution","Harm"], a:0},
-  {q:"Throwing trash anywhere?", o:["Good","Bad","Helpful"], a:1},
-  {q:"Saving water is?", o:["Important","Useless","Bad"], a:0},
-  {q:"Cutting trees is?", o:["Good","Bad","Nice"], a:1},
-  {q:"Clean environment is?", o:["Healthy","Dirty","Harmful"], a:0}
-],
+  if(stars >= 5) level = 2;
+  if(stars >= 10) level = 3;
 
-habit: [
-  {q:"Brushing teeth is?", o:["Good","Bad","Useless"], a:0},
-  {q:"Waking early is?", o:["Good","Bad","Wrong"], a:0},
-  {q:"Eating junk food always is?", o:["Healthy","Bad","Good"], a:1},
-  {q:"Doing homework is?", o:["Important","Useless","Wrong"], a:0},
-  {q:"Sleeping late everyday is?", o:["Good","Bad","Healthy"], a:1}
-]
+  document.getElementById("level").innerText = "📊 Level: " + level;
 
-};
-
-let currentStage = [];
-let index = 0;
-let score = 0;
-
-function startStage(stage) {
-  currentStage = stages[stage];
-  index = 0;
-  score = 0;
-  loadQ();
+  if(level == 1) document.getElementById("badge").innerText = "🏅 Beginner";
+  if(level == 2) document.getElementById("badge").innerText = "🏅 Explorer";
+  if(level == 3) document.getElementById("badge").innerText = "🏅 Master";
 }
 
-function loadQ() {
+/* ---------------- CLEAN GAME ---------------- */
+function startCleanGame(){
+document.getElementById("title").innerText = "🌱 Clean the Environment";
 
-if(index >= currentStage.length){
-  document.getElementById("question").innerText = "🎉 Stage Completed!";
-  document.getElementById("options").innerHTML = "";
-  document.getElementById("result").innerText = "";
-  document.getElementById("score").innerText = "Score: " + score + "/5";
-  return;
+document.getElementById("gameArea").innerHTML = `
+<div class="box" onclick="clean(true)">🗑️ Trash</div>
+<div class="box" onclick="clean(true)">🍌 Banana Peel</div>
+<div class="box" onclick="clean(false)">🌳 Tree</div>
+<div class="box" onclick="clean(false)">💧 Water</div>
+`;
+
+document.getElementById("result").innerText = "";
 }
 
-let q = currentStage[index];
+function clean(isTrash){
+if(isTrash){
+  stars++;
+  document.getElementById("result").innerText = "👍 Cleaned! +1 Star";
+}else{
+  document.getElementById("result").innerText = "❌ That's not trash!";
+}
+updateRewards();
+}
 
-document.getElementById("question").innerText = q.q;
+/* ---------------- MEMORY GAME ---------------- */
+let memoryItems = ["🍎","🍌","🍎","🍌"];
+let flipped = [];
+
+function startMemory(){
+document.getElementById("title").innerText = "🧠 Memory Game";
 
 let html = "";
-
-q.o.forEach((opt,i)=>{
-  html += `<button class="button" onclick="check(${i})">${opt}</button>`;
+memoryItems.forEach((item,i)=>{
+html += `<div class="box" onclick="flip(${i})">❓</div>`;
 });
 
-document.getElementById("options").innerHTML = html;
+document.getElementById("gameArea").innerHTML = html;
 document.getElementById("result").innerText = "";
-
+flipped = [];
 }
 
-function check(ans){
+function flip(i){
+flipped.push(i);
 
-if(ans === currentStage[index].a){
-  score++;
-  document.getElementById("result").innerText = "🎉 Correct!";
+if(flipped.length == 2){
+if(memoryItems[flipped[0]] == memoryItems[flipped[1]]){
+stars++;
+document.getElementById("result").innerText = "🎉 Match Found! +1 Star";
 }else{
-  document.getElementById("result").innerText = "❌ Wrong!";
+document.getElementById("result").innerText = "❌ Try Again!";
+}
+flipped = [];
+updateRewards();
+}
 }
 
-index++;
-setTimeout(loadQ, 800);
+/* ---------------- SIMPLE QUIZ ---------------- */
+function startQuiz(){
+document.getElementById("title").innerText = "🎯 Quick Quiz";
 
+document.getElementById("gameArea").innerHTML = `
+<p>What is good behavior?</p>
+<button class="button" onclick="quiz(true)">Helping others</button>
+<button class="button" onclick="quiz(false)">Hitting others</button>
+`;
+
+document.getElementById("result").innerText = "";
+}
+
+function quiz(correct){
+if(correct){
+stars++;
+document.getElementById("result").innerText = "🎉 Correct! +1 Star";
+}else{
+document.getElementById("result").innerText = "❌ Wrong!";
+}
+updateRewards();
 }
 
 </script>
