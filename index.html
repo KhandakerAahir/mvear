@@ -39,7 +39,6 @@ h1 { color: #38bdf8; }
   justify-content: center;
   font-size: 13px;
   font-weight: bold;
-  cursor: pointer;
   color: white;
   transition: 0.2s;
 }
@@ -69,22 +68,19 @@ input {
 
 <h1>🌍 MVEAR Learning App</h1>
 
-<!-- DASHBOARD -->
 <div class="section">
   <p>⭐ Stars: <span id="stars">0</span></p>
   <p>🌱 Environment: <span id="env">0</span>%</p>
   <p id="levelDisplay">Level 1 | XP: 0/50</p>
 </div>
 
-<!-- WORLD MAP -->
 <div class="section">
   <h2>🌍 World Map</h2>
-  <button class="button" onclick="showWorld()">Open World Map</button>
+  <button class="button" id="openMapBtn">Open World Map</button>
 
   <div id="worldArea"></div>
 </div>
 
-<!-- GAME AREA -->
 <div class="section">
   <h2 id="title">Select a Zone</h2>
   <div id="gameArea"></div>
@@ -93,54 +89,26 @@ input {
 
 <script>
 
-/* ---------------- DATA ---------------- */
+/* ---------------- SAFE STORAGE ---------------- */
+
+function safeParse(key, fallback){
+  try {
+    return JSON.parse(localStorage.getItem(key)) ?? fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 let stars = parseInt(localStorage.getItem("stars")) || 0;
 let xp = parseInt(localStorage.getItem("xp")) || 0;
 let level = parseInt(localStorage.getItem("level")) || 1;
 
-let progress = JSON.parse(localStorage.getItem("progress")) || {
+let progress = safeParse("progress", {
   env: 0,
   completedZones: []
-};
+});
 
-/* ---------------- SAVE ---------------- */
-
-function save(){
-  localStorage.setItem("stars", stars);
-  localStorage.setItem("xp", xp);
-  localStorage.setItem("level", level);
-  localStorage.setItem("progress", JSON.stringify(progress));
-  updateUI();
-}
-
-/* ---------------- LEVEL SYSTEM ---------------- */
-
-function addXP(amount){
-  xp += amount;
-
-  let required = level * 50;
-
-  if(xp >= required){
-    xp -= required;
-    level++;
-    alert("🎉 Level Up! You are now Level " + level);
-  }
-
-  save();
-}
-
-/* ---------------- UI ---------------- */
-
-function updateUI(){
-  document.getElementById("stars").innerText = stars;
-  document.getElementById("env").innerText = progress.env;
-
-  document.getElementById("levelDisplay").innerText =
-    "Level " + level + " | XP: " + xp + "/" + (level * 50);
-}
-
-/* ---------------- WORLD DATA ---------------- */
+/* ---------------- DATA ---------------- */
 
 const worldZones = [
   {
@@ -222,15 +190,57 @@ const worldZones = [
   }
 ];
 
-/* ---------------- GAME STATE ---------------- */
+/* ---------------- STATE ---------------- */
 
 let zoneIndex = null;
 let qIndex = 0;
 
-/* ---------------- WORLD MAP (FIXED) ---------------- */
+/* ---------------- UI ---------------- */
+
+function updateUI(){
+  document.getElementById("stars").innerText = stars;
+  document.getElementById("env").innerText = progress.env;
+  document.getElementById("levelDisplay").innerText =
+    `Level ${level} | XP ${xp}/${level * 50}`;
+}
+
+/* ---------------- LEVEL SYSTEM ---------------- */
+
+function addXP(amount){
+  xp += amount;
+
+  let required = level * 50;
+
+  if(xp >= required){
+    xp -= required;
+    level++;
+    alert("🎉 Level Up! Level " + level);
+  }
+
+  save();
+}
+
+/* ---------------- SAVE ---------------- */
+
+function save(){
+  localStorage.setItem("stars", stars);
+  localStorage.setItem("xp", xp);
+  localStorage.setItem("level", level);
+  localStorage.setItem("progress", JSON.stringify(progress));
+  updateUI();
+}
+
+/* ---------------- WORLD MAP ---------------- */
+
+document.getElementById("openMapBtn").addEventListener("click", showWorld);
 
 function showWorld(){
+
   document.getElementById("title").innerText = "🌍 World Map";
+  document.getElementById("gameArea").innerHTML = "";
+  document.getElementById("result").innerText = "";
+
+  const worldArea = document.getElementById("worldArea");
 
   let html = `<div class="map">`;
 
@@ -242,36 +252,36 @@ function showWorld(){
       <div class="zone"
         data-index="${i}"
         data-locked="${locked}"
-        style="background:${locked ? "#374151" : z.color}; opacity:${locked ? 0.5 : 1};">
+        style="background:${locked ? "#374151" : z.color}; opacity:${locked ? 0.5 : 1}; cursor:pointer;">
         ${locked ? "🔒 Locked" : z.name}
       </div>
     `;
   });
 
   html += `</div>`;
+  worldArea.innerHTML = html;
 
-  document.getElementById("worldArea").innerHTML = html;
-
-  // SAFE EVENT LISTENERS (FIX FOR GITHUB PAGES)
   document.querySelectorAll(".zone").forEach(el => {
-    el.addEventListener("click", function () {
+    el.addEventListener("click", () => {
 
-      let locked = this.getAttribute("data-locked") === "true";
-      let index = parseInt(this.getAttribute("data-index"));
+      let i = parseInt(el.dataset.index);
+      let locked = el.dataset.locked === "true";
 
       if(!locked){
-        enterZone(index);
+        enterZone(i);
+      } else {
+        document.getElementById("result").innerText =
+          "🔒 Complete previous zone first!";
       }
     });
   });
 }
 
-/* ---------------- ENTER ZONE ---------------- */
+/* ---------------- ZONES ---------------- */
 
 function enterZone(i){
   zoneIndex = i;
   qIndex = 0;
-  document.getElementById("result").innerText = "";
   loadQuestion();
 }
 
@@ -286,10 +296,8 @@ function loadQuestion(){
 
     if(!progress.completedZones.includes(zoneIndex)){
       progress.completedZones.push(zoneIndex);
-
       stars += 5;
       progress.env += 20;
-
       addXP(30);
     }
 
@@ -303,18 +311,16 @@ function loadQuestion(){
   document.getElementById("gameArea").innerHTML = `
     <h3>${zone.name}</h3>
     <p>Question ${qIndex + 1}/5</p>
-
     <p>${q.q}</p>
 
     <input id="answer" placeholder="Type answer..." />
-
     <br><br>
 
     <button class="button" onclick="checkAnswer()">Submit</button>
   `;
 }
 
-/* ---------------- ANSWER CHECK ---------------- */
+/* ---------------- ANSWER ---------------- */
 
 function checkAnswer(){
 
