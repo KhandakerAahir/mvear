@@ -3,24 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR Learning App</title>
+<title>MVEAR Learning Game</title>
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
-<h1>🌍 MVEAR Learning App</h1>
+<h1>🌍 MVEAR</h1>
 
 <a class="link" href="https://fabulous-twilight-91d407.netlify.app/" target="_blank">▶ MVEAR</a>
 
-<div class="stats">
-⭐ <span id="stars">0</span> |
-📈 XP <span id="xp">0</span> |
-🏆 Level <span id="level">1</span>
+<div class="top">
+⭐ <span id="stars">0</span>
+📈 XP <span id="xp">0</span>
+🏆 <span id="level">1</span>
+🧭 <span id="rank">Beginner</span>
+⏱️ <span id="timer">0</span>
 </div>
 
-<button onclick="showWorldMap()">🌍 Open World Map</button>
-<button onclick="showPatterns()">🧩 Pattern Game</button>
+<div id="avatar">👦</div>
+
+<button onclick="showMap()">🌍 Map</button>
+<button onclick="daily()">🎁 Daily</button>
+<button onclick="showPatterns()">🧩 Patterns</button>
 
 <h2 id="title">Home</h2>
 
