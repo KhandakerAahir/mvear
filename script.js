@@ -2,200 +2,193 @@
 let stars = +localStorage.getItem("stars") || 0;
 let xp = +localStorage.getItem("xp") || 0;
 let level = +localStorage.getItem("level") || 1;
+let rank = localStorage.getItem("rank") || "Beginner";
+
+let avatar = localStorage.getItem("avatar") || "👦";
 
 let progress = JSON.parse(localStorage.getItem("progress"));
 if(!progress || !Array.isArray(progress.completed)){
 progress = { completed: [] };
 }
 
-let currentWorld = 0;
-let qIndex = 0;
+/* GAME STATE */
+let current = 0;
+let q = 0;
+let streak = 0;
+let timer = null;
+let time = 0;
 
-/* WORLDS */
+/* WORLDS (8) */
 const worlds = [
-{ name:"🌱 Habits", color:"#1f2937",
-questions:gen([
-"Wake early?","Brush teeth?","Study daily?","Sleep late?","Drink water?",
-"Exercise?","Be disciplined?","Avoid laziness?","Keep clean?","Follow routine?"
-])},
-
-{ name:"🌍 Awareness", color:"#065f46",
-questions:gen([
-"Trees give oxygen?","Pollution good?","Save water?","Plastic harmful?","Nature important?",
-"Recycle?","Protect animals?","Keep clean?","Waste water?","Cut trees?"
-])},
-
-{ name:"❤️ Values", color:"#7f1d1d",
-questions:gen([
-"Be honest?","Help others?","Respect elders?","Steal ok?","Be kind?",
-"Forgive?","Lie good?","Respect teachers?","Cheat ok?","Spread kindness?"
-])},
-
-{ name:"🧭 Responsibility", color:"#92400e",
-questions:gen([
-"Do homework?","Break rules?","Help family?","Avoid duties?","Be responsible?",
-"Complete tasks?","Ignore work?","Care others?","Follow rules?","Be accountable?"
-])},
-
-{ name:"🏃 Health", color:"#0ea5e9",
-questions:gen([
-"Exercise?","Drink water?","Eat junk food?","Sleep well?","Stay active?",
-"Eat fruits?","Be lazy?","Maintain hygiene?","Stay fit?","Skip meals?"
-])},
-
-{ name:"🚦 Safety", color:"#f97316",
-questions:gen([
-"Cross safely?","Play road?","Follow rules?","Use phone walking?","Stay alert?",
-"Obey signals?","Be careless?","Stay safe?","Ignore danger?","Be careful?"
-])},
-
-{ name:"💻 Digital", color:"#a855f7",
-questions:gen([
-"Share password?","Safe internet?","Trust strangers?","Protect privacy?","Click unknown links?",
-"Strong password?","Be secure?","Download unknown apps?","Respect privacy?","Stay safe online?"
-])},
-
-{ name:"🏆 Final", color:"#4c1d95",
-questions:gen([
-"Be honest?","Be responsible?","Care environment?","Respect others?","Good habits matter?",
-"Stay disciplined?","Help others?","Follow values?","Stay safe?","Learn daily?"
-])}
-];
-
-/* HELP */
-function gen(list){
-return list.map(q=>[q,"yes"]);
-}
+"🌱 Habits","🌍 Awareness","❤️ Values","🧭 Responsibility",
+"🏃 Health","🚦 Safety","💻 Digital","🏆 Final"
+].map((n,i)=>({
+name:n,
+color:["#1f2937","#065f46","#7f1d1d","#92400e","#0ea5e9","#f97316","#a855f7","#4c1d95"][i],
+questions:Array.from({length:10},(_,x)=>[`Q${x+1} in ${n}?`,"yes"])
+}));
 
 /* UI */
-function updateUI(){
-document.getElementById("stars").innerText = stars;
-document.getElementById("xp").innerText = xp;
-document.getElementById("level").innerText = level;
+function update(){
+document.getElementById("stars").innerText=stars;
+document.getElementById("xp").innerText=xp;
+document.getElementById("level").innerText=level;
+document.getElementById("rank").innerText=rank;
+document.getElementById("avatar").innerText=avatar;
 }
-updateUI();
+update();
 
 /* MAP */
-function showWorldMap(){
+function showMap(){
+document.getElementById("title").innerText="🌍 Map";
 
-document.getElementById("title").innerText="World Map";
-
-let html = `<div class="map">`;
+let html="<div class='map'>";
 
 worlds.forEach((w,i)=>{
+let ok = i===0 || progress.completed.includes(i-1);
 
-let unlocked = i===0 || progress.completed.includes(i-1);
-let percent = Math.min(100, progress.completed.includes(i) ? 100 : 0);
-
-html += `
-<div class="zone ${unlocked?'':'locked'}"
+html+=`
+<div class="node"
 style="background:${w.color}"
-onclick="enterWorld(${i})">
-
-${w.name}
-
-<div class="progress">
-<div class="fill" style="width:${percent}%"></div>
-</div>
-
+onclick="enter(${i})">
+${ok? w.name : "🔒"}
 </div>`;
 });
 
-html += `</div>`;
+html+="</div>";
 
-document.getElementById("worldArea").innerHTML = html;
-document.getElementById("gameArea").innerHTML = "";
+document.getElementById("worldArea").innerHTML=html;
+document.getElementById("gameArea").innerHTML="";
 }
 
 /* ENTER */
-function enterWorld(i){
+function enter(i){
 
-let unlocked = i===0 || progress.completed.includes(i-1);
-if(!unlocked){
+if(!(i===0 || progress.completed.includes(i-1))){
 document.getElementById("result").innerText="Locked";
 return;
 }
 
-currentWorld = i;
-qIndex = 0;
-loadQ();
+if(!puzzleGate()) return;
+
+current=i;
+q=0;
+load();
 }
 
-/* QUESTIONS */
-function loadQ(){
-
-let w = worlds[currentWorld];
-let q = w.questions[qIndex];
-
-if(!q){
-
-if(!progress.completed.includes(currentWorld)){
-progress.completed.push(currentWorld);
-stars += 5;
-xp += 20;
-checkLevel();
-checkCertificate();
-save();
+/* PUZZLE GATE */
+function puzzleGate(){
+let a=prompt("Gate: 2+2?");
+return a==="4";
 }
 
-document.getElementById("gameArea").innerHTML="World Completed!";
+/* LOAD QUESTION */
+function load(){
+
+let w=worlds[current];
+let qu=w.questions[q];
+
+if(!qu){
+finishWorld();
 return;
 }
 
-document.getElementById("title").innerText = w.name;
+document.getElementById("title")=w.name;
+
+time=15;
+startTimer();
 
 document.getElementById("gameArea").innerHTML=`
-<p>${q[0]}</p>
+<p>${qu[0]}</p>
 <input id="ans">
-<br><br>
-<button onclick="check()">Submit</button>
+<button onclick="check()">OK</button>
 `;
+}
+
+/* TIMER */
+function startTimer(){
+clearInterval(timer);
+
+timer=setInterval(()=>{
+time--;
+document.getElementById("timer").innerText=time;
+
+if(time<=0){
+clearInterval(timer);
+q++;
+load();
+}
+},1000);
 }
 
 /* CHECK */
 function check(){
 
-let ans = document.getElementById("ans").value.toLowerCase().trim();
-let q = worlds[currentWorld].questions[qIndex];
+let a=document.getElementById("ans").value.toLowerCase();
+let w=worlds[current].questions[q];
 
-if(ans === q[1]){
+if(a===w[1]){
 stars++;
-xp += 5;
-document.getElementById("result").innerText="Correct!";
+xp+=5;
+streak++;
+document.getElementById("result").innerText="✔";
 }else{
-document.getElementById("result").innerText="Wrong!";
+streak=0;
+document.getElementById("result").innerText="❌ NPC: Try again!";
 }
 
-qIndex++;
-checkLevel();
+if(streak%3===0) xp+=10;
+
+q++;
+levelCheck();
 save();
-loadQ();
+load();
 }
 
 /* LEVEL */
-function checkLevel(){
-
-let need = level*50;
-
-if(xp>=need){
-xp-=need;
+function levelCheck(){
+if(xp>=level*50){
+xp-=level*50;
 level++;
-levelUpAnim();
-}
-}
-
-/* LEVEL ANIMATION */
-function levelUpAnim(){
 document.body.style.background="#1a2e1a";
 setTimeout(()=>document.body.style.background="#0b1220",500);
 }
-
-/* CERTIFICATE */
-function checkCertificate(){
-if(progress.completed.length === worlds.length){
-document.getElementById("result").innerHTML=
-"🏆 CERTIFIED MVEAR LEARNER!";
+rankSystem();
 }
+
+/* RANK */
+function rankSystem(){
+if(xp>300) rank="Legend 🔥";
+else if(xp>200) rank="Master 🏆";
+else if(xp>120) rank="Guardian 🛡️";
+else if(xp>60) rank="Explorer 🌍";
+}
+
+/* FINISH */
+function finishWorld(){
+if(!progress.completed.includes(current)){
+progress.completed.push(current);
+stars+=10;
+xp+=20;
+}
+save();
+document.getElementById("gameArea").innerHTML="🏆 Completed!";
+}
+
+/* DAILY */
+function daily(){
+let today=new Date().toDateString();
+let last=localStorage.getItem("daily");
+
+if(last===today){
+alert("Already done");
+return;
+}
+
+localStorage.setItem("daily",today);
+stars+=5;
+xp+=20;
+save();
 }
 
 /* SAVE */
@@ -203,28 +196,7 @@ function save(){
 localStorage.setItem("stars",stars);
 localStorage.setItem("xp",xp);
 localStorage.setItem("level",level);
+localStorage.setItem("rank",rank);
 localStorage.setItem("progress",JSON.stringify(progress));
-updateUI();
-}
-
-/* PATTERN GAME */
-const patterns=["ABAB","AABB","ABBA","BAAB","AAAA"];
-
-function showPatterns(){
-
-document.getElementById("title").innerText="Pattern Game";
-
-let html="";
-
-patterns.forEach(p=>{
-html+=`<div class="card" onclick="checkPattern('${p}')">${p}</div>`;
-});
-
-document.getElementById("worldArea").innerHTML=html;
-document.getElementById("gameArea").innerHTML="";
-}
-
-/* pattern check */
-function checkPattern(p){
-document.getElementById("result").innerText="Pattern: "+p;
+update();
 }
