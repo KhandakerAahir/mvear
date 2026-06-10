@@ -6,54 +6,63 @@
 <title>MVEAR Learning App</title>
 
 <style>
-body {
-  margin: 0;
-  font-family: Arial;
-  background: #0b1220;
-  color: white;
-  text-align: center;
+body{
+  margin:0;
+  font-family:Arial;
+  background:#0b1220;
+  color:white;
+  text-align:center;
 }
 
-h1 { color: #38bdf8; }
+h1{color:#38bdf8;}
 
-.section { padding: 20px; }
+.section{padding:15px;}
 
-.button {
-  background: #22c55e;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
+.button{
+  background:#22c55e;
+  color:white;
+  border:none;
+  padding:10px 15px;
+  border-radius:10px;
+  cursor:pointer;
+  margin:5px;
 }
 
-.map {
-  display: grid;
-  grid-template-columns: repeat(2, 140px);
-  justify-content: center;
-  gap: 10px;
-  margin-top: 15px;
+.button:hover{background:#16a34a;}
+
+.map{
+  display:grid;
+  grid-template-columns:repeat(2,150px);
+  justify-content:center;
+  gap:12px;
 }
 
-.zone {
-  width: 140px;
-  height: 90px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px;
-  font-weight: bold;
-  transition: 0.2s;
+.zone{
+  width:140px;
+  height:100px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  font-weight:bold;
+  cursor:pointer;
+  transition:0.2s;
 }
 
-.unlocked {
-  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
-  border: 2px solid #22c55e;
+.unlocked{
+  box-shadow:0 0 12px rgba(34,197,94,0.8);
 }
 
-.locked {
-  opacity: 0.4;
-  filter: grayscale(100%);
+.locked{
+  opacity:0.35;
+  filter:grayscale(100%);
+}
+
+input{
+  padding:8px;
+  border-radius:8px;
+  border:none;
+  text-align:center;
 }
 </style>
 </head>
@@ -63,93 +72,344 @@ h1 { color: #38bdf8; }
 <h1>🌍 MVEAR Learning App</h1>
 
 <div class="section">
-  <p>⭐ Stars: <span id="stars">0</span></p>
+⭐ Stars: <span id="stars">0</span> |
+📈 XP: <span id="xp">0</span> |
+🏆 Level: <span id="level">1</span><br>
+🌱 Environment: <span id="env">0</span>%
 </div>
 
 <div class="section">
-  <button class="button" onclick="showWorld()">Open World Map</button>
+<button class="button" onclick="showWorld()">🌍 World Map</button>
+<button class="button" onclick="showDashboard()">📊 Dashboard</button>
 </div>
 
 <div class="section">
-  <h2 id="title">Home</h2>
-  <div id="worldArea"></div>
-  <div id="gameArea"></div>
-  <p id="result"></p>
+<h2 id="title">Home</h2>
+<div id="worldArea"></div>
+<div id="gameArea"></div>
+<p id="result"></p>
 </div>
 
 <script>
 
-/* ---------------- DATA ---------------- */
+/* ---------------- STATE ---------------- */
 
-let stars = 0;
+let stars = parseInt(localStorage.getItem("stars")) || 0;
+let xp = parseInt(localStorage.getItem("xp")) || 0;
+let level = parseInt(localStorage.getItem("level")) || 1;
 
-let completed = [];
+let progress = JSON.parse(localStorage.getItem("progress")) || {
+  env:0,
+  completed:[]
+};
 
-/* 7 WORLD ZONES */
-const zones = [
-  {name:"🌴 Rainforest", color:"#16a34a"},
-  {name:"🏜️ Desert", color:"#ca8a04"},
-  {name:"🏔️ Mountains", color:"#60a5fa"},
-  {name:"🌊 Ocean", color:"#0284c7"},
-  {name:"🌆 City", color:"#64748b"},
-  {name:"🌋 Volcano", color:"#dc2626"},
-  {name:"🌾 Farm", color:"#84cc16"}
+let badges = JSON.parse(localStorage.getItem("badges")) || [];
+
+let pillars = JSON.parse(localStorage.getItem("pillars")) || {
+  habits:0,
+  awareness:0,
+  morals:0,
+  responsibility:0
+};
+
+/* ---------------- WORLDS ---------------- */
+
+const worlds = [
+{
+name:"🧠 Good Habits",
+pillar:"habits",
+color:"#64748b",
+questions:[
+["Wake up early?","yes"],
+["Brush teeth?","yes"],
+["Junk food healthy?","no"],
+["Study daily?","yes"],
+["Sleep late?","no"]
+]
+},
+{
+name:"🌱 Awareness",
+pillar:"awareness",
+color:"#16a34a",
+questions:[
+["Plants give oxygen?","yes"],
+["Pollution good?","no"],
+["Save water?","yes"],
+["Cut trees?","no"],
+["Environment matters?","yes"]
+]
+},
+{
+name:"❤️ Moral Values",
+pillar:"morals",
+color:"#dc2626",
+questions:[
+["Lying good?","no"],
+["Helping others?","yes"],
+["Respect elders?","yes"],
+["Stealing ok?","no"],
+["Kindness matters?","yes"]
+]
+},
+{
+name:"🧭 Responsibility",
+pillar:"responsibility",
+color:"#f59e0b",
+questions:[
+["Help family?","yes"],
+["Do homework?","yes"],
+["Break rules?","no"],
+["Clean room?","yes"],
+["Avoid duty?","no"]
+]
+},
+{
+name:"🌍 Safety",
+pillar:"awareness",
+color:"#0284c7",
+questions:[
+["Cross carefully?","yes"],
+["Touch fire?","no"],
+["Follow rules?","yes"],
+["Ignore danger?","no"],
+["Wear helmet?","yes"]
+]
+},
+{
+name:"🧠 Study",
+pillar:"habits",
+color:"#8b5cf6",
+questions:[
+["Study daily?","yes"],
+["Only play?","no"],
+["Read books?","yes"],
+["Skip homework?","no"],
+["Focus important?","yes"]
+]
+},
+{
+name:"❤️ Honesty",
+pillar:"morals",
+color:"#ec4899",
+questions:[
+["Tell truth?","yes"],
+["Cheating good?","no"],
+["Be honest?","yes"],
+["Hide mistakes?","no"],
+["Trust matters?","yes"]
+]
+}
 ];
 
-/* ---------------- WORLD MAP ---------------- */
+/* ---------------- MAP ---------------- */
+
+let currentWorld = 0;
+let qIndex = 0;
 
 function showWorld(){
 
-  document.getElementById("title").innerText = "🌍 World Map";
-  document.getElementById("gameArea").innerHTML = "";
-  document.getElementById("result").innerText = "";
+document.getElementById("title").innerText="🌍 World Map";
+document.getElementById("gameArea").innerHTML="";
+document.getElementById("result").innerText="";
 
-  let html = `<div class="map">`;
+let html=`<div class="map">`;
 
-  zones.forEach((z, i) => {
+worlds.forEach((w,i)=>{
 
-    let locked = i !== 0 && !completed.includes(i - 1);
+let locked = i!==0 && !progress.completed.includes(i-1);
 
-    html += `
-      <div class="zone ${locked ? "locked" : "unlocked"}"
-        style="background:${z.color}"
-        onclick="enterZone(${i}, ${locked})">
-        ${locked ? "🔒 Locked" : z.name}
-      </div>
-    `;
-  });
+html+=`
+<div class="zone ${locked?"locked":"unlocked"}"
+style="background:${w.color}"
+onclick="enterWorld(${i})">
+${locked?"🔒 Locked":w.name}
+</div>`;
+});
 
-  html += `</div>`;
-
-  document.getElementById("worldArea").innerHTML = html;
+html+=`</div>`;
+document.getElementById("worldArea").innerHTML=html;
 }
 
-/* ---------------- ENTER ZONE ---------------- */
+/* ---------------- ENTER WORLD ---------------- */
 
-function enterZone(i, locked){
+function enterWorld(i){
 
-  if(locked){
-    document.getElementById("result").innerText =
-      "🔒 Complete previous zone first!";
-    return;
-  }
+let locked = i!==0 && !progress.completed.includes(i-1);
 
-  document.getElementById("title").innerText =
-    zones[i].name;
-
-  document.getElementById("worldArea").innerHTML = "";
-
-  document.getElementById("gameArea").innerHTML =
-    "🎮 Questions for " + zones[i].name;
-
-  document.getElementById("result").innerText = "";
-
-  if(!completed.includes(i)){
-    completed.push(i);
-    stars += 5;
-    document.getElementById("stars").innerText = stars;
-  }
+if(locked){
+document.getElementById("result").innerText="🔒 Locked";
+return;
 }
+
+currentWorld=i;
+qIndex=0;
+
+document.getElementById("worldArea").innerHTML="";
+loadQuestion();
+}
+
+/* ---------------- QUESTIONS ---------------- */
+
+function loadQuestion(){
+
+let w=worlds[currentWorld];
+let q=w.questions[qIndex];
+
+if(!q){
+
+if(!progress.completed.includes(currentWorld)){
+progress.completed.push(currentWorld);
+
+stars+=5;
+progress.env+=10;
+
+pillars[w.pillar]++;
+
+checkBadges();
+checkCompletion();
+}
+
+save();
+
+document.getElementById("gameArea").innerHTML="🎉 World Completed!";
+document.getElementById("title").innerText="World Map";
+return;
+}
+
+document.getElementById("title").innerText=w.name;
+
+document.getElementById("gameArea").innerHTML=`
+<p>${q[0]}</p>
+<input id="ans">
+<br><br>
+<button class="button" onclick="checkAnswer()">Submit</button>
+`;
+
+}
+
+/* ---------------- ANSWER ---------------- */
+
+function checkAnswer(){
+
+let w=worlds[currentWorld];
+let q=w.questions[qIndex];
+
+let ans=document.getElementById("ans").value.toLowerCase().trim();
+
+if(ans===q[1]){
+stars++;
+xp+=10;
+progress.env+=2;
+document.getElementById("result").innerText="✔ Correct!";
+}else{
+document.getElementById("result").innerText="❌ Wrong!";
+}
+
+qIndex++;
+levelUp();
+save();
+loadQuestion();
+}
+
+/* ---------------- XP + LEVEL ---------------- */
+
+function levelUp(){
+
+let needed=level*50;
+
+if(xp>=needed){
+xp-=needed;
+level++;
+alert("🏆 Level Up!");
+}
+}
+
+/* ---------------- BADGES ---------------- */
+
+function checkBadges(){
+
+if(pillars.habits>=2 && !badges.includes("🧠 Habit Builder")){
+badges.push("🧠 Habit Builder");
+alert("Badge Unlocked!");
+}
+
+if(pillars.awareness>=2 && !badges.includes("🌱 Awareness Hero")){
+badges.push("🌱 Awareness Hero");
+alert("Badge Unlocked!");
+}
+
+if(pillars.morals>=2 && !badges.includes("❤️ Moral Champion")){
+badges.push("❤️ Moral Champion");
+alert("Badge Unlocked!");
+}
+
+if(pillars.responsibility>=1 && !badges.includes("🧭 Responsible Leader")){
+badges.push("🧭 Responsible Leader");
+alert("Badge Unlocked!");
+}
+}
+
+/* ---------------- COMPLETION ---------------- */
+
+function checkCompletion(){
+
+if(progress.completed.length===worlds.length){
+showCertificate();
+}
+}
+
+/* ---------------- CERTIFICATE ---------------- */
+
+function showCertificate(){
+
+document.getElementById("title")="🏆 Certificate";
+
+document.getElementById("worldArea").innerHTML="";
+
+document.getElementById("gameArea").innerHTML=`
+<h2>🏆 Completed!</h2>
+<p>⭐ ${stars}</p>
+<p>📈 Level ${level}</p>
+<p>🌱 ${progress.env}%</p>
+<p>${badges.join(" | ")}</p>
+`;
+}
+
+/* ---------------- DASHBOARD ---------------- */
+
+function showDashboard(){
+
+document.getElementById("title").innerText="📊 Dashboard";
+
+document.getElementById("worldArea").innerHTML="";
+document.getElementById("gameArea").innerHTML=`
+<p>Worlds: ${progress.completed.length}/${worlds.length}</p>
+<p>Stars: ${stars}</p>
+<p>XP: ${xp}</p>
+<p>Level: ${level}</p>
+<p>Environment: ${progress.env}%</p>
+`;
+}
+
+/* ---------------- SAVE ---------------- */
+
+function save(){
+
+localStorage.setItem("stars",stars);
+localStorage.setItem("xp",xp);
+localStorage.setItem("level",level);
+localStorage.setItem("progress",JSON.stringify(progress));
+localStorage.setItem("badges",JSON.stringify(badges));
+localStorage.setItem("pillars",JSON.stringify(pillars));
+
+document.getElementById("stars").innerText=stars;
+document.getElementById("xp").innerText=xp;
+document.getElementById("level").innerText=level;
+document.getElementById("env").innerText=progress.env;
+}
+
+/* INIT */
+save();
 
 </script>
 
