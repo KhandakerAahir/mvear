@@ -1,64 +1,39 @@
-body{
-margin:0;
-font-family:Arial;
-background:#0b1220;
-color:white;
-text-align:center;
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVEAR Learning App</title>
 
-h1{color:#38bdf8;}
+<link rel="stylesheet" href="style.css">
+</head>
 
-.stats{
-padding:10px;
-font-size:18px;
-}
+<body>
 
-.menu button{
-background:#22c55e;
-border:none;
-padding:10px 15px;
-margin:5px;
-color:white;
-border-radius:8px;
-cursor:pointer;
-}
+<h1>🌍 MVEAR Learning App</h1>
 
-.menu button:hover{
-background:#16a34a;
-}
+<!-- 🔗 CLEAN LINK NAME -->
+<div class="link-box">
+<a href="https://fabulous-twilight-91d407.netlify.app/" target="_blank" class="mvear-btn">
+▶ MVEAR
+</a>
+</div>
 
-.map{
-display:grid;
-grid-template-columns:repeat(2,150px);
-justify-content:center;
-gap:10px;
-margin-top:10px;
-}
+<div class="stats">
+⭐ Stars: <span id="stars">0</span> |
+🌱 Env: <span id="env">0</span>% |
+🏆 Level: <span id="level">1</span>
+</div>
 
-.zone{
-width:140px;
-height:100px;
-display:flex;
-align-items:center;
-justify-content:center;
-border-radius:12px;
-cursor:pointer;
-font-weight:bold;
-transition:0.2s;
-}
+<button onclick="showWorldMap()">🌍 Open World Map</button>
 
-.unlocked{
-box-shadow:0 0 12px #22c55e;
-}
+<h2 id="title">Home</h2>
 
-.locked{
-opacity:0.3;
-filter:grayscale(100%);
-cursor:not-allowed;
-}
+<div id="worldArea"></div>
+<div id="gameArea"></div>
+<p id="result"></p>
 
-input{
-padding:8px;
-border-radius:6px;
-border:none;
-}
+<script src="script.js"></script>
+
+</body>
+</html>
