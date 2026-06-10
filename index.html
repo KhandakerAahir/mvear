@@ -30,54 +30,64 @@ h1 { color: #38bdf8; }
 
 .button:hover { background: #16a34a; }
 
-.card {
-  display: inline-block;
-  padding: 15px;
-  margin: 10px;
-  background: #111827;
+.zone {
+  width: 140px;
+  height: 100px;
   border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: bold;
   cursor: pointer;
+  color: white;
+  transition: 0.2s;
 }
 
-.drop {
-  width: 120px;
-  height: 120px;
-  background: #1f2937;
-  display: inline-block;
-  margin: 10px;
-  border-radius: 10px;
-  line-height: 120px;
+.zone:hover {
+  transform: scale(1.05);
+}
+
+.map {
+  display: grid;
+  grid-template-columns: repeat(2, 150px);
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+input {
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  text-align: center;
 }
 </style>
 </head>
 
 <body>
 
-<h1>🎮 MVEAR</h1>
+<h1>🌍 MVEAR Learning App</h1>
 
 <!-- DASHBOARD -->
 <div class="section">
-<p>⭐ Stars: <span id="stars">0</span></p>
-<p>🌱 Environment: <span id="env">0</span>%</p>
-<p>🧠 Memory: <span id="memory">0</span>%</p>
-<p>🧩 Puzzle: <span id="puzzle">0</span>%</p>
-<p>🏅 Badges: <span id="badges">None</span></p>
+  <p>⭐ Stars: <span id="stars">0</span></p>
+  <p>🌱 Environment: <span id="env">0</span>%</p>
 </div>
 
-<!-- MENU -->
+<!-- WORLD MAP -->
 <div class="section">
-<h2>Choose Game</h2>
+  <h2>🌍 Section 1: World Map</h2>
+  <button class="button" onclick="showWorld()">Open World Map</button>
 
-<button class="button" onclick="startDrag()">🌱 Drag Game</button>
-<button class="button" onclick="startMemory()">🧠 Memory Game</button>
-<button class="button" onclick="startPuzzle()">🧩 Puzzle Game</button>
+  <div id="worldArea"></div>
 </div>
 
 <!-- GAME AREA -->
 <div class="section">
-<h2 id="title">Select a game</h2>
-<div id="gameArea"></div>
-<p id="result"></p>
+  <h2 id="title">Select a Zone</h2>
+  <div id="gameArea"></div>
+  <p id="result"></p>
 </div>
 
 <script>
@@ -85,164 +95,186 @@ h1 { color: #38bdf8; }
 /* ---------------- DATA ---------------- */
 
 let stars = parseInt(localStorage.getItem("stars")) || 0;
-let progress = JSON.parse(localStorage.getItem("progress")) || {
-  env: 0,
-  memory: 0,
-  puzzle: 0
-};
-let badges = JSON.parse(localStorage.getItem("badges")) || [];
+let progress = JSON.parse(localStorage.getItem("progress")) || { env: 0 };
 
 function save(){
-localStorage.setItem("stars", stars);
-localStorage.setItem("progress", JSON.stringify(progress));
-localStorage.setItem("badges", JSON.stringify(badges));
-updateUI();
+  localStorage.setItem("stars", stars);
+  localStorage.setItem("progress", JSON.stringify(progress));
+  updateUI();
 }
-
-/* ---------------- UI ---------------- */
 
 function updateUI(){
-document.getElementById("stars").innerText = stars;
-document.getElementById("env").innerText = progress.env;
-document.getElementById("memory").innerText = progress.memory;
-document.getElementById("puzzle").innerText = progress.puzzle;
-document.getElementById("badges").innerText = badges.join(", ") || "None";
-
-if(stars >= 5 && !badges.includes("Beginner")) badges.push("Beginner");
-if(stars >= 10 && !badges.includes("Explorer")) badges.push("Explorer");
-if(progress.env >= 50 && !badges.includes("Eco Hero")) badges.push("Eco Hero");
+  document.getElementById("stars").innerText = stars;
+  document.getElementById("env").innerText = progress.env;
 }
 
-/* ---------------- DRAG GAME ---------------- */
+/* ---------------- WORLD DATA ---------------- */
 
-function startDrag(){
-document.getElementById("title").innerText = "🌱 Drag Game";
-
-document.getElementById("gameArea").innerHTML = `
-<div class="card" draggable="true" ondragstart="drag(event)" id="trash">🗑️ Trash</div>
-<div class="card" draggable="true" ondragstart="drag(event)" id="tree">🌳 Tree</div>
-
-<br><br>
-
-<div class="drop" ondrop="drop(event)" ondragover="allow(event)">DROP HERE</div>
-`;
-
-}
-
-function allow(e){ e.preventDefault(); }
-
-function drag(e){
-e.dataTransfer.setData("text", e.target.id);
-}
-
-function drop(e){
-e.preventDefault();
-
-let data = e.dataTransfer.getData("text");
-
-if(data === "trash"){
-stars++;
-progress.env += 10;
-document.getElementById("result").innerText = "🎉 Correct! +1 Star";
-}else{
-document.getElementById("result").innerText = "❌ Wrong!";
-}
-
-save();
-}
-
-/* ---------------- MEMORY GAME ---------------- */
-
-let memItems = [];
-let memPick = [];
-
-function startMemory(){
-document.getElementById("title").innerText = "🧠 Memory Game";
-
-memItems = ["🍎","🍌","🍎","🍌"];
-
-let html = "";
-
-memItems.forEach((item,i)=>{
-html += `<div class="card" onclick="pick(${i})">❓</div>`;
-});
-
-document.getElementById("gameArea").innerHTML = html;
-memPick = [];
-}
-
-function pick(i){
-
-memPick.push(i);
-
-if(memPick.length === 2){
-
-let a = memItems[memPick[0]];
-let b = memItems[memPick[1]];
-
-if(a === b){
-stars++;
-progress.memory += 10;
-document.getElementById("result").innerText = "🎉 Match!";
-}else{
-document.getElementById("result").innerText = "❌ Try again!";
-}
-
-memPick = [];
-save();
-}
-}
-
-/* ---------------- PUZZLE GAME ---------------- */
-
-let puzzleQ = [
-{q:"2+2",a:"4"},
-{q:"5-1",a:"4"},
-{q:"3+3",a:"6"},
-{q:"10-5",a:"5"},
-{q:"4+1",a:"5"}
+const worldZones = [
+  {
+    name: "🌴 Rainforest",
+    color: "#16a34a",
+    questions: [
+      { q: "What do plants use to make food?", a: "sunlight" },
+      { q: "Which gas do plants absorb?", a: "carbon dioxide" },
+      { q: "What do trees produce?", a: "oxygen" },
+      { q: "Name a forest animal", a: "tiger" },
+      { q: "What is forest made of?", a: "trees" }
+    ]
+  },
+  {
+    name: "🏜️ Desert",
+    color: "#ca8a04",
+    questions: [
+      { q: "Is desert wet or dry?", a: "dry" },
+      { q: "Name desert animal", a: "camel" },
+      { q: "Main desert surface?", a: "sand" },
+      { q: "Do deserts get rain often?", a: "no" },
+      { q: "Is desert hot?", a: "yes" }
+    ]
+  },
+  {
+    name: "🏔️ Mountains",
+    color: "#60a5fa",
+    questions: [
+      { q: "Are mountains high or low?", a: "high" },
+      { q: "What falls in mountains?", a: "snow" },
+      { q: "Air is thin or thick?", a: "thin" },
+      { q: "Name mountain animal", a: "goat" },
+      { q: "Mountains are part of?", a: "earth" }
+    ]
+  },
+  {
+    name: "🌊 Ocean",
+    color: "#0284c7",
+    questions: [
+      { q: "Ocean water is?", a: "salty" },
+      { q: "Ocean covers most of?", a: "earth" },
+      { q: "Ocean animals live in?", a: "water" },
+      { q: "Waves are caused by?", a: "wind" },
+      { q: "Whales breathe?", a: "air" }
+    ]
+  },
+  {
+    name: "🌆 City",
+    color: "#64748b",
+    questions: [
+      { q: "Where do people live?", a: "city" },
+      { q: "Transport example?", a: "bus" },
+      { q: "Cars use?", a: "fuel" },
+      { q: "Cities are busy or quiet?", a: "busy" },
+      { q: "Buildings are made in?", a: "city" }
+    ]
+  },
+  {
+    name: "🌋 Volcano",
+    color: "#dc2626",
+    questions: [
+      { q: "What comes out of volcano?", a: "lava" },
+      { q: "Is lava hot?", a: "yes" },
+      { q: "Volcano erupts due to?", a: "pressure" },
+      { q: "Volcano is part of?", a: "earth" },
+      { q: "Is eruption dangerous?", a: "yes" }
+    ]
+  },
+  {
+    name: "🌾 Farm",
+    color: "#84cc16",
+    questions: [
+      { q: "Who grows crops?", a: "farmer" },
+      { q: "Cow gives?", a: "milk" },
+      { q: "Plants need?", a: "water" },
+      { q: "Farm animals live on?", a: "farm" },
+      { q: "We eat crops or plastic?", a: "crops" }
+    ]
+  }
 ];
 
-let pIndex = 0;
+/* ---------------- GAME STATE ---------------- */
 
-function startPuzzle(){
-document.getElementById("title").innerText = "🧩 Puzzle Game";
-pIndex = 0;
-loadPuzzle();
+let zoneIndex = null;
+let qIndex = 0;
+
+/* ---------------- MAP ---------------- */
+
+function showWorld(){
+  document.getElementById("title").innerText = "🌍 World Map";
+
+  let html = `<div class="map">`;
+
+  worldZones.forEach((z, i) => {
+    html += `
+      <div class="zone"
+        style="background:${z.color}"
+        onclick="enterZone(${i})">
+        ${z.name}
+      </div>
+    `;
+  });
+
+  html += `</div>`;
+
+  document.getElementById("worldArea").innerHTML = html;
 }
 
-function loadPuzzle(){
+/* ---------------- ZONE ---------------- */
 
-let q = puzzleQ[pIndex];
-
-if(!q){
-document.getElementById("gameArea").innerHTML = "🎉 Level Complete!";
-progress.puzzle += 20;
-save();
-return;
+function enterZone(i){
+  zoneIndex = i;
+  qIndex = 0;
+  document.getElementById("result").innerText = "";
+  loadQuestion();
 }
 
-document.getElementById("gameArea").innerHTML = `
-<p>${q.q} = ?</p>
-<button class="button" onclick="checkP('4')">4</button>
-<button class="button" onclick="checkP('5')">5</button>
-<button class="button" onclick="checkP('6')">6</button>
-`;
+/* ---------------- QUESTIONS ---------------- */
 
+function loadQuestion(){
+
+  let zone = worldZones[zoneIndex];
+  let q = zone.questions[qIndex];
+
+  if(!q){
+    document.getElementById("gameArea").innerHTML =
+      `🎉 ${zone.name} Completed! +20% Environment XP`;
+
+    progress.env += 20;
+    save();
+    return;
+  }
+
+  document.getElementById("gameArea").innerHTML = `
+    <h3>${zone.name}</h3>
+    <p>Question ${qIndex + 1}/5</p>
+
+    <p>${q.q}</p>
+
+    <input id="answer" placeholder="Type answer..." />
+
+    <br><br>
+
+    <button class="button" onclick="checkAnswer()">Submit</button>
+  `;
 }
 
-function checkP(ans){
+/* ---------------- ANSWER ---------------- */
 
-if(ans === puzzleQ[pIndex].a){
-stars++;
-document.getElementById("result").innerText = "🎉 Correct!";
-}else{
-document.getElementById("result").innerText = "❌ Wrong!";
-}
+function checkAnswer(){
 
-pIndex++;
-save();
-loadPuzzle();
+  let zone = worldZones[zoneIndex];
+  let q = zone.questions[qIndex];
+
+  let ans = document.getElementById("answer").value.toLowerCase().trim();
+
+  if(ans === q.a){
+    stars++;
+    document.getElementById("result").innerText = "🎉 Correct!";
+  } else {
+    document.getElementById("result").innerText = "❌ Wrong!";
+  }
+
+  qIndex++;
+  save();
+  loadQuestion();
 }
 
 /* INIT */
