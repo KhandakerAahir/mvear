@@ -7,176 +7,201 @@
 
 <style>
 body {
-  margin: 0;
+  margin:0;
   font-family: Arial;
-  background: linear-gradient(135deg, #0f172a, #1e293b);
-  color: white;
-  text-align: center;
+  background: linear-gradient(135deg,#0b1220,#1e293b);
+  color:white;
+  text-align:center;
 }
 
-h1 { color: #38bdf8; }
+h1 { color:#38bdf8; }
 
-.section { padding: 20px; }
+.section { padding:20px; }
 
 .button {
-  background: #22c55e;
-  color: white;
-  padding: 10px 15px;
-  border: none;
-  margin: 5px;
-  border-radius: 8px;
-  cursor: pointer;
+  background:#22c55e;
+  color:white;
+  padding:10px 15px;
+  border:none;
+  margin:5px;
+  border-radius:10px;
+  cursor:pointer;
 }
 
-.button:hover { background: #16a34a; }
+.button:hover { background:#16a34a; }
 
-.box {
-  display: inline-block;
-  padding: 15px;
-  margin: 10px;
-  background: #111827;
-  border-radius: 10px;
-  cursor: pointer;
+.card {
+  display:inline-block;
+  padding:15px;
+  margin:10px;
+  background:#111827;
+  border-radius:12px;
 }
 
-.reward {
-  margin-top: 10px;
-  font-size: 18px;
-  color: #fbbf24;
+.drop {
+  width:120px;
+  height:120px;
+  background:#1f2937;
+  display:inline-block;
+  margin:10px;
+  border-radius:10px;
+  line-height:120px;
 }
+
 </style>
 </head>
 
 <body>
 
 <h1>🎮 MVEAR</h1>
-<p>Learn by playing games & quizzes</p>
 
+<!-- REWARDS -->
 <div class="section">
-
-<h2>🏆 Rewards</h2>
-<p id="stars">⭐ Stars: 0</p>
-<p id="level">📊 Level: 1</p>
-<p id="badge">🏅 Badge: Beginner</p>
-
+<p>⭐ Stars: <span id="stars">0</span></p>
+<p>🏆 Badge: <span id="badge">Beginner</span></p>
 </div>
 
-<!-- GAME MENU -->
+<!-- MENU -->
 <div class="section">
-<h2>Choose a Game</h2>
+<h2>Choose Game</h2>
 
-<button class="button" onclick="startCleanGame()">🌱 Clean Environment</button>
-<button class="button" onclick="startMemory()">🧠 Memory Game</button>
-<button class="button" onclick="startQuiz()">🎯 Quiz Mode</button>
+<button class="button" onclick="dragGame()">🌱 Drag Game</button>
+<button class="button" onclick="memoryGame()">🧠 Memory Game</button>
+<button class="button" onclick="puzzleGame()">🧩 Puzzle</button>
 </div>
 
 <!-- GAME AREA -->
 <div class="section">
-
 <h2 id="title">Select a game</h2>
-
 <div id="gameArea"></div>
-
 <p id="result"></p>
-
 </div>
+
+<!-- SOUNDS -->
+<audio id="good" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
+<audio id="bad" src="https://actions.google.com/sounds/v1/cartoon/boing.ogg"></audio>
 
 <script>
 
 let stars = 0;
-let level = 1;
 
-function updateRewards(){
-  document.getElementById("stars").innerText = "⭐ Stars: " + stars;
+/* UPDATE REWARDS */
+function update(){
+document.getElementById("stars").innerText = stars;
 
-  if(stars >= 5) level = 2;
-  if(stars >= 10) level = 3;
-
-  document.getElementById("level").innerText = "📊 Level: " + level;
-
-  if(level == 1) document.getElementById("badge").innerText = "🏅 Beginner";
-  if(level == 2) document.getElementById("badge").innerText = "🏅 Explorer";
-  if(level == 3) document.getElementById("badge").innerText = "🏅 Master";
+if(stars >= 10){
+document.getElementById("badge").innerText = "Master 🏅";
+}else if(stars >= 5){
+document.getElementById("badge").innerText = "Explorer 🌟";
+}else{
+document.getElementById("badge").innerText = "Beginner";
+}
 }
 
-/* ---------------- CLEAN GAME ---------------- */
-function startCleanGame(){
-document.getElementById("title").innerText = "🌱 Clean the Environment";
+/* SOUND */
+function goodSound(){
+document.getElementById("good").play();
+}
+function badSound(){
+document.getElementById("bad").play();
+}
 
-document.getElementById("gameArea").innerHTML = `
-<div class="box" onclick="clean(true)">🗑️ Trash</div>
-<div class="box" onclick="clean(true)">🍌 Banana Peel</div>
-<div class="box" onclick="clean(false)">🌳 Tree</div>
-<div class="box" onclick="clean(false)">💧 Water</div>
+/* ---------------- DRAG GAME ---------------- */
+function dragGame(){
+document.getElementById("title").innerText="🌱 Drag Game";
+
+document.getElementById("gameArea").innerHTML=`
+<div class="card" draggable="true" ondragstart="drag(event)" id="trash">🗑️ Trash</div>
+<div class="card" draggable="true" ondragstart="drag(event)" id="leaf">🍃 Leaf</div>
+
+<br><br>
+
+<div class="drop" ondrop="drop(event)" ondragover="allow(event)">🧺 Drop</div>
 `;
 
-document.getElementById("result").innerText = "";
 }
 
-function clean(isTrash){
-if(isTrash){
-  stars++;
-  document.getElementById("result").innerText = "👍 Cleaned! +1 Star";
-}else{
-  document.getElementById("result").innerText = "❌ That's not trash!";
+function allow(e){ e.preventDefault(); }
+
+function drag(e){
+e.dataTransfer.setData("text",e.target.id);
 }
-updateRewards();
+
+function drop(e){
+e.preventDefault();
+
+let data=e.dataTransfer.getData("text");
+
+if(data==="trash"){
+stars++;
+goodSound();
+document.getElementById("result").innerText="🎉 Good job!";
+}else{
+badSound();
+document.getElementById("result").innerText="❌ Wrong item!";
+}
+
+update();
 }
 
 /* ---------------- MEMORY GAME ---------------- */
-let memoryItems = ["🍎","🍌","🍎","🍌"];
-let flipped = [];
+let items=["🍎","🍌","🍎","🍌"];
+let picked=[];
 
-function startMemory(){
-document.getElementById("title").innerText = "🧠 Memory Game";
+function memoryGame(){
+document.getElementById("title").innerText="🧠 Memory Game";
 
-let html = "";
-memoryItems.forEach((item,i)=>{
-html += `<div class="box" onclick="flip(${i})">❓</div>`;
+let html="";
+items.forEach((i,index)=>{
+html+=`<div class="card" onclick="pick(${index})">❓</div>`;
 });
 
-document.getElementById("gameArea").innerHTML = html;
-document.getElementById("result").innerText = "";
-flipped = [];
+document.getElementById("gameArea").innerHTML=html;
+picked=[];
 }
 
-function flip(i){
-flipped.push(i);
+function pick(i){
+picked.push(i);
 
-if(flipped.length == 2){
-if(memoryItems[flipped[0]] == memoryItems[flipped[1]]){
+if(picked.length===2){
+if(items[picked[0]]===items[picked[1]]){
 stars++;
-document.getElementById("result").innerText = "🎉 Match Found! +1 Star";
+goodSound();
+document.getElementById("result").innerText="🎉 Match!";
 }else{
-document.getElementById("result").innerText = "❌ Try Again!";
+badSound();
+document.getElementById("result").innerText="❌ Try again!";
 }
-flipped = [];
-updateRewards();
+picked=[];
+update();
 }
 }
 
-/* ---------------- SIMPLE QUIZ ---------------- */
-function startQuiz(){
-document.getElementById("title").innerText = "🎯 Quick Quiz";
+/* ---------------- PUZZLE GAME ---------------- */
+function puzzleGame(){
+document.getElementById("title").innerText="🧩 Puzzle Game";
 
-document.getElementById("gameArea").innerHTML = `
-<p>What is good behavior?</p>
-<button class="button" onclick="quiz(true)">Helping others</button>
-<button class="button" onclick="quiz(false)">Hitting others</button>
+document.getElementById("gameArea").innerHTML=`
+<p>What is 2 + 2?</p>
+<button class="button" onclick="puzzle(true)">4</button>
+<button class="button" onclick="puzzle(false)">5</button>
+<button class="button" onclick="puzzle(false)">3</button>
 `;
-
-document.getElementById("result").innerText = "";
 }
 
-function quiz(correct){
+function puzzle(correct){
 if(correct){
 stars++;
-document.getElementById("result").innerText = "🎉 Correct! +1 Star";
+goodSound();
+document.getElementById("result").innerText="🎉 Correct!";
 }else{
-document.getElementById("result").innerText = "❌ Wrong!";
+badSound();
+document.getElementById("result").innerText="❌ Wrong!";
 }
-updateRewards();
+update();
 }
+
+update();
 
 </script>
 
