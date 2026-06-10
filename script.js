@@ -1,103 +1,56 @@
-/* ---------------- SAFE STATE LOAD ---------------- */
+let stars = +localStorage.getItem("stars") || 0;
+let env = +localStorage.getItem("env") || 0;
+let level = +localStorage.getItem("level") || 1;
+let xp = +localStorage.getItem("xp") || 0;
 
-function load(key, fallback){
-try{
-let data = localStorage.getItem(key);
-return data ? JSON.parse(data) : fallback;
-}catch{
-return fallback;
-}
-}
-
-let stars = load("stars",0);
-let xp = load("xp",0);
-let level = load("level",1);
-
-let progress = load("progress",{completed:[]});
-let badges = load("badges",[]);
-let pillars = load("pillars",{
-habits:0,
-awareness:0,
-morals:0
-});
-
-/* ---------------- WORLDS ---------------- */
-
-const worlds = [
-{
-name:"🧠 Habits",
-pillar:"habits",
-color:"#64748b",
-questions:[
-["Wake early?","yes"],
-["Brush teeth?","yes"],
-["Study daily?","yes"],
-["Eat junk food?","no"],
-["Sleep late?","no"]
-]
-},
-{
-name:"🌱 Awareness",
-pillar:"awareness",
-color:"#16a34a",
-questions:[
-["Plants give oxygen?","yes"],
-["Pollution good?","no"],
-["Save water?","yes"],
-["Cut trees?","no"],
-["Nature matters?","yes"]
-]
-},
-{
-name:"❤️ Values",
-pillar:"morals",
-color:"#dc2626",
-questions:[
-["Lying good?","no"],
-["Help others?","yes"],
-["Respect elders?","yes"],
-["Stealing ok?","no"],
-["Be kind?","yes"]
-]
-}
-];
-
-/* ---------------- STATE ---------------- */
+let progress = JSON.parse(localStorage.getItem("progress")) || {
+completed:[]
+};
 
 let currentWorld = 0;
 let qIndex = 0;
 
-/* ---------------- UI ---------------- */
+/* WORLDS */
+const worlds = [
+{ name:"Habits 1", color:"#1f2937",
+questions:[["Wake early?","yes"],["Brush teeth?","yes"],["Study daily?","yes"],["Sleep late?","no"],["Drink water?","yes"]]},
 
+{ name:"Habits 2", color:"#374151",
+questions:[["Exercise?","yes"],["Junk food?","no"],["Sleep well?","yes"],["Waste time?","no"],["Be disciplined?","yes"]]},
+
+{ name:"Awareness", color:"#065f46",
+questions:[["Trees give oxygen?","yes"],["Pollution good?","no"],["Save water?","yes"],["Plastic harmful?","yes"],["Nature important?","yes"]]},
+
+{ name:"Values", color:"#7f1d1d",
+questions:[["Lying good?","no"],["Help others?","yes"],["Respect elders?","yes"],["Stealing ok?","no"],["Be kind?","yes"]]},
+
+{ name:"Responsibility", color:"#92400e",
+questions:[["Homework?","yes"],["Break rules?","no"],["Help family?","yes"],["Avoid duty?","no"],["Be responsible?","yes"]]},
+
+{ name:"Final Test", color:"#4c1d95",
+questions:[["Be honest?","yes"],["Be responsible?","yes"],["Care environment?","yes"],["Respect others?","yes"],["Good habits matter?","yes"]]}
+];
+
+/* UI */
 function updateUI(){
 document.getElementById("stars").innerText = stars;
-document.getElementById("xp").innerText = xp;
+document.getElementById("env").innerText = env;
 document.getElementById("level").innerText = level;
 }
-
 updateUI();
 
-/* ---------------- WORLD MAP ---------------- */
+/* WORLD MAP */
+function showWorldMap(){
 
-function showWorld(){
-
-document.getElementById("title").innerText="🌍 World Map";
-
-let worldArea = document.getElementById("worldArea");
-let gameArea = document.getElementById("gameArea");
-
-worldArea.innerHTML="";
-gameArea.innerHTML="";
-document.getElementById("result").innerText="";
+document.getElementById("title").innerText="World Map";
 
 let html = `<div class="map">`;
 
 worlds.forEach((w,i)=>{
-
 let unlocked = i===0 || progress.completed.includes(i-1);
 
 html += `
-<div class="zone ${unlocked?"unlocked":"locked"}"
+<div class="zone ${unlocked?'unlocked':'locked'}"
 style="background:${w.color}"
 onclick="enterWorld(${i})">
 ${unlocked ? w.name : "🔒 Locked"}
@@ -106,30 +59,27 @@ ${unlocked ? w.name : "🔒 Locked"}
 
 html += `</div>`;
 
-worldArea.innerHTML = html;
+document.getElementById("worldArea").innerHTML = html;
 }
 
-/* ---------------- ENTER WORLD ---------------- */
-
+/* ENTER WORLD */
 function enterWorld(i){
 
 let unlocked = i===0 || progress.completed.includes(i-1);
-
 if(!unlocked){
-document.getElementById("result").innerText="🔒 Locked World";
+document.getElementById("result").innerText="Locked!";
 return;
 }
 
-currentWorld=i;
-qIndex=0;
+currentWorld = i;
+qIndex = 0;
 
 document.getElementById("worldArea").innerHTML="";
-loadQuestion();
+loadQ();
 }
 
-/* ---------------- QUESTIONS ---------------- */
-
-function loadQuestion(){
+/* QUESTIONS */
+function loadQ(){
 
 let w = worlds[currentWorld];
 let q = w.questions[qIndex];
@@ -139,15 +89,13 @@ if(!q){
 if(!progress.completed.includes(currentWorld)){
 progress.completed.push(currentWorld);
 
-stars+=5;
-xp+=20;
+stars += 5;
+env += 10;
+xp += 20;
 
-pillars[w.pillar] = (pillars[w.pillar]||0) + 1;
-
-checkBadges();
-}
-
+checkLevel();
 save();
+}
 
 document.getElementById("gameArea").innerHTML="🎉 World Completed!";
 return;
@@ -157,95 +105,49 @@ document.getElementById("title").innerText = w.name;
 
 document.getElementById("gameArea").innerHTML = `
 <p>${q[0]}</p>
-<input id="answerInput">
+<input id="ans">
 <br><br>
-<button onclick="checkAnswer()">Submit</button>
+<button onclick="check()">Submit</button>
 `;
 }
 
-/* ---------------- ANSWER CHECK (SAFE) ---------------- */
+/* CHECK ANSWER */
+function check(){
 
-function checkAnswer(){
-
-let input = document.getElementById("answerInput");
-let userAns = (input?.value || "").toLowerCase().trim();
-
+let ans = document.getElementById("ans").value.toLowerCase().trim();
 let q = worlds[currentWorld].questions[qIndex];
 
-if(userAns === q[1]){
+if(ans === q[1]){
 stars++;
-xp+=10;
-document.getElementById("result").innerText="✔ Correct!";
+xp += 5;
+env += 2;
+document.getElementById("result").innerText="Correct!";
 }else{
-document.getElementById("result").innerText="❌ Wrong!";
+document.getElementById("result").innerText="Wrong!";
 }
 
 qIndex++;
-
-levelUp();
+checkLevel();
 save();
-loadQuestion();
+loadQ();
 }
 
-/* ---------------- LEVEL SYSTEM ---------------- */
-
-function levelUp(){
-
-let need = level * 60;
+/* LEVEL */
+function checkLevel(){
+let need = level * 50;
 
 if(xp >= need){
 xp -= need;
 level++;
-document.getElementById("result").innerText="🏆 Level Up!";
 }
 }
 
-/* ---------------- BADGES ---------------- */
-
-function checkBadges(){
-
-if(pillars.habits>=2 && !badges.includes("Habit Builder")){
-badges.push("Habit Builder");
-}
-
-if(pillars.awareness>=2 && !badges.includes("Awareness Hero")){
-badges.push("Awareness Hero");
-}
-
-if(pillars.morals>=2 && !badges.includes("Moral Champion")){
-badges.push("Moral Champion");
-}
-}
-
-/* ---------------- DASHBOARD ---------------- */
-
-function showDashboard(){
-
-document.getElementById("title").innerText="📊 Dashboard";
-
-document.getElementById("worldArea").innerHTML="";
-document.getElementById("gameArea").innerHTML="";
-document.getElementById("result").innerText="";
-
-document.getElementById("gameArea").innerHTML=`
-<p>⭐ Stars: ${stars}</p>
-<p>📈 XP: ${xp}</p>
-<p>🏆 Level: ${level}</p>
-<p>🌍 Completed Worlds: ${progress.completed.length}/${worlds.length}</p>
-<p>🏅 Badges: ${badges.join(" | ") || "None"}</p>
-`;
-}
-
-/* ---------------- SAVE ---------------- */
-
+/* SAVE */
 function save(){
-
-localStorage.setItem("stars",JSON.stringify(stars));
-localStorage.setItem("xp",JSON.stringify(xp));
-localStorage.setItem("level",JSON.stringify(level));
+localStorage.setItem("stars",stars);
+localStorage.setItem("env",env);
+localStorage.setItem("xp",xp);
+localStorage.setItem("level",level);
 localStorage.setItem("progress",JSON.stringify(progress));
-localStorage.setItem("badges",JSON.stringify(badges));
-localStorage.setItem("pillars",JSON.stringify(pillars));
-
 updateUI();
 }
