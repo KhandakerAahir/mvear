@@ -93,7 +93,7 @@ input {
 
 <script>
 
-/* ---------------- PLAYER DATA ---------------- */
+/* ---------------- DATA ---------------- */
 
 let stars = parseInt(localStorage.getItem("stars")) || 0;
 let xp = parseInt(localStorage.getItem("xp")) || 0;
@@ -103,6 +103,8 @@ let progress = JSON.parse(localStorage.getItem("progress")) || {
   env: 0,
   completedZones: []
 };
+
+/* ---------------- SAVE ---------------- */
 
 function save(){
   localStorage.setItem("stars", stars);
@@ -225,7 +227,7 @@ const worldZones = [
 let zoneIndex = null;
 let qIndex = 0;
 
-/* ---------------- WORLD MAP ---------------- */
+/* ---------------- WORLD MAP (FIXED) ---------------- */
 
 function showWorld(){
   document.getElementById("title").innerText = "🌍 World Map";
@@ -238,15 +240,30 @@ function showWorld(){
 
     html += `
       <div class="zone"
-        style="background:${locked ? "#374151" : z.color}; opacity:${locked ? 0.5 : 1};"
-        onclick="${locked ? '' : `enterZone(${i})`}">
+        data-index="${i}"
+        data-locked="${locked}"
+        style="background:${locked ? "#374151" : z.color}; opacity:${locked ? 0.5 : 1};">
         ${locked ? "🔒 Locked" : z.name}
       </div>
     `;
   });
 
   html += `</div>`;
+
   document.getElementById("worldArea").innerHTML = html;
+
+  // SAFE EVENT LISTENERS (FIX FOR GITHUB PAGES)
+  document.querySelectorAll(".zone").forEach(el => {
+    el.addEventListener("click", function () {
+
+      let locked = this.getAttribute("data-locked") === "true";
+      let index = parseInt(this.getAttribute("data-index"));
+
+      if(!locked){
+        enterZone(index);
+      }
+    });
+  });
 }
 
 /* ---------------- ENTER ZONE ---------------- */
