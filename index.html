@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MVEAR Learning App</title>
 
 <style>
 body {
   margin: 0;
   font-family: Arial;
-  background: linear-gradient(135deg, #0b1220, #1e293b);
+  background: #0b1220;
   color: white;
   text-align: center;
 }
@@ -23,59 +23,37 @@ h1 { color: #38bdf8; }
   color: white;
   padding: 10px 15px;
   border: none;
-  margin: 5px;
   border-radius: 10px;
   cursor: pointer;
 }
 
-.button:hover { background: #16a34a; }
-
-/* 🌍 MAP GRID */
 .map {
   display: grid;
-  grid-template-columns: repeat(2, 150px);
+  grid-template-columns: repeat(2, 140px);
   justify-content: center;
-  gap: 12px;
+  gap: 10px;
   margin-top: 15px;
 }
 
-/* 🌟 ZONES */
 .zone {
   width: 140px;
-  height: 100px;
-  border-radius: 12px;
+  height: 90px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 13px;
+  border-radius: 12px;
   font-weight: bold;
-  color: white;
   transition: 0.2s;
 }
 
-/* ✨ UNLOCKED GLOW */
 .unlocked {
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+  box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
   border: 2px solid #22c55e;
 }
 
-/* 🔒 LOCKED STYLE */
 .locked {
-  filter: grayscale(80%);
-  opacity: 0.5;
-}
-
-/* 🌟 HOVER GLOW */
-.unlocked:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 20px rgba(34, 197, 94, 1);
-}
-
-input {
-  padding: 8px;
-  border-radius: 8px;
-  border: none;
-  text-align: center;
+  opacity: 0.4;
+  filter: grayscale(100%);
 }
 </style>
 </head>
@@ -86,155 +64,39 @@ input {
 
 <div class="section">
   <p>⭐ Stars: <span id="stars">0</span></p>
-  <p>🌱 Environment: <span id="env">0</span>%</p>
-  <p id="levelDisplay">Level 1 | XP: 0/50</p>
 </div>
 
 <div class="section">
-  <h2>🌍 World Map</h2>
-  <button class="button" id="openMapBtn">Open World Map</button>
+  <button class="button" onclick="showWorld()">Open World Map</button>
+</div>
 
+<div class="section">
+  <h2 id="title">Home</h2>
   <div id="worldArea"></div>
-</div>
-
-<div class="section">
-  <h2 id="title">Select a Zone</h2>
   <div id="gameArea"></div>
   <p id="result"></p>
 </div>
 
 <script>
 
-/* ---------------- STORAGE ---------------- */
+/* ---------------- DATA ---------------- */
 
-function safeParse(key, fallback){
-  try {
-    return JSON.parse(localStorage.getItem(key)) ?? fallback;
-  } catch {
-    return fallback;
-  }
-}
+let stars = 0;
 
-let stars = parseInt(localStorage.getItem("stars")) || 0;
-let xp = parseInt(localStorage.getItem("xp")) || 0;
-let level = parseInt(localStorage.getItem("level")) || 1;
+let completed = [];
 
-let progress = safeParse("progress", {
-  env: 0,
-  completedZones: []
-});
-
-/* ---------------- WORLD DATA ---------------- */
-
-const worldZones = [
-  { name:"🌴 Rainforest", color:"#16a34a",
-    questions:[
-      {q:"What do plants use to make food?",a:"sunlight"},
-      {q:"Which gas do plants absorb?",a:"carbon dioxide"},
-      {q:"What do trees produce?",a:"oxygen"},
-      {q:"Name a forest animal",a:"tiger"},
-      {q:"What is forest made of?",a:"trees"}
-    ]
-  },
-  { name:"🏜️ Desert", color:"#ca8a04",
-    questions:[
-      {q:"Is desert wet or dry?",a:"dry"},
-      {q:"Name desert animal",a:"camel"},
-      {q:"Main desert surface?",a:"sand"},
-      {q:"Do deserts get rain often?",a:"no"},
-      {q:"Is desert hot?",a:"yes"}
-    ]
-  },
-  { name:"🏔️ Mountains", color:"#60a5fa",
-    questions:[
-      {q:"Are mountains high or low?",a:"high"},
-      {q:"What falls in mountains?",a:"snow"},
-      {q:"Air is thin or thick?",a:"thin"},
-      {q:"Name mountain animal",a:"goat"},
-      {q:"Mountains are part of?",a:"earth"}
-    ]
-  },
-  { name:"🌊 Ocean", color:"#0284c7",
-    questions:[
-      {q:"Ocean water is?",a:"salty"},
-      {q:"Ocean covers most of?",a:"earth"},
-      {q:"Waves are caused by?",a:"wind"},
-      {q:"Name ocean animal",a:"fish"},
-      {q:"Whales breathe?",a:"air"}
-    ]
-  },
-  { name:"🌆 City", color:"#64748b",
-    questions:[
-      {q:"Where do people live?",a:"city"},
-      {q:"Transport example?",a:"bus"},
-      {q:"Cars use?",a:"fuel"},
-      {q:"Cities are busy or quiet?",a:"busy"},
-      {q:"Buildings are made in?",a:"city"}
-    ]
-  },
-  { name:"🌋 Volcano", color:"#dc2626",
-    questions:[
-      {q:"What comes out of volcano?",a:"lava"},
-      {q:"Is lava hot?",a:"yes"},
-      {q:"Eruption caused by?",a:"pressure"},
-      {q:"Volcano is part of?",a:"earth"},
-      {q:"Is eruption dangerous?",a:"yes"}
-    ]
-  },
-  { name:"🌾 Farm", color:"#84cc16",
-    questions:[
-      {q:"Who grows crops?",a:"farmer"},
-      {q:"Cow gives?",a:"milk"},
-      {q:"Plants need?",a:"water"},
-      {q:"Farm animals live on?",a:"farm"},
-      {q:"We eat crops or plastic?",a:"crops"}
-    ]
-  }
+/* 7 WORLD ZONES */
+const zones = [
+  {name:"🌴 Rainforest", color:"#16a34a"},
+  {name:"🏜️ Desert", color:"#ca8a04"},
+  {name:"🏔️ Mountains", color:"#60a5fa"},
+  {name:"🌊 Ocean", color:"#0284c7"},
+  {name:"🌆 City", color:"#64748b"},
+  {name:"🌋 Volcano", color:"#dc2626"},
+  {name:"🌾 Farm", color:"#84cc16"}
 ];
 
-/* ---------------- STATE ---------------- */
-
-let zoneIndex = null;
-let qIndex = 0;
-
-/* ---------------- UI ---------------- */
-
-function updateUI(){
-  document.getElementById("stars").innerText = stars;
-  document.getElementById("env").innerText = progress.env;
-  document.getElementById("levelDisplay").innerText =
-    `Level ${level} | XP ${xp}/${level * 50}`;
-}
-
-/* ---------------- XP SYSTEM ---------------- */
-
-function addXP(amount){
-  xp += amount;
-
-  let required = level * 50;
-
-  if(xp >= required){
-    xp -= required;
-    level++;
-    alert("🎉 Level Up! Level " + level);
-  }
-
-  save();
-}
-
-/* ---------------- SAVE ---------------- */
-
-function save(){
-  localStorage.setItem("stars", stars);
-  localStorage.setItem("xp", xp);
-  localStorage.setItem("level", level);
-  localStorage.setItem("progress", JSON.stringify(progress));
-  updateUI();
-}
-
 /* ---------------- WORLD MAP ---------------- */
-
-document.getElementById("openMapBtn").addEventListener("click", showWorld);
 
 function showWorld(){
 
@@ -242,110 +104,52 @@ function showWorld(){
   document.getElementById("gameArea").innerHTML = "";
   document.getElementById("result").innerText = "";
 
-  const worldArea = document.getElementById("worldArea");
-
   let html = `<div class="map">`;
 
-  worldZones.forEach((z, i) => {
+  zones.forEach((z, i) => {
 
-    let locked = i !== 0 && !progress.completedZones.includes(i - 1);
+    let locked = i !== 0 && !completed.includes(i - 1);
 
     html += `
       <div class="zone ${locked ? "locked" : "unlocked"}"
-        data-index="${i}"
-        data-locked="${locked}"
-        style="background:${z.color}; cursor:pointer;">
+        style="background:${z.color}"
+        onclick="enterZone(${i}, ${locked})">
         ${locked ? "🔒 Locked" : z.name}
       </div>
     `;
   });
 
   html += `</div>`;
-  worldArea.innerHTML = html;
 
-  document.querySelectorAll(".zone").forEach(el => {
-    el.addEventListener("click", () => {
-
-      let i = parseInt(el.dataset.index);
-      let locked = el.dataset.locked === "true";
-
-      if(!locked){
-        enterZone(i);
-      } else {
-        document.getElementById("result").innerText =
-          "🔒 Complete previous zone first!";
-      }
-    });
-  });
+  document.getElementById("worldArea").innerHTML = html;
 }
 
-/* ---------------- ZONES ---------------- */
+/* ---------------- ENTER ZONE ---------------- */
 
-function enterZone(i){
-  zoneIndex = i;
-  qIndex = 0;
-  loadQuestion();
-}
+function enterZone(i, locked){
 
-/* ---------------- QUESTIONS ---------------- */
-
-function loadQuestion(){
-
-  let zone = worldZones[zoneIndex];
-  let q = zone.questions[qIndex];
-
-  if(!q){
-
-    if(!progress.completedZones.includes(zoneIndex)){
-      progress.completedZones.push(zoneIndex);
-      stars += 5;
-      progress.env += 20;
-      addXP(30);
-    }
-
-    document.getElementById("gameArea").innerHTML =
-      `🎉 ${zone.name} Completed!`;
-
-    save();
+  if(locked){
+    document.getElementById("result").innerText =
+      "🔒 Complete previous zone first!";
     return;
   }
 
-  document.getElementById("gameArea").innerHTML = `
-    <h3>${zone.name}</h3>
-    <p>Question ${qIndex + 1}/5</p>
-    <p>${q.q}</p>
+  document.getElementById("title").innerText =
+    zones[i].name;
 
-    <input id="answer" placeholder="Type answer..." />
-    <br><br>
+  document.getElementById("worldArea").innerHTML = "";
 
-    <button class="button" onclick="checkAnswer()">Submit</button>
-  `;
-}
+  document.getElementById("gameArea").innerHTML =
+    "🎮 Questions for " + zones[i].name;
 
-/* ---------------- ANSWER ---------------- */
+  document.getElementById("result").innerText = "";
 
-function checkAnswer(){
-
-  let zone = worldZones[zoneIndex];
-  let q = zone.questions[qIndex];
-
-  let ans = document.getElementById("answer").value.toLowerCase().trim();
-
-  if(ans === q.a){
-    stars++;
-    addXP(10);
-    document.getElementById("result").innerText = "🎉 Correct!";
-  } else {
-    document.getElementById("result").innerText = "❌ Wrong!";
+  if(!completed.includes(i)){
+    completed.push(i);
+    stars += 5;
+    document.getElementById("stars").innerText = stars;
   }
-
-  qIndex++;
-  save();
-  loadQuestion();
 }
-
-/* INIT */
-updateUI();
 
 </script>
 
