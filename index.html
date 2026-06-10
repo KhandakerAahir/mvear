@@ -1,125 +1,148 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MVEAR</title>
 
-  <!-- Google verification -->
-  <meta name="google-site-verification" content="nIXqJkWkW55vby70Q0RSgnO5Z2oYB6TJ0IA9861dkOc" />
+<style>
+body {
+  margin: 0;
+  font-family: Arial;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  text-align: center;
+}
 
-  <title>MVEAR - Learn & Play</title>
+h1 { color: #38bdf8; font-size: 50px; }
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: white;
-      text-align: center;
-    }
+.section { padding: 20px; }
 
-    header {
-      padding: 60px 20px;
-    }
+.button {
+  background: #22c55e;
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  margin: 5px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
-    h1 {
-      font-size: 60px;
-      margin-bottom: 10px;
-      color: #38bdf8;
-    }
+.button:hover { background: #16a34a; }
 
-    p {
-      font-size: 20px;
-      max-width: 700px;
-      margin: auto;
-      line-height: 1.6;
-    }
-
-    .section {
-      padding: 40px 20px;
-    }
-
-    .card-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      margin-top: 20px;
-    }
-
-    .card {
-      background: #111827;
-      border: 1px solid #334155;
-      border-radius: 12px;
-      padding: 20px;
-      width: 250px;
-    }
-
-    .button {
-      display: inline-block;
-      margin-top: 30px;
-      padding: 15px 25px;
-      background: #22c55e;
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      font-size: 18px;
-    }
-
-    .button:hover {
-      background: #16a34a;
-    }
-
-    footer {
-      margin-top: 50px;
-      padding: 20px;
-      font-size: 14px;
-      color: #94a3b8;
-    }
-  </style>
+.card {
+  margin: 10px;
+}
+</style>
 </head>
 
 <body>
 
-<header>
-  <h1>MVEAR</h1>
-
-  <p>
-    A fun and interactive learning app for kids aged 5–11.
-    Learn moral values, responsibility, general knowledge, good habits,
-    and environmental awareness through games and quizzes.
-  </p>
-
-  <a class="button" href="#">
-    Start Learning
-  </a>
-</header>
+<h1>MVEAR</h1>
+<p>Learn by playing quizzes 🎮</p>
 
 <div class="section">
-  <h2>What Kids Learn</h2>
 
-  <div class="card-container">
-    <div class="card">🌟 Moral Values</div>
-    <div class="card">📘 General Knowledge</div>
-    <div class="card">🌱 Environment Awareness</div>
-    <div class="card">🧠 Good Habits</div>
-    <div class="card">⚖️ Responsibility</div>
-    <div class="card">🎮 Learning Games</div>
-  </div>
+<h2>Choose a Stage</h2>
+
+<button class="button" onclick="startStage('moral')">🌟 Moral Values</button>
+<button class="button" onclick="startStage('env')">🌱 Environment</button>
+<button class="button" onclick="startStage('habit')">🧠 Good Habits</button>
+
 </div>
 
 <div class="section">
-  <h2>Why MVEAR?</h2>
-  <p>
-    MVEAR makes learning fun so kids don’t get bored.
-    Instead of boring reading, children learn by playing, answering questions,
-    and exploring interactive challenges.
-  </p>
+
+<h2 id="question">Select a stage to start</h2>
+
+<div id="options"></div>
+
+<p id="result"></p>
+<p id="score"></p>
+
 </div>
 
-<footer>
-  © 2026 MVEAR. Built with care for young learners.
-</footer>
+<script>
+
+const stages = {
+
+moral: [
+  {q:"Helping others is?", o:["Good","Bad","Useless"], a:0},
+  {q:"Lying is?", o:["Good","Bad","Helpful"], a:1},
+  {q:"Respect elders is?", o:["Good","Bad","Wrong"], a:0},
+  {q:"Sharing toys is?", o:["Good","Bad","Dangerous"], a:0},
+  {q:"Stealing is?", o:["Good","Bad","Nice"], a:1}
+],
+
+env: [
+  {q:"Planting trees helps?", o:["Air","Pollution","Harm"], a:0},
+  {q:"Throwing trash anywhere?", o:["Good","Bad","Helpful"], a:1},
+  {q:"Saving water is?", o:["Important","Useless","Bad"], a:0},
+  {q:"Cutting trees is?", o:["Good","Bad","Nice"], a:1},
+  {q:"Clean environment is?", o:["Healthy","Dirty","Harmful"], a:0}
+],
+
+habit: [
+  {q:"Brushing teeth is?", o:["Good","Bad","Useless"], a:0},
+  {q:"Waking early is?", o:["Good","Bad","Wrong"], a:0},
+  {q:"Eating junk food always is?", o:["Healthy","Bad","Good"], a:1},
+  {q:"Doing homework is?", o:["Important","Useless","Wrong"], a:0},
+  {q:"Sleeping late everyday is?", o:["Good","Bad","Healthy"], a:1}
+]
+
+};
+
+let currentStage = [];
+let index = 0;
+let score = 0;
+
+function startStage(stage) {
+  currentStage = stages[stage];
+  index = 0;
+  score = 0;
+  loadQ();
+}
+
+function loadQ() {
+
+if(index >= currentStage.length){
+  document.getElementById("question").innerText = "🎉 Stage Completed!";
+  document.getElementById("options").innerHTML = "";
+  document.getElementById("result").innerText = "";
+  document.getElementById("score").innerText = "Score: " + score + "/5";
+  return;
+}
+
+let q = currentStage[index];
+
+document.getElementById("question").innerText = q.q;
+
+let html = "";
+
+q.o.forEach((opt,i)=>{
+  html += `<button class="button" onclick="check(${i})">${opt}</button>`;
+});
+
+document.getElementById("options").innerHTML = html;
+document.getElementById("result").innerText = "";
+
+}
+
+function check(ans){
+
+if(ans === currentStage[index].a){
+  score++;
+  document.getElementById("result").innerText = "🎉 Correct!";
+}else{
+  document.getElementById("result").innerText = "❌ Wrong!";
+}
+
+index++;
+setTimeout(loadQ, 800);
+
+}
+
+</script>
 
 </body>
 </html>
