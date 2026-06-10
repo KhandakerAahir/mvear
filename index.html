@@ -30,6 +30,16 @@ h1 { color: #38bdf8; }
 
 .button:hover { background: #16a34a; }
 
+/* 🌍 MAP GRID */
+.map {
+  display: grid;
+  grid-template-columns: repeat(2, 150px);
+  justify-content: center;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+/* 🌟 ZONES */
 .zone {
   width: 140px;
   height: 100px;
@@ -43,16 +53,22 @@ h1 { color: #38bdf8; }
   transition: 0.2s;
 }
 
-.zone:hover {
-  transform: scale(1.05);
+/* ✨ UNLOCKED GLOW */
+.unlocked {
+  box-shadow: 0 0 12px rgba(34, 197, 94, 0.8);
+  border: 2px solid #22c55e;
 }
 
-.map {
-  display: grid;
-  grid-template-columns: repeat(2, 150px);
-  justify-content: center;
-  gap: 12px;
-  margin-top: 15px;
+/* 🔒 LOCKED STYLE */
+.locked {
+  filter: grayscale(80%);
+  opacity: 0.5;
+}
+
+/* 🌟 HOVER GLOW */
+.unlocked:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 20px rgba(34, 197, 94, 1);
 }
 
 input {
@@ -89,7 +105,7 @@ input {
 
 <script>
 
-/* ---------------- SAFE STORAGE ---------------- */
+/* ---------------- STORAGE ---------------- */
 
 function safeParse(key, fallback){
   try {
@@ -108,84 +124,70 @@ let progress = safeParse("progress", {
   completedZones: []
 });
 
-/* ---------------- DATA ---------------- */
+/* ---------------- WORLD DATA ---------------- */
 
 const worldZones = [
-  {
-    name: "🌴 Rainforest",
-    color: "#16a34a",
-    questions: [
-      { q: "What do plants use to make food?", a: "sunlight" },
-      { q: "Which gas do plants absorb?", a: "carbon dioxide" },
-      { q: "What do trees produce?", a: "oxygen" },
-      { q: "Name a forest animal", a: "tiger" },
-      { q: "What is forest made of?", a: "trees" }
+  { name:"🌴 Rainforest", color:"#16a34a",
+    questions:[
+      {q:"What do plants use to make food?",a:"sunlight"},
+      {q:"Which gas do plants absorb?",a:"carbon dioxide"},
+      {q:"What do trees produce?",a:"oxygen"},
+      {q:"Name a forest animal",a:"tiger"},
+      {q:"What is forest made of?",a:"trees"}
     ]
   },
-  {
-    name: "🏜️ Desert",
-    color: "#ca8a04",
-    questions: [
-      { q: "Is desert wet or dry?", a: "dry" },
-      { q: "Name desert animal", a: "camel" },
-      { q: "Main desert surface?", a: "sand" },
-      { q: "Do deserts get rain often?", a: "no" },
-      { q: "Is desert hot?", a: "yes" }
+  { name:"🏜️ Desert", color:"#ca8a04",
+    questions:[
+      {q:"Is desert wet or dry?",a:"dry"},
+      {q:"Name desert animal",a:"camel"},
+      {q:"Main desert surface?",a:"sand"},
+      {q:"Do deserts get rain often?",a:"no"},
+      {q:"Is desert hot?",a:"yes"}
     ]
   },
-  {
-    name: "🏔️ Mountains",
-    color: "#60a5fa",
-    questions: [
-      { q: "Are mountains high or low?", a: "high" },
-      { q: "What falls in mountains?", a: "snow" },
-      { q: "Air is thin or thick?", a: "thin" },
-      { q: "Name mountain animal", a: "goat" },
-      { q: "Mountains are part of?", a: "earth" }
+  { name:"🏔️ Mountains", color:"#60a5fa",
+    questions:[
+      {q:"Are mountains high or low?",a:"high"},
+      {q:"What falls in mountains?",a:"snow"},
+      {q:"Air is thin or thick?",a:"thin"},
+      {q:"Name mountain animal",a:"goat"},
+      {q:"Mountains are part of?",a:"earth"}
     ]
   },
-  {
-    name: "🌊 Ocean",
-    color: "#0284c7",
-    questions: [
-      { q: "Ocean water is?", a: "salty" },
-      { q: "Ocean covers most of?", a: "earth" },
-      { q: "Waves are caused by?", a: "wind" },
-      { q: "Name ocean animal", a: "fish" },
-      { q: "Whales breathe?", a: "air" }
+  { name:"🌊 Ocean", color:"#0284c7",
+    questions:[
+      {q:"Ocean water is?",a:"salty"},
+      {q:"Ocean covers most of?",a:"earth"},
+      {q:"Waves are caused by?",a:"wind"},
+      {q:"Name ocean animal",a:"fish"},
+      {q:"Whales breathe?",a:"air"}
     ]
   },
-  {
-    name: "🌆 City",
-    color: "#64748b",
-    questions: [
-      { q: "Where do people live?", a: "city" },
-      { q: "Transport example?", a: "bus" },
-      { q: "Cars use?", a: "fuel" },
-      { q: "Cities are busy or quiet?", a: "busy" },
-      { q: "Buildings are made in?", a: "city" }
+  { name:"🌆 City", color:"#64748b",
+    questions:[
+      {q:"Where do people live?",a:"city"},
+      {q:"Transport example?",a:"bus"},
+      {q:"Cars use?",a:"fuel"},
+      {q:"Cities are busy or quiet?",a:"busy"},
+      {q:"Buildings are made in?",a:"city"}
     ]
   },
-  {
-    name: "🌋 Volcano",
-    color: "#dc2626",
-    questions: [
-      { q: "What comes out of volcano?", a: "lava" },
-      { q: "Is lava hot?", a: "yes" },
-      { q: "Eruption caused by?", a: "pressure" },
-      { q: "Volcano is part of?", a: "earth" },
-      { q: "Is eruption dangerous?", a: "yes" }
+  { name:"🌋 Volcano", color:"#dc2626",
+    questions:[
+      {q:"What comes out of volcano?",a:"lava"},
+      {q:"Is lava hot?",a:"yes"},
+      {q:"Eruption caused by?",a:"pressure"},
+      {q:"Volcano is part of?",a:"earth"},
+      {q:"Is eruption dangerous?",a:"yes"}
     ]
   },
-  {
-    name: "🌾 Farm",
-    color: "#84cc16",
-    questions: [
-      { q: "Who grows crops?", a: "farmer" },
-      { q: "Cow gives?", a: "milk" },
-      { q: "Plants need?", a: "water" },
-      { q: "Farm animals live on?", a: "farm" },
-      { q: "We eat crops or plastic?", a: "crops" }
+  { name:"🌾 Farm", color:"#84cc16",
+    questions:[
+      {q:"Who grows crops?",a:"farmer"},
+      {q:"Cow gives?",a:"milk"},
+      {q:"Plants need?",a:"water"},
+      {q:"Farm animals live on?",a:"farm"},
+      {q:"We eat crops or plastic?",a:"crops"}
     ]
   }
 ];
@@ -204,7 +206,7 @@ function updateUI(){
     `Level ${level} | XP ${xp}/${level * 50}`;
 }
 
-/* ---------------- LEVEL SYSTEM ---------------- */
+/* ---------------- XP SYSTEM ---------------- */
 
 function addXP(amount){
   xp += amount;
@@ -246,13 +248,13 @@ function showWorld(){
 
   worldZones.forEach((z, i) => {
 
-    let locked = i > progress.completedZones.length;
+    let locked = i !== 0 && !progress.completedZones.includes(i - 1);
 
     html += `
-      <div class="zone"
+      <div class="zone ${locked ? "locked" : "unlocked"}"
         data-index="${i}"
         data-locked="${locked}"
-        style="background:${locked ? "#374151" : z.color}; opacity:${locked ? 0.5 : 1}; cursor:pointer;">
+        style="background:${z.color}; cursor:pointer;">
         ${locked ? "🔒 Locked" : z.name}
       </div>
     `;
