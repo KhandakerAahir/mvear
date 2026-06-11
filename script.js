@@ -9,271 +9,176 @@ level: +localStorage.getItem("level") || 1,
 stars: +localStorage.getItem("stars") || 0,
 avatar: localStorage.getItem("avatar") || "🙂",
 world: 0,
-qIndex: 0
+qIndex: 0,
+lives: 3,
+streak: 0,
+typingLock: false
 };
 
-let timer;
-let timeLeft = 0;
+/* =========================
+   SOUND SYSTEM
+========================= */
+
+const sounds = {
+correct: new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a3.mp3"),
+wrong: new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_4b9c8c.mp3"),
+click: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_c5c8b0.mp3")
+};
+
+function play(s){
+if(sounds[s]){
+sounds[s].currentTime = 0;
+sounds[s].play();
+}
+}
 
 /* =========================
-   SHUFFLE FUNCTION
+   SHUFFLE (SAFE)
 ========================= */
 
 function shuffle(arr){
-for(let i = arr.length - 1; i > 0; i--){
-const j = Math.floor(Math.random() * (i + 1));
-[arr[i], arr[j]] = [arr[j], arr[i]];
+let a=[...arr];
+for(let i=a.length-1;i>0;i--){
+let j=Math.floor(Math.random()*(i+1));
+[a[i],a[j]]=[a[j],a[i]];
 }
-return arr;
-}
-
-/* =========================
-   MUSIC
-========================= */
-
-const music = new Audio("https://cdn.pixabay.com/audio/2022/10/16/audio_7c6f3.mp3");
-music.loop = true;
-let musicOn = false;
-
-function toggleMusic(){
-if(!musicOn){
-music.play();
-musicOn = true;
-}else{
-music.pause();
-musicOn = false;
-}
+return a;
 }
 
 /* =========================
-   AVATAR
-========================= */
-
-function setAvatar(){
-let pick = prompt("Choose avatar 🙂 😎 🧠 🚀 🤖");
-if(pick){
-state.avatar = pick;
-save();
-updateUI();
-}
-}
-
-/* =========================
-   WORLDS
+   WORLDS (SAFE STRUCTURE)
 ========================= */
 
 const worlds = [
 {
 name:"🌱 Habits",
-color:"#1f2937",
-locked:false,
 questions:[
-{q:"Best morning habit?",options:["Exercise","Sleep","Games","Scrolling"],a:"Exercise"},
-{q:"Good habit is?",options:["Reading","Smoking","Laziness","Anger"],a:"Reading"},
-{q:"Success needs?",options:["Discipline","Luck","Excuses","Sleep"],a:"Discipline"},
-{q:"Healthy routine?",options:["Sleep early","Stay late","Skip meals","No plan"],a:"Sleep early"},
-{q:"Self growth comes from?",options:["Practice","Ignore","Fear","Hate"],a:"Practice"}
-]
-},
-
-{
-name:"🌍 Awareness",
-color:"#065f46",
-locked:true,
-questions:[
-{q:"Trees give?",options:["Oxygen","Plastic","Smoke","Stone"],a:"Oxygen"},
-{q:"Pollution is caused by?",options:["Humans","Clouds","Stars","Wind"],a:"Humans"},
-{q:"Recycle means?",options:["Reuse","Burn","Throw","Ignore"],a:"Reuse"},
-{q:"Clean energy?",options:["Solar","Coal","Oil","Gas"],a:"Solar"},
-{q:"Water is?",options:["Precious","Useless","Danger","Waste"],a:"Precious"}
-]
-},
-
-{
-name:"❤️ Values",
-color:"#7f1d1d",
-locked:true,
-questions:[
-{q:"Honesty means?",options:["Truth","Lie","Cheat","Hide"],a:"Truth"},
-{q:"Kindness is?",options:["Help","Hate","Fight","Ignore"],a:"Help"},
-{q:"Respect means?",options:["Value others","Insult","Hate","Ignore"],a:"Value others"},
-{q:"Forgive means?",options:["Let go anger","Fight","Blame","Hate"],a:"Let go anger"},
-{q:"Good character builds?",options:["Trust","Fear","Enemies","Problems"],a:"Trust"}
-]
-},
-
-{
-name:"🧭 Responsibility",
-color:"#92400e",
-locked:true,
-questions:[
-{q:"Responsibility means?",options:["Duty","Avoid","Sleep","Run"],a:"Duty"},
-{q:"Who is responsible?",options:["You","Others","Luck","None"],a:"You"},
-{q:"Rules give?",options:["Safety","Chaos","Danger","Fear"],a:"Safety"},
-{q:"Good student?",options:["Works","Ignores","Sleeps","Plays"],a:"Works"},
-{q:"Accountability is?",options:["Own actions","Blame others","Hide","Escape"],a:"Own actions"}
-]
-},
-
-{
-name:"🏃 Health",
-color:"#0ea5e9",
-locked:true,
-questions:[
-{q:"Healthy food?",options:["Fruits","Junk","Candy","Soda"],a:"Fruits"},
-{q:"Exercise gives?",options:["Fitness","Weakness","Pain","Stress"],a:"Fitness"},
-{q:"Water helps?",options:["Hydration","Harm","Nothing","Danger"],a:"Hydration"},
-{q:"Sleep improves?",options:["Health","Weakness","Pain","Fear"],a:"Health"},
-{q:"Balanced diet?",options:["All nutrients","Only sugar","Only junk","Nothing"],a:"All nutrients"}
-]
-},
-
-{
-name:"🚦 Safety",
-color:"#f97316",
-locked:true,
-questions:[
-{q:"Red light means?",options:["Stop","Go","Run","Jump"],a:"Stop"},
-{q:"Cross road via?",options:["Zebra","Anywhere","Run","Jump"],a:"Zebra"},
-{q:"Seatbelt is?",options:["Safety","Style","Fun","Hobby"],a:"Safety"},
-{q:"Danger means?",options:["Risk","Safe","Easy","Calm"],a:"Risk"},
-{q:"Emergency action?",options:["Stay calm","Panic","Run","Ignore"],a:"Stay calm"}
-]
-},
-
-{
-name:"💻 Digital",
-color:"#a855f7",
-locked:true,
-questions:[
-{q:"Strong password?",options:["Unique","1234","Name","123"],a:"Unique"},
-{q:"Sharing password?",options:["Bad","Good","Safe","Smart"],a:"Bad"},
-{q:"Phishing is?",options:["Scam","Game","App","Site"],a:"Scam"},
-{q:"Unknown link?",options:["Avoid","Click","Trust","Open"],a:"Avoid"},
-{q:"Privacy is?",options:["Important","Useless","Fake","Optional"],a:"Important"}
-]
-},
-
-{
-name:"🏆 Final",
-color:"#4c1d95",
-locked:true,
-questions:[
-{q:"Success needs?",options:["Hard work","Luck","Sleep","Excuses"],a:"Hard work"},
-{q:"Learning is?",options:["Continuous","Stop","None","Optional"],a:"Continuous"},
-{q:"Failure means?",options:["Try again","Quit","Cry","Stop"],a:"Try again"},
-{q:"Best attitude?",options:["Positive","Negative","Lazy","Angry"],a:"Positive"},
-{q:"Growth comes from?",options:["Practice","Ignore","Fear","Hate"],a:"Practice"}
+{q:"Best habit?",options:["Exercise","Sleep","Games","Scroll"],a:"Exercise"},
+{q:"Success needs?",options:["Discipline","Luck","Sleep","Fear"],a:"Discipline"},
+{q:"Good routine?",options:["Plan","Chaos","Lazy","None"],a:"Plan"},
+{q:"Health habit?",options:["Eat well","Junk","Skip","Nothing"],a:"Eat well"},
+{q:"Growth needs?",options:["Practice","Ignore","Stop","Quit"],a:"Practice"}
 ]
 }
 ];
 
 /* =========================
-   UI
+   UI UPDATE (SAFE)
 ========================= */
 
 function updateUI(){
-document.getElementById("xp").innerText = state.xp;
-document.getElementById("level").innerText = state.level;
-document.getElementById("stars").innerText = state.stars;
-document.getElementById("avatar").innerText = state.avatar;
+const el = (id)=>document.getElementById(id);
+
+if(el("xp")) el("xp").innerText=state.xp;
+if(el("level")) el("level").innerText=state.level;
+if(el("stars")) el("stars").innerText=state.stars;
+if(el("avatar")) el("avatar").innerText=state.avatar;
+
+/* lives display optional */
+if(el("result")){
+el("result").innerText = `❤️ Lives: ${state.lives} | 🔥 Streak: ${state.streak}`;
+}
 }
 
 /* =========================
-   MAP
+   TYPEWRITER (SAFE)
 ========================= */
 
-function showMap(){
+function typeText(el,text){
+if(state.typingLock) return;
+state.typingLock=true;
 
-let html = "<div class='map'>";
+el.innerHTML="";
+let i=0;
 
-worlds.forEach((w,i)=>{
-html += `
-<div class="node ${w.locked ? "locked":""}"
-style="background:${w.color}"
-onclick="${w.locked ? "" : `enterWorld(${i})`}">
-${w.locked ? "🔒 Locked" : w.name}
-</div>`;
-});
+let interval=setInterval(()=>{
+el.innerHTML+=text[i];
+i++;
 
-html += "</div>";
-
-document.getElementById("worldArea").innerHTML = html;
-document.getElementById("gameArea").innerHTML = "";
-document.getElementById("title").innerText = "World Map";
+if(i>=text.length){
+clearInterval(interval);
+state.typingLock=false;
+}
+},35);
 }
 
 /* =========================
-   ENTER WORLD
+   AVATAR EVOLUTION
 ========================= */
 
-function enterWorld(i){
-state.world = i;
-state.qIndex = 0;
-loadQuestion();
+function updateAvatar(){
+if(state.level>=10) state.avatar="🧠";
+else if(state.level>=5) state.avatar="😎";
+else state.avatar="🙂";
 }
 
 /* =========================
-   LOAD QUESTION (A/B/C/D SHUFFLE FIX)
+   LIVES SYSTEM
+========================= */
+
+function loseLife(){
+state.lives--;
+
+if(state.lives<=0){
+alert("💀 Game Over");
+location.reload();
+}
+}
+
+/* =========================
+   XP MULTIPLIER
+========================= */
+
+function xpGain(){
+return state.streak>=5 ? 20 : 10;
+}
+
+/* =========================
+   LOAD QUESTION (FIXED CORE)
 ========================= */
 
 function loadQuestion(){
 
-const w = worlds[state.world];
-const q = w.questions[state.qIndex];
+const w=worlds[state.world];
+
+if(!w || !w.questions) return;
+
+const q=w.questions[state.qIndex];
 
 if(!q){
-completeWorld();
+alert("🏆 World Completed! Badge unlocked!");
 return;
 }
 
-document.getElementById("title").innerText =
-`${w.name} (${state.qIndex+1}/5)`;
-
-clearInterval(timer);
-timeLeft = 15;
-document.getElementById("timer").innerText = timeLeft;
-
-timer = setInterval(()=>{
-timeLeft--;
-document.getElementById("timer").innerText = timeLeft;
-if(timeLeft <= 0) nextQuestion();
-},1000);
-
-/* SHUFFLE OPTIONS */
-let options = shuffle([...q.options]);
-
-const labels = ["A","B","C","D"];
-
-let html = `
+/* reset UI safely */
+document.getElementById("gameArea").innerHTML=`
 <div class="quiz-container">
-
-<div class="question-box">
-${q.q}
-</div>
-
-<div class="answer-box">
-`;
-
-options.forEach((opt,i)=>{
-html += `
-<button class="option-btn">
-${labels[i]}. ${opt}
-</button>`;
-});
-
-html += `
-</div>
+<div class="question-box" id="qbox"></div>
+<div class="answer-box" id="abox"></div>
 </div>`;
 
-document.getElementById("gameArea").innerHTML = html;
+/* question animation */
+typeText(document.getElementById("qbox"),q.q);
 
-/* CLICK HANDLER */
-document.querySelectorAll(".option-btn").forEach(btn=>{
-btn.addEventListener("click", ()=>{
-const selected = btn.innerText.split(". ")[1];
-checkAnswer(selected);
-});
+/* shuffle options safely */
+const opts=shuffle(q.options);
+
+/* render answers */
+const labels=["A","B","C","D"];
+const box=document.getElementById("abox");
+box.innerHTML="";
+
+opts.forEach((opt,i)=>{
+const btn=document.createElement("button");
+btn.className="option-btn";
+btn.innerText=`${labels[i]}. ${opt}`;
+
+btn.onclick=()=>{
+play("click");
+checkAnswer(opt,q.a);
+};
+
+box.appendChild(btn);
 });
 }
 
@@ -281,45 +186,60 @@ checkAnswer(selected);
    CHECK ANSWER
 ========================= */
 
-function checkAnswer(opt){
+function checkAnswer(opt,correct){
 
-const q = worlds[state.world].questions[state.qIndex];
-
-if(opt === q.a){
-state.xp += 10;
+if(opt===correct){
+play("correct");
+state.streak++;
+state.xp+=xpGain();
 state.stars++;
-document.getElementById("result").innerText = "✔ Correct!";
 }else{
-document.getElementById("result").innerText = "❌ Wrong!";
+play("wrong");
+state.streak=0;
+loseLife();
 }
 
 nextQuestion();
 }
 
 /* =========================
-   NEXT
+   NEXT QUESTION (SAFE)
 ========================= */
 
 function nextQuestion(){
 state.qIndex++;
+updateAvatar();
+updateUI();
 save();
-loadQuestion();
+setTimeout(loadQuestion,200);
 }
 
 /* =========================
-   WORLD COMPLETE
+   ROCK PAPER SCISSORS
 ========================= */
 
-function completeWorld(){
+function rps(player){
 
-document.getElementById("gameArea").innerHTML =
-"<h2>🏆 World Completed!</h2>";
+const arr=["rock","paper","scissors"];
+const ai=arr[Math.floor(Math.random()*3)];
 
-if(worlds[state.world + 1]){
-worlds[state.world + 1].locked = false;
+if(player===ai){
+alert("Draw!");
+}
+else if(
+(player==="rock"&&ai==="scissors")||
+(player==="paper"&&ai==="rock")||
+(player==="scissors"&&ai==="paper")
+){
+alert("You Win!");
+state.xp+=10;
+}
+else{
+alert("You Lose!");
 }
 
-setTimeout(showMap,1000);
+updateUI();
+save();
 }
 
 /* =========================
@@ -334,8 +254,8 @@ localStorage.setItem("avatar",state.avatar);
 }
 
 /* =========================
-   INIT
+   INIT SAFELY
 ========================= */
 
-showMap();
 updateUI();
+loadQuestion();
