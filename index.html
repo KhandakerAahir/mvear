@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR Learning Game</title>
+<title>MVEAR Game</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -15,19 +15,14 @@
 ========================= -->
 
 <header class="header">
-
 <h1>🌍 MVEAR</h1>
 
 <div class="stats">
-
 <div class="stat">🙂 <span id="avatar">🙂</span></div>
 <div class="stat">⭐ <span id="stars">0</span></div>
 <div class="stat">📈 XP <span id="xp">0</span></div>
 <div class="stat">🏆 Lv <span id="level">1</span></div>
-<div class="stat">⏱️ <span id="timer">0</span></div>
-
 </div>
-
 </header>
 
 <!-- =========================
@@ -36,54 +31,34 @@
 
 <div class="actions">
 
-<button onclick="showMap()">🌍 Worlds</button>
-<button onclick="setAvatar()">🙂 Avatar</button>
+<button onclick="location.reload()">🔄 Restart</button>
 <button onclick="toggleMusic()">🎵 Music</button>
 
 </div>
 
 <!-- =========================
-   XP BAR
+   GAME AREA (IMPORTANT)
 ========================= -->
 
-<div class="xp-wrapper">
-<div id="xpBar" class="xp-bar"></div>
-</div>
-
-<!-- =========================
-   TITLE
-========================= -->
-
-<h2 id="title">World Map</h2>
-
-<!-- =========================
-   WORLD AREA
-========================= -->
-
-<div id="worldArea"></div>
-
-<!-- =========================
-   GAME AREA (MCQ)
-========================= -->
+<h2 id="title">MVEAR Quiz</h2>
 
 <div id="gameArea"></div>
-
-<!-- =========================
-   RESULT TEXT
-========================= -->
 
 <p id="result"></p>
 
 <!-- =========================
-   LEVEL UP POPUP
+   ROCK PAPER SCISSORS
 ========================= -->
 
-<div id="levelUpScreen" class="levelup hidden">
+<hr>
 
-<div class="levelup-card">
-<h1>🎉 LEVEL UP!</h1>
-<p id="levelText">Level Up</p>
-</div>
+<h3>🎮 Rock Paper Scissors</h3>
+
+<div class="actions">
+
+<button onclick="rps('rock')">🪨 Rock</button>
+<button onclick="rps('paper')">📄 Paper</button>
+<button onclick="rps('scissors')">✂️ Scissors</button>
 
 </div>
 
