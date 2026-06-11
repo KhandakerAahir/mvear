@@ -4,44 +4,104 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MVEAR Learning Game</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- =========================
+     HEADER
+========================= -->
+
+<header class="header">
 <h1>🌍 MVEAR</h1>
 
-<div class="top">
-👦 <span id="avatar">🙂</span>
-⭐ <span id="stars">0</span>
-📈 XP <span id="xp">0</span>
-🏆 Lv <span id="level">1</span>
-⏱️ <span id="timer">0</span>
-</div>
+<div class="stats">
 
-<button onclick="showMap()">🌍 Map</button>
+<div class="stat">🙂 <span id="avatar">🙂</span></div>
+<div class="stat">⭐ <span id="stars">0</span></div>
+<div class="stat">📈 XP <span id="xp">0</span></div>
+<div class="stat">🏆 Lv <span id="level">1</span></div>
+<div class="stat">⏱️ <span id="timer">0</span></div>
+
+</div>
+</header>
+
+<!-- =========================
+     ACTION BUTTONS
+========================= -->
+
+<div class="actions">
+
+<button onclick="showMap()">🌍 Worlds</button>
 <button onclick="setAvatar()">🙂 Avatar</button>
 <button onclick="toggleMusic()">🎵 Music</button>
 
-<h2 id="title">Home</h2>
+</div>
+
+<!-- =========================
+     XP BAR
+========================= -->
+
+<div class="xp-wrapper">
+<div id="xpBar" class="xp-bar"></div>
+</div>
+
+<!-- =========================
+     TITLE
+========================= -->
+
+<h2 id="title">World Map</h2>
+
+<!-- =========================
+     WORLD AREA
+========================= -->
 
 <div id="worldArea"></div>
+
+<!-- =========================
+     GAME AREA
+========================= -->
+
 <div id="gameArea"></div>
+
+<!-- =========================
+     RESULT TEXT
+========================= -->
+
 <p id="result"></p>
 
-<!-- LEVEL UP -->
+<!-- =========================
+     LEVEL UP POPUP
+========================= -->
+
 <div id="levelUpScreen" class="levelup hidden">
-  🎉 LEVEL UP!
-  <p id="levelText"></p>
+
+<div class="levelup-card">
+<h1>🎉 LEVEL UP!</h1>
+<p id="levelText">Level 2</p>
 </div>
 
-<!-- NAV -->
-<div class="nav">
-<button onclick="showMap()">🌍 Map</button>
-<button onclick="setAvatar()">🙂 Avatar</button>
-<button onclick="toggleMusic()">🎵 Music</button>
 </div>
+
+<!-- =========================
+     BOTTOM NAV
+========================= -->
+
+<nav class="bottom-nav">
+
+<button onclick="showMap()">🌍<br>Map</button>
+<button onclick="setAvatar()">🙂<br>Avatar</button>
+<button onclick="toggleMusic()">🎵<br>Music</button>
+
+</nav>
+
+<!-- =========================
+     SCRIPT
+========================= -->
 
 <script src="script.js"></script>
+
 </body>
 </html>
