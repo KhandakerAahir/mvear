@@ -36,7 +36,7 @@ margin-bottom:10px;
 }
 
 /* =========================
-   STATS BAR
+   STATS
 ========================= */
 
 .stats{
@@ -88,7 +88,7 @@ font-size:1.6rem;
 }
 
 /* =========================
-   QUIZ AREA
+   GAME AREA
 ========================= */
 
 #gameArea{
@@ -148,7 +148,7 @@ color:white;
 transition:0.2s;
 }
 
-/* different colors for options */
+/* option colors */
 .option-btn:nth-child(1){
 background:#3b82f6;
 }
@@ -195,7 +195,16 @@ margin-top:20px;
 }
 
 /* =========================
-   RESPONSIVE
+   STAGE COMPLETE ANIMATION
+========================= */
+
+@keyframes pop{
+from{transform:scale(0.5);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+/* =========================
+   RESPONSIVE DESIGN
 ========================= */
 
 @media(max-width:768px){
@@ -206,6 +215,7 @@ grid-template-columns:1fr;
 
 .question-box{
 font-size:1.2rem;
+min-height:140px;
 }
 
 button{
