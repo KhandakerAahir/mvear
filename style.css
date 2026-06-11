@@ -32,18 +32,17 @@ padding:20px 10px;
 
 .header h1{
 font-size:2.4rem;
-margin-bottom:10px;
 }
 
 /* =========================
-   STATS BAR
+   STATS
 ========================= */
 
 .stats{
 display:flex;
 justify-content:center;
-flex-wrap:wrap;
 gap:10px;
+flex-wrap:wrap;
 margin-top:10px;
 }
 
@@ -52,7 +51,6 @@ background:#1f2937;
 padding:10px 14px;
 border-radius:10px;
 font-weight:bold;
-min-width:100px;
 }
 
 /* =========================
@@ -61,11 +59,11 @@ min-width:100px;
 
 #title{
 margin:15px 0;
-font-size:1.7rem;
+font-size:1.6rem;
 }
 
 /* =========================
-   GAME AREA
+   GAME AREA (IMPORTANT)
 ========================= */
 
 #gameArea{
@@ -75,30 +73,31 @@ padding:10px;
 }
 
 /* =========================
-   STAGE MENU BUTTONS 🗺️
+   STAGE BUTTON MENU (FIXED)
 ========================= */
 
-.stage-grid{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-gap:15px;
-max-width:800px;
-margin:20px auto;
+.stage-menu{
+display:flex;
+flex-direction:column;
+align-items:center;
+gap:12px;
+margin-top:30px;
 }
 
-.stage-btn{
-padding:18px;
+.stage-menu button{
+width:280px;
+padding:16px;
 font-size:1.1rem;
 border-radius:12px;
 background:#1f2937;
 color:white;
 border:2px solid #22c55e;
 cursor:pointer;
-transition:0.2s;
 font-weight:bold;
+transition:0.2s;
 }
 
-.stage-btn:hover{
+.stage-menu button:hover{
 transform:scale(1.05);
 background:#22c55e;
 color:black;
@@ -119,12 +118,12 @@ margin-top:20px;
 background:#1f2937;
 padding:25px;
 border-radius:15px;
-font-size:1.4rem;
+font-size:1.3rem;
 font-weight:bold;
-min-height:160px;
 display:flex;
 align-items:center;
 justify-content:center;
+min-height:140px;
 }
 
 .answer-box{
@@ -146,9 +145,12 @@ border:none;
 border-radius:10px;
 cursor:pointer;
 font-weight:bold;
-text-align:left;
 color:white;
 transition:0.2s;
+}
+
+.option-btn:hover{
+transform:scale(1.03);
 }
 
 .option-btn:nth-child(1){background:#3b82f6;}
@@ -156,23 +158,8 @@ transition:0.2s;
 .option-btn:nth-child(3){background:#f59e0b;}
 .option-btn:nth-child(4){background:#ef4444;}
 
-.option-btn:hover{
-transform:scale(1.03);
-}
-
 /* =========================
-   RESULT TEXT
-========================= */
-
-#result{
-margin-top:15px;
-font-size:1.2rem;
-font-weight:bold;
-min-height:25px;
-}
-
-/* =========================
-   BUTTONS
+   BUTTONS GENERAL
 ========================= */
 
 button{
@@ -192,7 +179,7 @@ transform:scale(1.05);
 }
 
 /* =========================
-   HEALTH BAR ❤️
+   HEALTH BAR
 ========================= */
 
 .hp-bar{
@@ -210,56 +197,29 @@ border:2px solid #374151;
 height:100%;
 width:100%;
 background:linear-gradient(90deg,#22c55e,#facc15,#ef4444);
-transition:width 0.3s ease;
+transition:0.3s;
 }
 
 /* =========================
-   SHOP SECTION 🛒
+   SHOP SECTION
 ========================= */
 
 hr{
-margin:30px auto;
+margin:25px auto;
 width:80%;
 opacity:0.3;
 }
+
+/* =========================
+   RPS SECTION
+========================= */
 
 h3{
 margin-top:20px;
 }
 
-.actions button{
-background:#3b82f6;
-}
-
-.actions button:hover{
-background:#2563eb;
-}
-
 /* =========================
-   REWARD CARD 🏆
-========================= */
-
-.reward-card{
-background:#111827;
-padding:25px;
-border-radius:15px;
-max-width:500px;
-margin:20px auto;
-border:2px solid #22c55e;
-animation:pop 0.4s ease;
-}
-
-.reward-card h2{
-color:#22c55e;
-margin-bottom:10px;
-}
-
-.reward-card p{
-margin:6px 0;
-}
-
-/* =========================
-   CELEBRATION OVERLAY 🎉
+   CELEBRATION
 ========================= */
 
 .celebration{
@@ -278,8 +238,8 @@ flex-direction:column;
 
 .celebration h1{
 color:#22c55e;
-font-size:2.8rem;
-animation:pop 0.6s ease;
+font-size:2.5rem;
+animation:pop 0.5s ease;
 }
 
 .hidden{
@@ -287,7 +247,7 @@ display:none;
 }
 
 /* =========================
-   CONFETTI CANVAS 🎊
+   CONFETTI CANVAS
 ========================= */
 
 #confettiCanvas{
@@ -310,7 +270,7 @@ z-index:9998;
 }
 
 /* =========================
-   RESPONSIVE DESIGN
+   RESPONSIVE
 ========================= */
 
 @media(max-width:768px){
@@ -319,20 +279,12 @@ z-index:9998;
 grid-template-columns:1fr;
 }
 
-.question-box{
-font-size:1.2rem;
-min-height:140px;
-}
-
-.stage-btn{
-font-size:1rem;
-}
-
-.stat{
-min-width:80px;
-}
-
-button{
+.stage-menu button{
 width:90%;
 }
+
+.question-box{
+font-size:1.1rem;
+}
+
 }
