@@ -16,13 +16,14 @@ typingLock: false
 };
 
 /* =========================
-   SOUND SYSTEM
+   SOUND SYSTEM (UPDATED)
 ========================= */
 
 const sounds = {
 correct: new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a3.mp3"),
 wrong: new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_4b9c8c.mp3"),
-click: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_c5c8b0.mp3")
+click: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_c5c8b0.mp3"),
+complete: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_5b8c3b.mp3")
 };
 
 function play(s){
@@ -33,7 +34,7 @@ sounds[s].play();
 }
 
 /* =========================
-   SHUFFLE (SAFE)
+   SHUFFLE
 ========================= */
 
 function shuffle(arr){
@@ -46,7 +47,7 @@ return a;
 }
 
 /* =========================
-   WORLDS (SAFE STRUCTURE)
+   WORLDS
 ========================= */
 
 const worlds = [
@@ -59,29 +60,37 @@ questions:[
 {q:"Health habit?",options:["Eat well","Junk","Skip","Nothing"],a:"Eat well"},
 {q:"Growth needs?",options:["Practice","Ignore","Stop","Quit"],a:"Practice"}
 ]
+},
+{
+name:"🌍 Awareness",
+questions:[
+{q:"Trees give?",options:["Oxygen","Plastic","Smoke","Stone"],a:"Oxygen"},
+{q:"Pollution is caused by?",options:["Humans","Clouds","Stars","Wind"],a:"Humans"},
+{q:"Recycle means?",options:["Reuse","Burn","Throw","Ignore"],a:"Reuse"},
+{q:"Clean energy?",options:["Solar","Coal","Oil","Gas"],a:"Solar"},
+{q:"Water is?",options:["Precious","Useless","Danger","Waste"],a:"Precious"}
+]
 }
 ];
 
 /* =========================
-   UI UPDATE (SAFE)
+   UI UPDATE
 ========================= */
 
 function updateUI(){
-const el = (id)=>document.getElementById(id);
+document.getElementById("xp").innerText=state.xp;
+document.getElementById("level").innerText=state.level;
+document.getElementById("stars").innerText=state.stars;
+document.getElementById("avatar").innerText=state.avatar;
 
-if(el("xp")) el("xp").innerText=state.xp;
-if(el("level")) el("level").innerText=state.level;
-if(el("stars")) el("stars").innerText=state.stars;
-if(el("avatar")) el("avatar").innerText=state.avatar;
-
-/* lives display optional */
-if(el("result")){
-el("result").innerText = `❤️ Lives: ${state.lives} | 🔥 Streak: ${state.streak}`;
+if(document.getElementById("result")){
+document.getElementById("result").innerText =
+`❤️ Lives: ${state.lives} | 🔥 Streak: ${state.streak}`;
 }
 }
 
 /* =========================
-   TYPEWRITER (SAFE)
+   TYPE ANIMATION
 ========================= */
 
 function typeText(el,text){
@@ -118,7 +127,6 @@ else state.avatar="🙂";
 
 function loseLife(){
 state.lives--;
-
 if(state.lives<=0){
 alert("💀 Game Over");
 location.reload();
@@ -134,23 +142,26 @@ return state.streak>=5 ? 20 : 10;
 }
 
 /* =========================
-   LOAD QUESTION (FIXED CORE)
+   LOAD QUESTION
 ========================= */
 
 function loadQuestion(){
 
 const w=worlds[state.world];
 
-if(!w || !w.questions) return;
-
-const q=w.questions[state.qIndex];
-
-if(!q){
-alert("🏆 World Completed! Badge unlocked!");
+if(!w){
+gameComplete();
 return;
 }
 
-/* reset UI safely */
+const q=w.questions[state.qIndex];
+
+/* WORLD COMPLETE */
+if(!q){
+stageComplete();
+return;
+}
+
 document.getElementById("gameArea").innerHTML=`
 <div class="quiz-container">
 <div class="question-box" id="qbox"></div>
@@ -160,11 +171,10 @@ document.getElementById("gameArea").innerHTML=`
 /* question animation */
 typeText(document.getElementById("qbox"),q.q);
 
-/* shuffle options safely */
+/* shuffle options */
 const opts=shuffle(q.options);
-
-/* render answers */
 const labels=["A","B","C","D"];
+
 const box=document.getElementById("abox");
 box.innerHTML="";
 
@@ -203,7 +213,7 @@ nextQuestion();
 }
 
 /* =========================
-   NEXT QUESTION (SAFE)
+   NEXT QUESTION
 ========================= */
 
 function nextQuestion(){
@@ -215,31 +225,42 @@ setTimeout(loadQuestion,200);
 }
 
 /* =========================
-   ROCK PAPER SCISSORS
+   STAGE COMPLETE (NEW FEATURE 🔊)
 ========================= */
 
-function rps(player){
+function stageComplete(){
 
-const arr=["rock","paper","scissors"];
-const ai=arr[Math.floor(Math.random()*3)];
+play("complete");
 
-if(player===ai){
-alert("Draw!");
-}
-else if(
-(player==="rock"&&ai==="scissors")||
-(player==="paper"&&ai==="rock")||
-(player==="scissors"&&ai==="paper")
-){
-alert("You Win!");
-state.xp+=10;
-}
-else{
-alert("You Lose!");
+/* show screen */
+document.getElementById("gameArea").innerHTML=`
+<h2 style="color:#22c55e; animation:pop 0.5s ease;">
+🏆 Stage Completed!
+</h2>
+<p>Loading next world...</p>
+`;
+
+/* unlock next world */
+state.world++;
+state.qIndex=0;
+
+/* delay next stage */
+setTimeout(()=>{
+loadQuestion();
+},2000);
 }
 
-updateUI();
-save();
+/* =========================
+   FINAL GAME COMPLETE
+========================= */
+
+function gameComplete(){
+document.getElementById("gameArea").innerHTML=`
+<h2>🎉 ALL WORLDS COMPLETED!</h2>
+<p>You finished MVEAR!</p>
+`;
+
+play("complete");
 }
 
 /* =========================
@@ -254,7 +275,7 @@ localStorage.setItem("avatar",state.avatar);
 }
 
 /* =========================
-   INIT SAFELY
+   INIT
 ========================= */
 
 updateUI();
