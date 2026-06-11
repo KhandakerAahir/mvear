@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR - Learning Game</title>
+<title>MVEAR - Ultimate Learning Game</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -21,22 +21,35 @@
 <div class="stats">
 
 <div class="stat">🙂 <span id="avatar">🙂</span></div>
-<div class="stat">⭐ <span id="stars">0</span></div>
-<div class="stat">📈 XP <span id="xp">0</span></div>
-<div class="stat">🏆 Lv <span id="level">1</span></div>
+<div class="stat">⭐ XP: <span id="xp">0</span></div>
+<div class="stat">💰 Coins: <span id="coins">0</span></div>
+<div class="stat">🏆 Lv: <span id="level">1</span></div>
 
 </div>
 
 </header>
 
 <!-- =========================
-   ACTIONS
+   HEALTH BAR (NEW FEATURE ❤️)
+========================= -->
+
+<div style="width:90%;max-width:600px;margin:15px auto;text-align:left;">
+
+<p>❤️ Health</p>
+
+<div class="hp-bar">
+  <div id="hpFill" class="hp-fill"></div>
+</div>
+
+</div>
+
+<!-- =========================
+   ACTION BUTTONS
 ========================= -->
 
 <div class="actions">
 
 <button onclick="location.reload()">🔄 Restart</button>
-<button onclick="toggleMusic()">🎵 Music</button>
 
 </div>
 
@@ -47,21 +60,42 @@
 <h2 id="title">MVEAR Adventure</h2>
 
 <!-- =========================
-   GAME AREA (IMPORTANT)
+   GAME AREA
 ========================= -->
 
 <div id="gameArea"></div>
 
-<!-- result / lives / streak -->
 <p id="result"></p>
 
 <!-- =========================
-   RPS SECTION (OPTIONAL GAME MODE)
+   REWARD DISPLAY AREA (IMPORTANT)
+========================= -->
+
+<div id="rewardBox"></div>
+
+<!-- =========================
+   SHOP SYSTEM
 ========================= -->
 
 <hr>
 
-<h3>🎮 Mini Game: Rock Paper Scissors</h3>
+<h3>🛒 Shop</h3>
+
+<div class="actions">
+
+<button onclick="buyItem('life')">❤️ Extra Life (30💰)</button>
+<button onclick="buyItem('skip')">⏭ Skip Question (20💰)</button>
+<button onclick="buyItem('hint')">💡 Hint (15💰)</button>
+
+</div>
+
+<!-- =========================
+   ROCK PAPER SCISSORS
+========================= -->
+
+<hr>
+
+<h3>🎮 Rock Paper Scissors</h3>
 
 <div class="actions">
 
