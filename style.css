@@ -1,12 +1,35 @@
-body{
+
+/* =========================
+   RESET
+========================= */
+
+*{
 margin:0;
-font-family:Arial;
+padding:0;
+box-sizing:border-box;
+}
+
+/* =========================
+   BODY
+========================= */
+
+body{
+font-family:Arial, Helvetica, sans-serif;
+min-height:100vh;
 color:white;
 text-align:center;
-background: linear-gradient(-45deg,#0b1220,#1f2937,#0b1220,#111827);
+padding-bottom:90px;
+
+background:linear-gradient(
+-45deg,
+#0b1220,
+#1f2937,
+#111827,
+#0b1220
+);
+
 background-size:400% 400%;
-animation:bg 10s ease infinite;
-padding-bottom:80px;
+animation:bg 12s ease infinite;
 }
 
 @keyframes bg{
@@ -15,71 +38,207 @@ padding-bottom:80px;
 100%{background-position:0% 50%;}
 }
 
-.top{
-display:flex;
-justify-content:center;
-gap:10px;
-flex-wrap:wrap;
-margin:10px;
+/* =========================
+   HEADER
+========================= */
+
+.header{
+padding:20px 10px;
 }
 
-button{
+.header h1{
+font-size:2.2rem;
+margin-bottom:15px;
+}
+
+/* =========================
+   STATS
+========================= */
+
+.stats{
+display:flex;
+justify-content:center;
+flex-wrap:wrap;
+gap:10px;
+}
+
+.stat{
+background:#1f2937;
 padding:10px 14px;
+border-radius:12px;
+font-weight:bold;
+}
+
+/* =========================
+   ACTION BUTTONS
+========================= */
+
+.actions{
+margin:15px 0;
+}
+
+.actions button{
+padding:12px 18px;
 margin:5px;
 border:none;
-border-radius:10px;
+border-radius:12px;
 cursor:pointer;
 background:#22c55e;
 color:white;
 font-weight:bold;
+transition:.2s;
 }
+
+.actions button:hover{
+transform:scale(1.05);
+}
+
+/* =========================
+   XP BAR
+========================= */
+
+.xp-wrapper{
+width:90%;
+max-width:700px;
+height:16px;
+margin:15px auto;
+background:#1f2937;
+border-radius:20px;
+overflow:hidden;
+}
+
+.xp-bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#22c55e,#4ade80);
+transition:width .4s ease;
+}
+
+/* =========================
+   TITLE
+========================= */
+
+#title{
+margin:15px 0;
+font-size:1.6rem;
+}
+
+/* =========================
+   WORLD MAP
+========================= */
 
 .map{
 display:grid;
-grid-template-columns:repeat(2,160px);
-gap:12px;
-justify-content:center;
-margin-top:10px;
+grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+gap:15px;
+max-width:900px;
+margin:20px auto;
+padding:10px;
 }
 
 .node{
-padding:20px;
-border-radius:12px;
-background:#1f2937;
+padding:25px;
+border-radius:18px;
+font-weight:bold;
 cursor:pointer;
+transition:.3s;
+background:#1f2937;
+box-shadow:0 0 10px rgba(0,0,0,.25);
 }
+
+.node:hover{
+transform:translateY(-4px);
+}
+
+.locked{
+opacity:0.4;
+cursor:not-allowed;
+}
+
+/* =========================
+   QUIZ AREA
+========================= */
 
 .quiz-container{
-display:flex;
-gap:20px;
 max-width:900px;
-margin:20px auto;
+margin:25px auto;
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:20px;
+padding:10px;
 }
+
+/* QUESTION BOX */
 
 .question-box{
-flex:1;
 background:#1f2937;
 padding:25px;
-border-radius:15px;
-font-size:2rem;
+border-radius:18px;
+
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
+
+font-size:1.6rem;
+font-weight:bold;
+min-height:180px;
 }
+
+/* ANSWER BOX */
 
 .answer-box{
-flex:1;
 background:#111827;
-padding:25px;
-border-radius:15px;
+padding:20px;
+border-radius:18px;
+
 display:flex;
 flex-direction:column;
-gap:15px;
+gap:12px;
 }
 
-.answer-box button:nth-child(2){
+/* MCQ BUTTONS */
+
+.option-btn{
+padding:14px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:bold;
+background:#22c55e;
+color:white;
+transition:.2s;
+}
+
+.option-btn:hover{
+transform:scale(1.03);
+}
+
+.option-btn:nth-child(2){
+background:#3b82f6;
+}
+
+.option-btn:nth-child(3){
+background:#f59e0b;
+}
+
+.option-btn:nth-child(4){
 background:#ef4444;
 }
+
+/* =========================
+   RESULT TEXT
+========================= */
+
+#result{
+margin-top:10px;
+font-size:1.1rem;
+font-weight:bold;
+min-height:25px;
+}
+
+/* =========================
+   LEVEL UP
+========================= */
 
 .levelup{
 position:fixed;
@@ -87,23 +246,66 @@ top:0;
 left:0;
 width:100%;
 height:100%;
-background:rgba(0,0,0,0.9);
+background:rgba(0,0,0,.9);
 display:flex;
-flex-direction:column;
 justify-content:center;
 align-items:center;
-font-size:3rem;
 z-index:999;
 }
 
-.hidden{display:none;}
+.levelup-card{
+background:#111827;
+padding:40px;
+border-radius:18px;
+border:2px solid #22c55e;
+animation:pop .4s ease;
+}
 
-.nav{
+@keyframes pop{
+from{transform:scale(.5);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+.hidden{
+display:none;
+}
+
+/* =========================
+   BOTTOM NAV
+========================= */
+
+.bottom-nav{
 position:fixed;
 bottom:0;
+left:0;
 width:100%;
 display:flex;
 justify-content:space-around;
 background:#111827;
-padding:10px;
+padding:10px 0;
+border-top:1px solid #374151;
+}
+
+.bottom-nav button{
+background:none;
+border:none;
+color:white;
+font-size:1rem;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px){
+
+.quiz-container{
+grid-template-columns:1fr;
+}
+
+.question-box{
+font-size:1.3rem;
+min-height:140px;
+}
+
 }
