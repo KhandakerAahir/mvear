@@ -16,15 +16,15 @@ let timer;
 let timeLeft = 0;
 
 /* =========================
-   SHUFFLE FUNCTION (IMPORTANT FIX)
+   SHUFFLE FUNCTION
 ========================= */
 
-function shuffle(array){
-for(let i = array.length - 1; i > 0; i--){
+function shuffle(arr){
+for(let i = arr.length - 1; i > 0; i--){
 const j = Math.floor(Math.random() * (i + 1));
-[array[i], array[j]] = [array[j], array[i]];
+[arr[i], arr[j]] = [arr[j], arr[i]];
 }
-return array;
+return arr;
 }
 
 /* =========================
@@ -49,11 +49,9 @@ musicOn = false;
    AVATAR
 ========================= */
 
-const avatars = ["🙂","😎","🧠","👨‍💻","🚀","🤖"];
-
 function setAvatar(){
-let pick = prompt("Choose avatar:\n" + avatars.join(" "));
-if(avatars.includes(pick)){
+let pick = prompt("Choose avatar 🙂 😎 🧠 🚀 🤖");
+if(pick){
 state.avatar = pick;
 save();
 updateUI();
@@ -61,7 +59,7 @@ updateUI();
 }
 
 /* =========================
-   WORLDS (8 MCQ WORLDS)
+   WORLDS
 ========================= */
 
 const worlds = [
@@ -70,11 +68,11 @@ name:"🌱 Habits",
 color:"#1f2937",
 locked:false,
 questions:[
-{q:"Best morning habit?",options:["Exercise","Sleep all day","Skip breakfast","Stay lazy"],a:"Exercise"},
-{q:"Healthy sleep is?",options:["6-8 hours","2 hours","12 hours","No sleep"],a:"6-8 hours"},
-{q:"Success needs?",options:["Discipline","Luck only","No work","Games"],a:"Discipline"},
-{q:"Good habit is?",options:["Reading","Smoking","Laziness","Skipping work"],a:"Reading"},
-{q:"Routine helps?",options:["Yes","No","Never","Harmful"],a:"Yes"}
+{q:"Best morning habit?",options:["Exercise","Sleep","Games","Scrolling"],a:"Exercise"},
+{q:"Good habit is?",options:["Reading","Smoking","Laziness","Anger"],a:"Reading"},
+{q:"Success needs?",options:["Discipline","Luck","Excuses","Sleep"],a:"Discipline"},
+{q:"Healthy routine?",options:["Sleep early","Stay late","Skip meals","No plan"],a:"Sleep early"},
+{q:"Self growth comes from?",options:["Practice","Ignore","Fear","Hate"],a:"Practice"}
 ]
 },
 
@@ -83,11 +81,11 @@ name:"🌍 Awareness",
 color:"#065f46",
 locked:true,
 questions:[
-{q:"Trees give?",options:["Oxygen","Smoke","Plastic","Stone"],a:"Oxygen"},
-{q:"Pollution is caused by?",options:["Humans","Clouds","Stars","Rain"],a:"Humans"},
-{q:"Recycle means?",options:["Reuse waste","Burn it","Throw anywhere","Ignore"],a:"Reuse waste"},
-{q:"Clean energy example?",options:["Solar","Coal","Oil","Gas"],a:"Solar"},
-{q:"Water is?",options:["Precious","Useless","Waste","Danger only"],a:"Precious"}
+{q:"Trees give?",options:["Oxygen","Plastic","Smoke","Stone"],a:"Oxygen"},
+{q:"Pollution is caused by?",options:["Humans","Clouds","Stars","Wind"],a:"Humans"},
+{q:"Recycle means?",options:["Reuse","Burn","Throw","Ignore"],a:"Reuse"},
+{q:"Clean energy?",options:["Solar","Coal","Oil","Gas"],a:"Solar"},
+{q:"Water is?",options:["Precious","Useless","Danger","Waste"],a:"Precious"}
 ]
 },
 
@@ -96,11 +94,11 @@ name:"❤️ Values",
 color:"#7f1d1d",
 locked:true,
 questions:[
-{q:"Honesty means?",options:["Truth","Lying","Cheating","Hiding"],a:"Truth"},
-{q:"Kindness means?",options:["Helping","Hurting","Ignoring","Fighting"],a:"Helping"},
-{q:"Respect means?",options:["Value others","Insult","Ignore","Hate"],a:"Value others"},
-{q:"Forgiveness is?",options:["Let go anger","Revenge","Fight","Blame"],a:"Let go anger"},
-{q:"Good character builds?",options:["Trust","Enemies","Fear","Problems"],a:"Trust"}
+{q:"Honesty means?",options:["Truth","Lie","Cheat","Hide"],a:"Truth"},
+{q:"Kindness is?",options:["Help","Hate","Fight","Ignore"],a:"Help"},
+{q:"Respect means?",options:["Value others","Insult","Hate","Ignore"],a:"Value others"},
+{q:"Forgive means?",options:["Let go anger","Fight","Blame","Hate"],a:"Let go anger"},
+{q:"Good character builds?",options:["Trust","Fear","Enemies","Problems"],a:"Trust"}
 ]
 },
 
@@ -109,11 +107,11 @@ name:"🧭 Responsibility",
 color:"#92400e",
 locked:true,
 questions:[
-{q:"Responsibility means?",options:["Duty","Avoid","Sleep","Ignore"],a:"Duty"},
-{q:"Who is responsible?",options:["You","Others","Luck","Friends"],a:"You"},
+{q:"Responsibility means?",options:["Duty","Avoid","Sleep","Run"],a:"Duty"},
+{q:"Who is responsible?",options:["You","Others","Luck","None"],a:"You"},
+{q:"Rules give?",options:["Safety","Chaos","Danger","Fear"],a:"Safety"},
 {q:"Good student?",options:["Works","Ignores","Sleeps","Plays"],a:"Works"},
-{q:"Rules ensure?",options:["Safety","Danger","Chaos","Confusion"],a:"Safety"},
-{q:"Accountability is?",options:["Own actions","Blaming","Hiding","Lying"],a:"Own actions"}
+{q:"Accountability is?",options:["Own actions","Blame others","Hide","Escape"],a:"Own actions"}
 ]
 },
 
@@ -126,7 +124,7 @@ questions:[
 {q:"Exercise gives?",options:["Fitness","Weakness","Pain","Stress"],a:"Fitness"},
 {q:"Water helps?",options:["Hydration","Harm","Nothing","Danger"],a:"Hydration"},
 {q:"Sleep improves?",options:["Health","Weakness","Pain","Fear"],a:"Health"},
-{q:"Balanced diet is?",options:["All nutrients","Only sugar","Only junk","Nothing"],a:"All nutrients"}
+{q:"Balanced diet?",options:["All nutrients","Only sugar","Only junk","Nothing"],a:"All nutrients"}
 ]
 },
 
@@ -137,9 +135,9 @@ locked:true,
 questions:[
 {q:"Red light means?",options:["Stop","Go","Run","Jump"],a:"Stop"},
 {q:"Cross road via?",options:["Zebra","Anywhere","Run","Jump"],a:"Zebra"},
-{q:"Seatbelt is for?",options:["Safety","Style","Fun","Hobby"],a:"Safety"},
+{q:"Seatbelt is?",options:["Safety","Style","Fun","Hobby"],a:"Safety"},
 {q:"Danger means?",options:["Risk","Safe","Easy","Calm"],a:"Risk"},
-{q:"Emergency you should?",options:["Stay calm","Panic","Run","Ignore"],a:"Stay calm"}
+{q:"Emergency action?",options:["Stay calm","Panic","Run","Ignore"],a:"Stay calm"}
 ]
 },
 
@@ -148,8 +146,8 @@ name:"💻 Digital",
 color:"#a855f7",
 locked:true,
 questions:[
-{q:"Strong password?",options:["Unique","1234","name","abcd"],a:"Unique"},
-{q:"Sharing password is?",options:["Bad","Good","Safe","Smart"],a:"Bad"},
+{q:"Strong password?",options:["Unique","1234","Name","123"],a:"Unique"},
+{q:"Sharing password?",options:["Bad","Good","Safe","Smart"],a:"Bad"},
 {q:"Phishing is?",options:["Scam","Game","App","Site"],a:"Scam"},
 {q:"Unknown link?",options:["Avoid","Click","Trust","Open"],a:"Avoid"},
 {q:"Privacy is?",options:["Important","Useless","Fake","Optional"],a:"Important"}
@@ -179,12 +177,6 @@ document.getElementById("xp").innerText = state.xp;
 document.getElementById("level").innerText = state.level;
 document.getElementById("stars").innerText = state.stars;
 document.getElementById("avatar").innerText = state.avatar;
-updateXPBar();
-}
-
-function updateXPBar(){
-document.getElementById("xpBar").style.width =
-((state.xp % 50) * 2) + "%";
 }
 
 /* =========================
@@ -222,7 +214,7 @@ loadQuestion();
 }
 
 /* =========================
-   LOAD QUESTION (FIXED SHUFFLE)
+   LOAD QUESTION (A/B/C/D SHUFFLE FIX)
 ========================= */
 
 function loadQuestion(){
@@ -240,20 +232,18 @@ document.getElementById("title").innerText =
 
 clearInterval(timer);
 timeLeft = 15;
-
 document.getElementById("timer").innerText = timeLeft;
 
 timer = setInterval(()=>{
 timeLeft--;
 document.getElementById("timer").innerText = timeLeft;
-
-if(timeLeft <= 0){
-nextQuestion();
-}
+if(timeLeft <= 0) nextQuestion();
 },1000);
 
 /* SHUFFLE OPTIONS */
-const shuffled = shuffle([...q.options]);
+let options = shuffle([...q.options]);
+
+const labels = ["A","B","C","D"];
 
 let html = `
 <div class="quiz-container">
@@ -265,8 +255,11 @@ ${q.q}
 <div class="answer-box">
 `;
 
-shuffled.forEach(opt=>{
-html += `<button class="option-btn">${opt}</button>`;
+options.forEach((opt,i)=>{
+html += `
+<button class="option-btn">
+${labels[i]}. ${opt}
+</button>`;
 });
 
 html += `
@@ -275,10 +268,11 @@ html += `
 
 document.getElementById("gameArea").innerHTML = html;
 
-/* SAFE EVENT BINDING */
+/* CLICK HANDLER */
 document.querySelectorAll(".option-btn").forEach(btn=>{
 btn.addEventListener("click", ()=>{
-checkAnswer(btn.innerText);
+const selected = btn.innerText.split(". ")[1];
+checkAnswer(selected);
 });
 });
 }
@@ -303,12 +297,11 @@ nextQuestion();
 }
 
 /* =========================
-   NEXT QUESTION
+   NEXT
 ========================= */
 
 function nextQuestion(){
 state.qIndex++;
-checkLevel();
 save();
 loadQuestion();
 }
@@ -330,34 +323,6 @@ setTimeout(showMap,1000);
 }
 
 /* =========================
-   LEVEL SYSTEM
-========================= */
-
-function checkLevel(){
-
-if(state.xp >= state.level * 50){
-state.xp -= state.level * 50;
-state.level++;
-showLevelUp();
-}
-
-updateUI();
-}
-
-function showLevelUp(){
-
-let box = document.getElementById("levelUpScreen");
-box.classList.remove("hidden");
-
-document.getElementById("levelText").innerText =
-"Level " + state.level;
-
-setTimeout(()=>{
-box.classList.add("hidden");
-},2000);
-}
-
-/* =========================
    SAVE
 ========================= */
 
@@ -372,5 +337,5 @@ localStorage.setItem("avatar",state.avatar);
    INIT
 ========================= */
 
-updateUI();
 showMap();
+updateUI();
