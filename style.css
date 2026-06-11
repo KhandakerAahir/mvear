@@ -19,7 +19,7 @@ background:#0b1220;
 color:white;
 text-align:center;
 min-height:100vh;
-padding-bottom:60px;
+padding-bottom:80px;
 }
 
 /* =========================
@@ -31,12 +31,12 @@ padding:20px 10px;
 }
 
 .header h1{
-font-size:2.2rem;
+font-size:2.3rem;
 margin-bottom:10px;
 }
 
 /* =========================
-   STATS
+   STATS BAR
 ========================= */
 
 .stats{
@@ -52,6 +52,7 @@ background:#1f2937;
 padding:10px 14px;
 border-radius:10px;
 font-weight:bold;
+min-width:100px;
 }
 
 /* =========================
@@ -84,7 +85,7 @@ transform:scale(1.05);
 
 #title{
 margin:15px 0;
-font-size:1.6rem;
+font-size:1.7rem;
 }
 
 /* =========================
@@ -148,22 +149,10 @@ color:white;
 transition:0.2s;
 }
 
-/* option colors */
-.option-btn:nth-child(1){
-background:#3b82f6;
-}
-
-.option-btn:nth-child(2){
-background:#22c55e;
-}
-
-.option-btn:nth-child(3){
-background:#f59e0b;
-}
-
-.option-btn:nth-child(4){
-background:#ef4444;
-}
+.option-btn:nth-child(1){background:#3b82f6;}
+.option-btn:nth-child(2){background:#22c55e;}
+.option-btn:nth-child(3){background:#f59e0b;}
+.option-btn:nth-child(4){background:#ef4444;}
 
 .option-btn:hover{
 transform:scale(1.03);
@@ -181,7 +170,29 @@ min-height:25px;
 }
 
 /* =========================
-   RPS SECTION
+   HEALTH BAR (NEW ❤️)
+========================= */
+
+.hp-bar{
+width:100%;
+max-width:600px;
+height:18px;
+background:#1f2937;
+border-radius:20px;
+overflow:hidden;
+margin:10px auto;
+border:2px solid #374151;
+}
+
+.hp-fill{
+height:100%;
+width:100%;
+background:linear-gradient(90deg,#22c55e,#facc15,#ef4444);
+transition:width 0.3s ease;
+}
+
+/* =========================
+   SHOP SECTION
 ========================= */
 
 hr{
@@ -194,8 +205,43 @@ h3{
 margin-top:20px;
 }
 
+.actions button{
+background:#3b82f6;
+}
+
+.actions button:hover{
+background:#2563eb;
+}
+
 /* =========================
-   STAGE COMPLETE ANIMATION
+   REWARD BOX
+========================= */
+
+#rewardBox{
+margin-top:20px;
+}
+
+.reward-card{
+background:#111827;
+padding:25px;
+border-radius:15px;
+max-width:500px;
+margin:20px auto;
+animation:pop 0.4s ease;
+border:2px solid #22c55e;
+}
+
+.reward-card h2{
+color:#22c55e;
+margin-bottom:10px;
+}
+
+.reward-card p{
+margin:6px 0;
+}
+
+/* =========================
+   ANIMATION
 ========================= */
 
 @keyframes pop{
@@ -204,7 +250,7 @@ to{transform:scale(1);opacity:1;}
 }
 
 /* =========================
-   RESPONSIVE DESIGN
+   RESPONSIVE
 ========================= */
 
 @media(max-width:768px){
