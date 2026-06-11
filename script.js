@@ -1,206 +1,334 @@
 
+/* =========================
+   STATE
+========================= */
+
 const state = {
-xp:0,
-level:1,
-coins:0,
-hp:100,
-world:0,
-qIndex:0,
-bossHp:100
+xp: +localStorage.getItem("xp") || 0,
+level: +localStorage.getItem("level") || 1,
+coins: +localStorage.getItem("coins") || 0,
+hp: +localStorage.getItem("hp") || 100,
+
+world: 0,
+qIndex: 0,
+streak: 0
 };
 
+/* =========================
+   WORLDS (8 STAGES - 5 QUESTIONS EACH)
+========================= */
+
 const worlds = [
+
 {
-name:"🌲 Forest",
-bossHp:100,
+name:"🌱 Good Habits",
 questions:[
-{q:"2+2?",options:["3","4","5","6"],a:"4"},
-{q:"5-3?",options:["1","2","3","4"],a:"2"},
-{q:"10/2?",options:["4","5","6","3"],a:"5"}
+{q:"Best morning habit?",options:["Wake early","Sleep late","Skip breakfast","Stay lazy"],a:"Wake early"},
+{q:"Discipline means?",options:["Consistency","Chaos","Fear","Luck"],a:"Consistency"},
+{q:"Healthy routine includes?",options:["Exercise","Junk food","No sleep","Stress"],a:"Exercise"},
+{q:"Good habit is?",options:["Reading","Smoking","Waste time","Laziness"],a:"Reading"},
+{q:"Success needs?",options:["Practice","Avoid work","Quit","Ignore"],a:"Practice"}
 ]
 },
+
 {
-name:"🏜️ Desert",
-bossHp:120,
+name:"🌍 Awareness",
 questions:[
-{q:"3+3?",options:["5","6","7","8"],a:"6"},
-{q:"4×2?",options:["6","7","8","9"],a:"8"},
-{q:"9-3?",options:["5","6","7","8"],a:"6"}
+{q:"Trees give?",options:["Oxygen","Plastic","Smoke","Noise"],a:"Oxygen"},
+{q:"Pollution caused by?",options:["Humans","Stars","Clouds","Rain"],a:"Humans"},
+{q:"We should save?",options:["Water","Fire","Dust","Smoke"],a:"Water"},
+{q:"Earth is?",options:["Precious","Useless","Fake","Dangerous"],a:"Precious"},
+{q:"Recycle means?",options:["Reuse","Burn","Throw","Destroy"],a:"Reuse"}
 ]
 },
+
 {
-name:"❄️ Winter",
-bossHp:140,
+name:"🧭 Responsibilities",
 questions:[
-{q:"6+6?",options:["11","12","13","14"],a:"12"},
-{q:"8-2?",options:["5","6","7","8"],a:"6"},
-{q:"2×5?",options:["9","10","11","12"],a:"10"}
+{q:"Homework is?",options:["Duty","Option","Waste","Ignore"],a:"Duty"},
+{q:"Helping family is?",options:["Responsibility","Optional","Bad","Avoid"],a:"Responsibility"},
+{q:"Ignoring work is?",options:["Wrong","Good","Funny","Smart"],a:"Wrong"},
+{q:"Blaming others is?",options:["Bad","Good","Normal","Helpful"],a:"Bad"},
+{q:"Rules should be?",options:["Followed","Ignored","Broken","Skipped"],a:"Followed"}
 ]
 },
+
 {
-name:"🌋 Volcano",
-bossHp:160,
+name:"📜 Rules",
 questions:[
-{q:"7+8?",options:["14","15","16","17"],a:"15"},
-{q:"12-5?",options:["6","7","8","5"],a:"7"},
-{q:"3×4?",options:["11","12","13","10"],a:"12"}
+{q:"Traffic rules are for?",options:["Safety","Fun","Noise","Chaos"],a:"Safety"},
+{q:"Breaking rules leads to?",options:["Danger","Reward","Success","Peace"],a:"Danger"},
+{q:"Rules create?",options:["Order","Chaos","Confusion","Delay"],a:"Order"},
+{q:"School rules give?",options:["Discipline","Freedom","Confusion","Stress"],a:"Discipline"},
+{q:"Rules are?",options:["Important","Useless","Optional","Bad"],a:"Important"}
 ]
 },
+
 {
-name:"🌊 Ocean",
-bossHp:180,
+name:"❤️ Moral Values",
 questions:[
-{q:"20/4?",options:["4","5","6","3"],a:"5"},
-{q:"9+9?",options:["16","17","18","19"],a:"18"},
-{q:"5×2?",options:["8","9","10","11"],a:"10"}
+{q:"Honesty means?",options:["Truth","Lie","Cheat","Hide"],a:"Truth"},
+{q:"Kindness is?",options:["Good","Bad","Weakness","Danger"],a:"Good"},
+{q:"Helping others is?",options:["Right","Wrong","Optional","Useless"],a:"Right"},
+{q:"Stealing is?",options:["Wrong","Right","Funny","Normal"],a:"Wrong"},
+{q:"Respect is?",options:["Important","Optional","Fake","Bad"],a:"Important"}
 ]
 },
+
 {
-name:"🏙️ City",
-bossHp:200,
+name:"🌿 Environment",
 questions:[
-{q:"15+10?",options:["20","25","30","35"],a:"25"},
-{q:"18-9?",options:["8","9","10","7"],a:"9"},
-{q:"6×3?",options:["15","16","18","20"],a:"18"}
+{q:"Trees give?",options:["Clean air","Pollution","Heat","Noise"],a:"Clean air"},
+{q:"Plastic is?",options:["Harmful","Safe","Good","Magic"],a:"Harmful"},
+{q:"We should save?",options:["Nature","Waste","Smoke","Fire"],a:"Nature"},
+{q:"Global warming is?",options:["Danger","Gift","Fun","Nothing"],a:"Danger"},
+{q:"Clean environment is?",options:["Healthy","Bad","Dangerous","Useless"],a:"Healthy"}
 ]
 },
+
 {
-name:"🪐 Space",
-bossHp:250,
+name:"🧠 Digital Safety",
 questions:[
-{q:"50/5?",options:["8","9","10","11"],a:"10"},
-{q:"12+12?",options:["22","23","24","25"],a:"24"},
-{q:"7×7?",options:["47","48","49","50"],a:"49"}
+{q:"Strong password is?",options:["Safe","Weak","Open","Easy"],a:"Safe"},
+{q:"Unknown links should be?",options:["Avoided","Clicked","Shared","Trusted"],a:"Avoided"},
+{q:"Personal info should be?",options:["Protected","Shared","Posted","Ignored"],a:"Protected"},
+{q:"Cyber safety is?",options:["Important","Useless","Fake","Optional"],a:"Important"},
+{q:"Strangers online?",options:["Avoid","Trust","Meet","Follow"],a:"Avoid"}
+]
+},
+
+{
+name:"💪 Health & Fitness",
+questions:[
+{q:"Exercise gives?",options:["Fitness","Weakness","Fatigue","Pain"],a:"Fitness"},
+{q:"Healthy food is?",options:["Good","Bad","Junk","Slow"],a:"Good"},
+{q:"Sleep is?",options:["Important","Useless","Optional","Waste"],a:"Important"},
+{q:"Water is needed for?",options:["Body","Fire","Smoke","Noise"],a:"Body"},
+{q:"Junk food is?",options:["Unhealthy","Healthy","Safe","Good"],a:"Unhealthy"}
 ]
 }
+
 ];
+
+/* =========================
+   INIT
+========================= */
+
+updateUI();
+showStages();
+
+/* =========================
+   SHOW STAGE BUTTONS
+========================= */
 
 function showStages(){
 
-document.getElementById("title").innerText="Select World";
+document.getElementById("title").innerText = "🌍 SELECT STAGE";
 
-let html="<div class='stage-menu'>";
+document.getElementById("gameArea").innerHTML = `
+<div class="stage-menu">
 
-worlds.forEach((w,i)=>{
-html+=`<button onclick="startWorld(${i})">${w.name}</button>`;
-});
+<button onclick="startStage(0)">🌱 Good Habits</button>
+<button onclick="startStage(1)">🌍 Awareness</button>
+<button onclick="startStage(2)">🧭 Responsibilities</button>
+<button onclick="startStage(3)">📜 Rules</button>
+<button onclick="startStage(4)">❤️ Moral Values</button>
+<button onclick="startStage(5)">🌿 Environment</button>
+<button onclick="startStage(6)">🧠 Digital Safety</button>
+<button onclick="startStage(7)">💪 Health & Fitness</button>
 
-html+="</div>";
-
-document.getElementById("gameArea").innerHTML=html;
-
-}
-
-function startWorld(i){
-
-state.world=i;
-state.qIndex=0;
-state.hp=100;
-state.bossHp=worlds[i].bossHp;
-
-loadQ();
+</div>
+`;
 
 }
 
-function loadQ(){
+/* =========================
+   START STAGE
+========================= */
 
-let w=worlds[state.world];
+function startStage(i){
 
-if(state.qIndex>=3 || state.hp<=0 || state.bossHp<=0){
-return endWorld();
+state.world = i;
+state.qIndex = 0;
+state.streak = 0;
+
+loadQuestion();
+
 }
 
-let q=w.questions[state.qIndex];
+/* =========================
+   LOAD QUESTION
+========================= */
 
-document.getElementById("title").innerText=
-`${w.name} | Boss HP: ${state.bossHp} | HP: ${state.hp}`;
+function loadQuestion(){
 
-document.getElementById("gameArea").innerHTML=`
+const world = worlds[state.world];
+
+if(!world){
+showStages();
+return;
+}
+
+if(state.qIndex >= 5){
+stageComplete();
+return;
+}
+
+const q = world.questions[state.qIndex];
+
+document.getElementById("title").innerText = world.name;
+
+document.getElementById("gameArea").innerHTML = `
 <div class="quiz-container">
+
 <div class="question-box">${q.q}</div>
-<div class="answer-box" id="ans"></div>
-</div>`;
 
-let options=[...q.options].sort(()=>Math.random()-0.5);
+<div class="answer-box" id="answers"></div>
 
-let box=document.getElementById("ans");
+</div>
+`;
 
-options.forEach(o=>{
-let b=document.createElement("button");
-b.className="option-btn";
-b.innerText=o;
-b.onclick=()=>check(o,q.a);
-box.appendChild(b);
+let options = [...q.options].sort(()=>Math.random()-0.5);
+
+const box = document.getElementById("answers");
+
+options.forEach(opt=>{
+
+const btn = document.createElement("button");
+btn.className = "option-btn";
+btn.innerText = opt;
+
+btn.onclick = ()=>checkAnswer(opt,q.a);
+
+box.appendChild(btn);
+
 });
 
 }
 
-function check(sel,correct){
+/* =========================
+   CHECK ANSWER
+========================= */
 
-if(sel===correct){
-state.bossHp-=30;
-state.xp+=10;
-state.coins+=5;
+function checkAnswer(selected, correct){
+
+if(selected === correct){
+
+state.xp += 10;
+state.coins += 5;
+state.streak++;
+
 }else{
-state.hp-=20;
+
+state.streak = 0;
+state.hp -= 20;
+
+if(state.hp <= 0){
+gameOver();
+return;
+}
+
 }
 
 state.qIndex++;
 
-update();
-loadQ();
+updateLevel();
+updateUI();
+save();
+
+setTimeout(loadQuestion,200);
 
 }
 
-function endWorld(){
+/* =========================
+   LEVEL SYSTEM
+========================= */
 
-state.xp+=100;
-state.coins+=50;
-state.hp=Math.min(100,state.hp+30);
+function updateLevel(){
 
-document.getElementById("gameArea").innerHTML=`
-<h2>World Completed!</h2>
-<button onclick="showStages()">Back</button>`;
+if(state.xp >= state.level * 50){
 
-update();
-
-}
-
-function update(){
-
-document.getElementById("xp").innerText=state.xp;
-document.getElementById("level").innerText=state.level;
-document.getElementById("coins").innerText=state.coins;
-document.getElementById("hpFill").style.width=state.hp+"%";
+state.xp -= state.level * 50;
+state.level++;
 
 }
 
-function buyItem(type){
-
-if(type==="life" && state.coins>=30){
-state.coins-=30;
-state.hp=Math.min(100,state.hp+30);
 }
 
-if(type==="skip" && state.coins>=20){
-state.coins-=20;
+/* =========================
+   STAGE COMPLETE
+========================= */
+
+function stageComplete(){
+
+state.coins += 50;
+state.xp += 100;
+state.hp = Math.min(100,state.hp + 30);
+
+document.getElementById("gameArea").innerHTML = `
+<div class="reward-card">
+<h2>🎉 Stage Completed!</h2>
+<p>💰 +50 Coins</p>
+<p>⭐ +100 XP</p>
+<p>❤️ +30 HP</p>
+
+<button onclick="showStages()">⬅ Back to Stages</button>
+</div>
+`;
+
+save();
+updateUI();
+
+}
+
+/* =========================
+   GAME OVER
+========================= */
+
+function gameOver(){
+
+document.getElementById("gameArea").innerHTML = `
+<h2 style="color:red;">💀 Game Over</h2>
+<button onclick="showStages()">Restart</button>
+`;
+
+}
+
+/* =========================
+   SHOP SYSTEM
+========================= */
+
+function buyItem(item){
+
+if(item==="life" && state.coins>=30){
+state.coins -= 30;
+state.hp = Math.min(100,state.hp + 30);
+}
+
+if(item==="skip" && state.coins>=20){
+state.coins -= 20;
 state.qIndex++;
-loadQ();
+loadQuestion();
 }
 
-if(type==="hint" && state.coins>=15){
-state.coins-=15;
-alert("Think carefully!");
+if(item==="hint" && state.coins>=15){
+state.coins -= 15;
+alert("💡 Think carefully!");
 }
 
-update();
+updateUI();
+save();
 
 }
+
+/* =========================
+   ROCK PAPER SCISSORS
+========================= */
 
 function rps(user){
 
-let arr=["rock","paper","scissors"];
-let ai=arr[Math.floor(Math.random()*3)];
+const arr=["rock","paper","scissors"];
+const ai = arr[Math.floor(Math.random()*3)];
 
 if(user===ai){
 alert("Draw!");
@@ -211,15 +339,40 @@ else if(
 (user==="scissors"&&ai==="paper")
 ){
 alert("You Win!");
-state.coins+=10;
+state.coins += 10;
 }else{
 alert("You Lose!");
-state.hp-=10;
+state.hp -= 10;
 }
 
-update();
+updateUI();
+save();
 
 }
 
-update();
-showStages();
+/* =========================
+   UI UPDATE
+========================= */
+
+function updateUI(){
+
+document.getElementById("xp").innerText = state.xp;
+document.getElementById("level").innerText = state.level;
+document.getElementById("coins").innerText = state.coins;
+
+document.getElementById("hpFill").style.width = state.hp + "%";
+
+}
+
+/* =========================
+   SAVE
+========================= */
+
+function save(){
+
+localStorage.setItem("xp",state.xp);
+localStorage.setItem("level",state.level);
+localStorage.setItem("coins",state.coins);
+localStorage.setItem("hp",state.hp);
+
+}
