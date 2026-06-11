@@ -16,6 +16,18 @@ let timer;
 let timeLeft = 0;
 
 /* =========================
+   SHUFFLE FUNCTION (IMPORTANT FIX)
+========================= */
+
+function shuffle(array){
+for(let i = array.length - 1; i > 0; i--){
+const j = Math.floor(Math.random() * (i + 1));
+[array[i], array[j]] = [array[j], array[i]];
+}
+return array;
+}
+
+/* =========================
    MUSIC
 ========================= */
 
@@ -210,7 +222,7 @@ loadQuestion();
 }
 
 /* =========================
-   LOAD QUESTION (FIXED MCQ)
+   LOAD QUESTION (FIXED SHUFFLE)
 ========================= */
 
 function loadQuestion(){
@@ -229,6 +241,8 @@ document.getElementById("title").innerText =
 clearInterval(timer);
 timeLeft = 15;
 
+document.getElementById("timer").innerText = timeLeft;
+
 timer = setInterval(()=>{
 timeLeft--;
 document.getElementById("timer").innerText = timeLeft;
@@ -238,6 +252,9 @@ nextQuestion();
 }
 },1000);
 
+/* SHUFFLE OPTIONS */
+const shuffled = shuffle([...q.options]);
+
 let html = `
 <div class="quiz-container">
 
@@ -245,11 +262,11 @@ let html = `
 ${q.q}
 </div>
 
-<div class="answer-box" id="answers">
+<div class="answer-box">
 `;
 
-q.options.forEach(opt=>{
-html += `<button class="option-btn" data-opt="${opt}">${opt}</button>`;
+shuffled.forEach(opt=>{
+html += `<button class="option-btn">${opt}</button>`;
 });
 
 html += `
@@ -258,9 +275,11 @@ html += `
 
 document.getElementById("gameArea").innerHTML = html;
 
-/* attach events safely */
+/* SAFE EVENT BINDING */
 document.querySelectorAll(".option-btn").forEach(btn=>{
-btn.onclick = () => checkAnswer(btn.dataset.opt);
+btn.addEventListener("click", ()=>{
+checkAnswer(btn.innerText);
+});
 });
 }
 
