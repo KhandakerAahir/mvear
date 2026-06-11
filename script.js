@@ -1,22 +1,29 @@
 
 /* =========================
-   STATE
+   STATE (CORE GAME DATA)
 ========================= */
 
 const state = {
 xp: +localStorage.getItem("xp") || 0,
 level: +localStorage.getItem("level") || 1,
+coins: +localStorage.getItem("coins") || 0,
 stars: +localStorage.getItem("stars") || 0,
 avatar: localStorage.getItem("avatar") || "🙂",
+
+hp: +localStorage.getItem("hp") || 100,
+maxHp: 100,
+
 world: 0,
 qIndex: 0,
+
 lives: 3,
 streak: 0,
-typingLock: false
+
+badges: JSON.parse(localStorage.getItem("badges")) || []
 };
 
 /* =========================
-   SOUND SYSTEM (UPDATED)
+   SOUND SYSTEM
 ========================= */
 
 const sounds = {
@@ -34,20 +41,7 @@ sounds[s].play();
 }
 
 /* =========================
-   SHUFFLE
-========================= */
-
-function shuffle(arr){
-let a=[...arr];
-for(let i=a.length-1;i>0;i--){
-let j=Math.floor(Math.random()*(i+1));
-[a[i],a[j]]=[a[j],a[i]];
-}
-return a;
-}
-
-/* =========================
-   WORLDS
+   WORLDS (MCQ GAME)
 ========================= */
 
 const worlds = [
@@ -65,7 +59,7 @@ questions:[
 name:"🌍 Awareness",
 questions:[
 {q:"Trees give?",options:["Oxygen","Plastic","Smoke","Stone"],a:"Oxygen"},
-{q:"Pollution is caused by?",options:["Humans","Clouds","Stars","Wind"],a:"Humans"},
+{q:"Pollution caused by?",options:["Humans","Clouds","Stars","Wind"],a:"Humans"},
 {q:"Recycle means?",options:["Reuse","Burn","Throw","Ignore"],a:"Reuse"},
 {q:"Clean energy?",options:["Solar","Coal","Oil","Gas"],a:"Solar"},
 {q:"Water is?",options:["Precious","Useless","Danger","Waste"],a:"Precious"}
@@ -78,14 +72,16 @@ questions:[
 ========================= */
 
 function updateUI(){
-document.getElementById("xp").innerText=state.xp;
-document.getElementById("level").innerText=state.level;
-document.getElementById("stars").innerText=state.stars;
-document.getElementById("avatar").innerText=state.avatar;
 
-if(document.getElementById("result")){
-document.getElementById("result").innerText =
-`❤️ Lives: ${state.lives} | 🔥 Streak: ${state.streak}`;
+document.getElementById("xp").innerText = state.xp;
+document.getElementById("level").innerText = state.level;
+document.getElementById("coins").innerText = state.coins;
+document.getElementById("avatar").innerText = state.avatar;
+
+/* HEALTH BAR */
+const hpFill = document.getElementById("hpFill");
+if(hpFill){
+hpFill.style.width = state.hp + "%";
 }
 }
 
@@ -94,21 +90,17 @@ document.getElementById("result").innerText =
 ========================= */
 
 function typeText(el,text){
-if(state.typingLock) return;
-state.typingLock=true;
-
 el.innerHTML="";
 let i=0;
 
 let interval=setInterval(()=>{
-el.innerHTML+=text[i];
+el.innerHTML += text[i];
 i++;
 
 if(i>=text.length){
 clearInterval(interval);
-state.typingLock=false;
 }
-},35);
+},30);
 }
 
 /* =========================
@@ -116,29 +108,37 @@ state.typingLock=false;
 ========================= */
 
 function updateAvatar(){
-if(state.level>=10) state.avatar="🧠";
-else if(state.level>=5) state.avatar="😎";
-else state.avatar="🙂";
+if(state.level >= 10) state.avatar = "🧠";
+else if(state.level >= 5) state.avatar = "😎";
+else state.avatar = "🙂";
 }
 
 /* =========================
-   LIVES SYSTEM
+   HP SYSTEM ❤️
 ========================= */
 
-function loseLife(){
-state.lives--;
-if(state.lives<=0){
-alert("💀 Game Over");
-location.reload();
+function damageHP(amount){
+state.hp -= amount;
+
+if(state.hp <= 0){
+state.hp = 0;
+gameOver();
 }
 }
 
 /* =========================
-   XP MULTIPLIER
+   GAME OVER
 ========================= */
 
-function xpGain(){
-return state.streak>=5 ? 20 : 10;
+function gameOver(){
+document.getElementById("gameArea").innerHTML = `
+<h2 style="color:red;">💀 Game Over</h2>
+<p>You ran out of health!</p>
+<button onclick="location.reload()">Restart</button>
+`;
+
+play("wrong");
+save();
 }
 
 /* =========================
@@ -147,45 +147,42 @@ return state.streak>=5 ? 20 : 10;
 
 function loadQuestion(){
 
-const w=worlds[state.world];
+const world = worlds[state.world];
 
-if(!w){
+if(!world){
 gameComplete();
 return;
 }
 
-const q=w.questions[state.qIndex];
+const q = world.questions[state.qIndex];
 
-/* WORLD COMPLETE */
 if(!q){
 stageComplete();
 return;
 }
 
-document.getElementById("gameArea").innerHTML=`
+document.getElementById("gameArea").innerHTML = `
 <div class="quiz-container">
 <div class="question-box" id="qbox"></div>
 <div class="answer-box" id="abox"></div>
-</div>`;
+</div>
+`;
 
-/* question animation */
-typeText(document.getElementById("qbox"),q.q);
+typeText(document.getElementById("qbox"), q.q);
 
 /* shuffle options */
-const opts=shuffle(q.options);
-const labels=["A","B","C","D"];
+let options = [...q.options].sort(()=>Math.random()-0.5);
 
-const box=document.getElementById("abox");
-box.innerHTML="";
+const box = document.getElementById("abox");
 
-opts.forEach((opt,i)=>{
-const btn=document.createElement("button");
-btn.className="option-btn";
-btn.innerText=`${labels[i]}. ${opt}`;
+options.forEach(opt=>{
 
-btn.onclick=()=>{
-play("click");
-checkAnswer(opt,q.a);
+const btn = document.createElement("button");
+btn.className = "option-btn";
+btn.innerText = opt;
+
+btn.onclick = ()=>{
+checkAnswer(opt, q.a);
 };
 
 box.appendChild(btn);
@@ -196,17 +193,23 @@ box.appendChild(btn);
    CHECK ANSWER
 ========================= */
 
-function checkAnswer(opt,correct){
+function checkAnswer(opt, correct){
 
-if(opt===correct){
+if(opt === correct){
+
 play("correct");
+
 state.streak++;
-state.xp+=xpGain();
+state.xp += state.streak >= 5 ? 20 : 10;
+state.coins += 5;
 state.stars++;
+
 }else{
+
 play("wrong");
-state.streak=0;
-loseLife();
+
+state.streak = 0;
+damageHP(25);
 }
 
 nextQuestion();
@@ -217,61 +220,156 @@ nextQuestion();
 ========================= */
 
 function nextQuestion(){
+
 state.qIndex++;
+
 updateAvatar();
 updateUI();
 save();
-setTimeout(loadQuestion,200);
+
+setTimeout(loadQuestion, 200);
 }
 
 /* =========================
-   STAGE COMPLETE (NEW FEATURE 🔊)
+   STAGE REWARD SYSTEM 🏆
 ========================= */
 
 function stageComplete(){
 
 play("complete");
 
-/* show screen */
-document.getElementById("gameArea").innerHTML=`
-<h2 style="color:#22c55e; animation:pop 0.5s ease;">
-🏆 Stage Completed!
-</h2>
-<p>Loading next world...</p>
+state.coins += 50;
+state.xp += 100;
+state.hp = Math.min(100, state.hp + 30);
+
+/* badge */
+let badge = "🌍 Stage Complete";
+
+if(state.world === 0) badge = "🌱 Habits Master";
+if(state.world === 1) badge = "🌍 Awareness Hero";
+
+state.badges.push(badge);
+
+document.getElementById("gameArea").innerHTML = `
+<div class="reward-card">
+<h2>🎉 STAGE COMPLETED!</h2>
+
+<p>💰 +50 Coins</p>
+<p>⭐ +100 XP</p>
+<p>❤️ +30 HP</p>
+<p>🏅 ${badge}</p>
+
+<button onclick="nextWorld()">▶ Continue</button>
+</div>
 `;
 
-/* unlock next world */
-state.world++;
-state.qIndex=0;
-
-/* delay next stage */
-setTimeout(()=>{
-loadQuestion();
-},2000);
+save();
+updateUI();
 }
 
 /* =========================
-   FINAL GAME COMPLETE
+   NEXT WORLD
+========================= */
+
+function nextWorld(){
+state.world++;
+state.qIndex = 0;
+loadQuestion();
+}
+
+/* =========================
+   GAME COMPLETE
 ========================= */
 
 function gameComplete(){
-document.getElementById("gameArea").innerHTML=`
-<h2>🎉 ALL WORLDS COMPLETED!</h2>
-<p>You finished MVEAR!</p>
+
+document.getElementById("gameArea").innerHTML = `
+<h2>🏆 YOU COMPLETED ALL WORLDS!</h2>
+<p>Final Score: ${state.xp} XP</p>
 `;
 
 play("complete");
+save();
 }
 
 /* =========================
-   SAVE
+   SHOP SYSTEM 💰
+========================= */
+
+function buyItem(item){
+
+if(item === "life"){
+
+if(state.coins < 30) return alert("Not enough coins!");
+state.coins -= 30;
+state.hp = Math.min(100, state.hp + 30);
+
+}
+
+if(item === "skip"){
+
+if(state.coins < 20) return alert("Not enough coins!");
+state.coins -= 20;
+state.qIndex++;
+
+loadQuestion();
+
+}
+
+if(item === "hint"){
+
+if(state.coins < 15) return alert("Not enough coins!");
+state.coins -= 15;
+alert("💡 Think about keywords!");
+
+}
+
+save();
+updateUI();
+}
+
+/* =========================
+   ROCK PAPER SCISSORS 🎮
+========================= */
+
+function rps(player){
+
+const arr = ["rock","paper","scissors"];
+const ai = arr[Math.floor(Math.random()*3)];
+
+if(player === ai){
+alert("Draw!");
+}
+else if(
+(player==="rock" && ai==="scissors") ||
+(player==="paper" && ai==="rock") ||
+(player==="scissors" && ai==="paper")
+){
+alert("You Win!");
+state.coins += 10;
+}
+else{
+alert("You Lose!");
+damageHP(10);
+}
+
+updateUI();
+save();
+}
+
+/* =========================
+   SAVE SYSTEM
 ========================= */
 
 function save(){
-localStorage.setItem("xp",state.xp);
-localStorage.setItem("level",state.level);
-localStorage.setItem("stars",state.stars);
-localStorage.setItem("avatar",state.avatar);
+
+localStorage.setItem("xp", state.xp);
+localStorage.setItem("level", state.level);
+localStorage.setItem("coins", state.coins);
+localStorage.setItem("hp", state.hp);
+localStorage.setItem("avatar", state.avatar);
+localStorage.setItem("badges", JSON.stringify(state.badges));
+
 }
 
 /* =========================
