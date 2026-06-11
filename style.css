@@ -22,10 +22,10 @@ padding-bottom:80px;
 
 background:linear-gradient(-45deg,#0b1220,#1f2937,#111827,#0b1220);
 background-size:400% 400%;
-animation:bgMove 12s ease infinite;
+animation:bg 12s ease infinite;
 }
 
-@keyframes bgMove{
+@keyframes bg{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
@@ -45,7 +45,7 @@ margin-bottom:10px;
 }
 
 /* =========================
-   STATS BAR
+   STATS
 ========================= */
 
 .stats{
@@ -150,7 +150,7 @@ cursor:not-allowed;
 }
 
 /* =========================
-   QUIZ AREA
+   QUIZ LAYOUT
 ========================= */
 
 .quiz-container{
@@ -191,7 +191,9 @@ flex-direction:column;
 gap:12px;
 }
 
-/* MCQ BUTTONS */
+/* =========================
+   MCQ BUTTONS
+========================= */
 
 .option-btn{
 padding:14px;
@@ -208,13 +210,15 @@ transition:.2s;
 transform:scale(1.03);
 }
 
-/* different colors for variety */
+/* different colors */
 .option-btn:nth-child(2){
 background:#3b82f6;
 }
+
 .option-btn:nth-child(3){
 background:#f59e0b;
 }
+
 .option-btn:nth-child(4){
 background:#ef4444;
 }
@@ -282,5 +286,4 @@ min-height:140px;
 .actions button{
 width:90%;
 }
-
 }
