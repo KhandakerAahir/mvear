@@ -1,17 +1,8 @@
-
-/* =========================
-   RESET
-========================= */
-
 *{
 margin:0;
 padding:0;
 box-sizing:border-box;
 }
-
-/* =========================
-   BODY
-========================= */
 
 body{
 font-family:Arial, Helvetica, sans-serif;
@@ -22,21 +13,13 @@ min-height:100vh;
 padding-bottom:80px;
 }
 
-/* =========================
-   HEADER
-========================= */
-
 .header{
-padding:20px 10px;
+padding:20px;
 }
 
 .header h1{
-font-size:2.4rem;
+font-size:2.5rem;
 }
-
-/* =========================
-   STATS
-========================= */
 
 .stats{
 display:flex;
@@ -51,37 +34,28 @@ background:#1f2937;
 padding:10px 14px;
 border-radius:10px;
 font-weight:bold;
+min-width:100px;
 }
-
-/* =========================
-   TITLE
-========================= */
 
 #title{
 margin:15px 0;
 font-size:1.6rem;
 }
 
-/* =========================
-   GAME AREA (IMPORTANT)
-========================= */
-
 #gameArea{
 max-width:900px;
-margin:0 auto;
+margin:auto;
 padding:10px;
 }
 
-/* =========================
-   STAGE BUTTON MENU (FIXED)
-========================= */
+/* WORLD MENU */
 
 .stage-menu{
 display:flex;
 flex-direction:column;
 align-items:center;
 gap:12px;
-margin-top:30px;
+margin-top:20px;
 }
 
 .stage-menu button{
@@ -103,9 +77,7 @@ background:#22c55e;
 color:black;
 }
 
-/* =========================
-   QUIZ LAYOUT
-========================= */
+/* QUIZ BATTLE */
 
 .quiz-container{
 display:grid;
@@ -135,9 +107,7 @@ flex-direction:column;
 gap:10px;
 }
 
-/* =========================
-   OPTION BUTTONS
-========================= */
+/* ANSWER BUTTONS */
 
 .option-btn{
 padding:14px;
@@ -158,9 +128,7 @@ transform:scale(1.03);
 .option-btn:nth-child(3){background:#f59e0b;}
 .option-btn:nth-child(4){background:#ef4444;}
 
-/* =========================
-   BUTTONS GENERAL
-========================= */
+/* GENERAL BUTTONS */
 
 button{
 padding:12px 16px;
@@ -178,9 +146,7 @@ button:hover{
 transform:scale(1.05);
 }
 
-/* =========================
-   HEALTH BAR
-========================= */
+/* HEALTH BAR */
 
 .hp-bar{
 width:100%;
@@ -200,9 +166,7 @@ background:linear-gradient(90deg,#22c55e,#facc15,#ef4444);
 transition:0.3s;
 }
 
-/* =========================
-   SHOP SECTION
-========================= */
+/* SHOP + SECTIONS */
 
 hr{
 margin:25px auto;
@@ -210,17 +174,7 @@ width:80%;
 opacity:0.3;
 }
 
-/* =========================
-   RPS SECTION
-========================= */
-
-h3{
-margin-top:20px;
-}
-
-/* =========================
-   CELEBRATION
-========================= */
+/* CELEBRATION */
 
 .celebration{
 position:fixed;
@@ -246,9 +200,7 @@ animation:pop 0.5s ease;
 display:none;
 }
 
-/* =========================
-   CONFETTI CANVAS
-========================= */
+/* CONFETTI */
 
 #confettiCanvas{
 position:fixed;
@@ -260,18 +212,14 @@ pointer-events:none;
 z-index:9998;
 }
 
-/* =========================
-   ANIMATION
-========================= */
+/* ANIMATION */
 
 @keyframes pop{
 0%{transform:scale(0.3);opacity:0;}
 100%{transform:scale(1);opacity:1;}
 }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media(max-width:768px){
 
@@ -287,4 +235,8 @@ width:90%;
 font-size:1.1rem;
 }
 
+.stat{
+min-width:80px;
+font-size:0.9rem;
+}
 }
