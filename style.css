@@ -15,7 +15,6 @@ padding-bottom:80px;
 100%{background-position:0% 50%;}
 }
 
-/* TOP */
 .top{
 display:flex;
 justify-content:center;
@@ -24,7 +23,6 @@ flex-wrap:wrap;
 margin:10px;
 }
 
-/* BUTTONS */
 button{
 padding:10px 14px;
 margin:5px;
@@ -36,7 +34,6 @@ color:white;
 font-weight:bold;
 }
 
-/* MAP */
 .map{
 display:grid;
 grid-template-columns:repeat(2,160px);
@@ -48,17 +45,10 @@ margin-top:10px;
 .node{
 padding:20px;
 border-radius:12px;
-cursor:pointer;
-font-weight:bold;
 background:#1f2937;
-transition:0.3s;
+cursor:pointer;
 }
 
-.node:hover{
-transform:scale(1.05);
-}
-
-/* QUIZ */
 .quiz-container{
 display:flex;
 gap:20px;
@@ -69,7 +59,7 @@ margin:20px auto;
 .question-box{
 flex:1;
 background:#1f2937;
-padding:30px;
+padding:25px;
 border-radius:15px;
 font-size:2rem;
 display:flex;
@@ -80,23 +70,17 @@ justify-content:center;
 .answer-box{
 flex:1;
 background:#111827;
-padding:30px;
+padding:25px;
 border-radius:15px;
 display:flex;
 flex-direction:column;
-gap:20px;
-}
-
-.answer-box button{
-padding:15px;
-font-size:1.2rem;
+gap:15px;
 }
 
 .answer-box button:nth-child(2){
 background:#ef4444;
 }
 
-/* LEVEL UP */
 .levelup{
 position:fixed;
 top:0;
@@ -109,13 +93,11 @@ flex-direction:column;
 justify-content:center;
 align-items:center;
 font-size:3rem;
-color:#22c55e;
 z-index:999;
 }
 
 .hidden{display:none;}
 
-/* NAV */
 .nav{
 position:fixed;
 bottom:0;
