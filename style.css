@@ -1,29 +1,30 @@
-/* =========================
-   BASE
-========================= */
 body{
 margin:0;
-font-family:Arial, sans-serif;
-background:#0b1220;
+font-family:Arial;
 color:white;
 text-align:center;
+background: linear-gradient(-45deg,#0b1220,#1f2937,#0b1220,#111827);
+background-size:400% 400%;
+animation:bg 10s ease infinite;
+padding-bottom:80px;
 }
 
-/* =========================
-   HEADER STATS
-========================= */
+@keyframes bg{
+0%{background-position:0% 50%;}
+50%{background-position:100% 50%;}
+100%{background-position:0% 50%;}
+}
+
+/* TOP */
 .top{
 display:flex;
 justify-content:center;
 gap:10px;
 flex-wrap:wrap;
 margin:10px;
-font-size:14px;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTONS */
 button{
 padding:10px 14px;
 margin:5px;
@@ -33,16 +34,9 @@ cursor:pointer;
 background:#22c55e;
 color:white;
 font-weight:bold;
-transition:0.2s;
 }
 
-button:hover{
-transform:scale(1.05);
-}
-
-/* =========================
-   MAP
-========================= */
+/* MAP */
 .map{
 display:grid;
 grid-template-columns:repeat(2,160px);
@@ -58,116 +52,76 @@ cursor:pointer;
 font-weight:bold;
 background:#1f2937;
 transition:0.3s;
-box-shadow:0 0 10px rgba(34,197,94,0.2);
-animation:float 3s infinite ease-in-out;
 }
 
 .node:hover{
-transform:scale(1.08);
-box-shadow:0 0 20px #22c55e;
+transform:scale(1.05);
 }
 
-@keyframes float{
-0%,100%{transform:translateY(0);}
-50%{transform:translateY(-6px);}
-}
-
-/* =========================
-   INPUT (fallback)
-========================= */
-input{
-padding:10px;
-margin-top:10px;
-border-radius:8px;
-border:none;
-font-size:1rem;
-}
-
-/* =========================
-   QUIZ LAYOUT (NEW)
-========================= */
+/* QUIZ */
 .quiz-container{
 display:flex;
-justify-content:center;
-align-items:stretch;
-gap:25px;
-max-width:1000px;
-margin:30px auto;
-padding:10px;
+gap:20px;
+max-width:900px;
+margin:20px auto;
 }
 
-/* LEFT SIDE QUESTION */
 .question-box{
 flex:1;
 background:#1f2937;
-border-radius:16px;
 padding:30px;
+border-radius:15px;
 font-size:2rem;
-font-weight:bold;
 display:flex;
 align-items:center;
 justify-content:center;
-min-height:180px;
-box-shadow:0 0 20px rgba(34,197,94,0.25);
 }
 
-/* RIGHT SIDE ANSWERS */
 .answer-box{
 flex:1;
 background:#111827;
-border-radius:16px;
 padding:30px;
+border-radius:15px;
 display:flex;
 flex-direction:column;
-justify-content:center;
 gap:20px;
-box-shadow:0 0 20px rgba(34,197,94,0.25);
 }
 
-/* YES / NO BUTTONS */
 .answer-box button{
-padding:18px;
+padding:15px;
 font-size:1.2rem;
-border-radius:12px;
-background:#22c55e;
 }
 
 .answer-box button:nth-child(2){
 background:#ef4444;
 }
 
-/* =========================
-   RESULT TEXT
-========================= */
-#result{
-font-size:1.2rem;
-margin-top:10px;
-color:#22c55e;
-}
-
-/* =========================
-   TIMER
-========================= */
-#timer{
-font-weight:bold;
-color:#fbbf24;
-}
-
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
-@media(max-width:768px){
-
-.quiz-container{
+/* LEVEL UP */
+.levelup{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,0.9);
+display:flex;
 flex-direction:column;
+justify-content:center;
+align-items:center;
+font-size:3rem;
+color:#22c55e;
+z-index:999;
 }
 
-.question-box{
-font-size:1.5rem;
-min-height:120px;
-}
+.hidden{display:none;}
 
-.answer-box button{
-font-size:1rem;
-}
+/* NAV */
+.nav{
+position:fixed;
+bottom:0;
+width:100%;
+display:flex;
+justify-content:space-around;
+background:#111827;
+padding:10px;
 }
