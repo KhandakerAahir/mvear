@@ -1,4 +1,3 @@
-
 /* =========================
    STATE
 ========================= */
@@ -43,7 +42,7 @@ document.getElementById("avatar").innerText = avatar;
 }
 
 /* =========================
-   WORLDS (8 + DIFFICULTY)
+   WORLDS
 ========================= */
 const worlds = [
 {
@@ -61,7 +60,6 @@ questions:[
 {q:"Quit after failure?",a:"no",d:"hard"}
 ]
 },
-
 {
 name:"🌍 Awareness",
 color:"#065f46",
@@ -77,7 +75,6 @@ questions:[
 {q:"Earth needs care?",a:"yes",d:"hard"}
 ]
 },
-
 {
 name:"❤️ Values",
 color:"#7f1d1d",
@@ -93,7 +90,6 @@ questions:[
 {q:"Respect important?",a:"yes",d:"hard"}
 ]
 },
-
 {
 name:"🧭 Responsibility",
 color:"#92400e",
@@ -109,7 +105,6 @@ questions:[
 {q:"Accountability matters?",a:"yes",d:"hard"}
 ]
 },
-
 {
 name:"🏃 Health",
 color:"#0ea5e9",
@@ -125,7 +120,6 @@ questions:[
 {q:"Ignore health?",a:"no",d:"hard"}
 ]
 },
-
 {
 name:"🚦 Safety",
 color:"#f97316",
@@ -141,7 +135,6 @@ questions:[
 {q:"Risky behavior ok?",a:"no",d:"hard"}
 ]
 },
-
 {
 name:"💻 Digital",
 color:"#a855f7",
@@ -157,7 +150,6 @@ questions:[
 {q:"Stay alert online?",a:"yes",d:"hard"}
 ]
 },
-
 {
 name:"🏆 Final",
 color:"#4c1d95",
@@ -222,15 +214,18 @@ load();
 }
 
 /* =========================
-   LOAD QUESTION
+   LOAD QUESTION (NEW UI)
 ========================= */
 function load(){
 
-let w=worlds[current];
-let q=w.questions[qIndex];
+let w = worlds[current];
+let q = w.questions[qIndex];
 
 if(!q){
-document.getElementById("gameArea").innerHTML="🏆 World Completed!";
+document.getElementById("gameArea").innerHTML=`
+<div style="padding:30px;font-size:2rem;font-weight:bold;color:#22c55e;">
+🏆 World Completed!
+</div>`;
 return;
 }
 
@@ -239,15 +234,26 @@ w.name + " [" + q.d + "]";
 
 startTimer(q.d);
 
-document.getElementById("gameArea").innerHTML=`
-<p>${q.q}</p>
-<input id="ans" placeholder="yes / no">
-<button onclick="check()">Submit</button>
+document.getElementById("gameArea").innerHTML = `
+<div class="quiz-container">
+
+    <div class="question-box">
+        ${q.q}
+    </div>
+
+    <div class="answer-box">
+
+        <button onclick="checkAnswer('yes')">✅ YES</button>
+        <button onclick="checkAnswer('no')">❌ NO</button>
+
+    </div>
+
+</div>
 `;
 }
 
 /* =========================
-   TIMER (DIFFICULTY)
+   TIMER
 ========================= */
 function startTimer(d){
 
@@ -274,12 +280,11 @@ load();
 /* =========================
    CHECK ANSWER
 ========================= */
-function check(){
+function checkAnswer(ans){
 
-let ans=document.getElementById("ans").value.toLowerCase();
-let q=worlds[current].questions[qIndex];
+let q = worlds[current].questions[qIndex];
 
-if(ans===q.a){
+if(ans === q.a){
 play("correct");
 
 stars++;
@@ -296,9 +301,10 @@ streak=0;
 document.getElementById("result").innerText="❌ Wrong!";
 }
 
-if(streak%3===0) xp+=10;
+if(streak % 3 === 0) xp += 10;
 
 qIndex++;
+
 levelCheck();
 save();
 load();
