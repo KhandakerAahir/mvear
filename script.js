@@ -11,32 +11,11 @@ hp: +localStorage.getItem("hp") || 100,
 
 world: 0,
 qIndex: 0,
-
-streak: 0,
-
-badges: JSON.parse(localStorage.getItem("badges")) || []
+streak: 0
 };
 
 /* =========================
-   SOUND SYSTEM
-========================= */
-
-const sounds = {
-correct: new Audio("https://cdn.pixabay.com/audio/2022/03/15/audio_c8c8a3.mp3"),
-wrong: new Audio("https://cdn.pixabay.com/audio/2021/08/04/audio_4b9c8c.mp3"),
-click: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_5b8c3b.mp3"),
-complete: new Audio("https://cdn.pixabay.com/audio/2022/03/10/audio_5b8c3b.mp3")
-};
-
-function play(s){
-if(sounds[s]){
-sounds[s].currentTime = 0;
-sounds[s].play();
-}
-}
-
-/* =========================
-   WORLDS (8 STAGES, 5 Q EACH)
+   WORLDS (8 STAGES - 5 QUESTIONS EACH)
 ========================= */
 
 const worlds = [
@@ -132,43 +111,34 @@ questions:[
 ];
 
 /* =========================
-   UI UPDATE
+   INIT
 ========================= */
 
-function updateUI(){
-
-document.getElementById("xp").innerText = state.xp;
-document.getElementById("level").innerText = state.level;
-document.getElementById("coins").innerText = state.coins;
-
-/* HP BAR */
-document.getElementById("hpFill").style.width = state.hp + "%";
-
-}
+updateUI();
+showStages();
 
 /* =========================
-   SHOW STAGES (MENU)
+   SHOW STAGE BUTTONS
 ========================= */
 
 function showStages(){
 
-document.getElementById("title").innerText = "🌍 Select Stage";
+document.getElementById("title").innerText = "🌍 SELECT STAGE";
 
-let html = `<div class="stage-grid">`;
+document.getElementById("gameArea").innerHTML = `
+<div class="stage-menu">
 
-worlds.forEach((w,i)=>{
+<button onclick="startStage(0)">🌱 Good Habits</button>
+<button onclick="startStage(1)">🌍 Awareness</button>
+<button onclick="startStage(2)">🧭 Responsibilities</button>
+<button onclick="startStage(3)">📜 Rules</button>
+<button onclick="startStage(4)">❤️ Moral Values</button>
+<button onclick="startStage(5)">🌿 Environment</button>
+<button onclick="startStage(6)">🧠 Digital Safety</button>
+<button onclick="startStage(7)">💪 Health & Fitness</button>
 
-html += `
-<button class="stage-btn" onclick="startStage(${i})">
-${w.name}
-</button>
+</div>
 `;
-
-});
-
-html += `</div>`;
-
-document.getElementById("gameArea").innerHTML = html;
 
 }
 
@@ -244,21 +214,16 @@ function checkAnswer(selected, correct){
 
 if(selected === correct){
 
-play("correct");
-
 state.xp += 10;
 state.coins += 5;
 state.streak++;
 
 }else{
 
-play("wrong");
-
 state.streak = 0;
 state.hp -= 20;
 
 if(state.hp <= 0){
-state.hp = 0;
 gameOver();
 return;
 }
@@ -271,7 +236,7 @@ updateLevel();
 updateUI();
 save();
 
-setTimeout(loadQuestion,300);
+setTimeout(loadQuestion,200);
 
 }
 
@@ -296,13 +261,9 @@ state.level++;
 
 function stageComplete(){
 
-play("complete");
-
 state.coins += 50;
 state.xp += 100;
-state.hp = Math.min(100, state.hp + 30);
-
-state.badges.push(worlds[state.world].name);
+state.hp = Math.min(100,state.hp + 30);
 
 document.getElementById("gameArea").innerHTML = `
 <div class="reward-card">
@@ -310,7 +271,6 @@ document.getElementById("gameArea").innerHTML = `
 <p>💰 +50 Coins</p>
 <p>⭐ +100 XP</p>
 <p>❤️ +30 HP</p>
-<p>🏅 Badge Earned!</p>
 
 <button onclick="showStages()">⬅ Back to Stages</button>
 </div>
@@ -331,8 +291,6 @@ document.getElementById("gameArea").innerHTML = `
 <h2 style="color:red;">💀 Game Over</h2>
 <button onclick="showStages()">Restart</button>
 `;
-
-play("wrong");
 
 }
 
@@ -393,7 +351,21 @@ save();
 }
 
 /* =========================
-   SAVE SYSTEM
+   UI UPDATE
+========================= */
+
+function updateUI(){
+
+document.getElementById("xp").innerText = state.xp;
+document.getElementById("level").innerText = state.level;
+document.getElementById("coins").innerText = state.coins;
+
+document.getElementById("hpFill").style.width = state.hp + "%";
+
+}
+
+/* =========================
+   SAVE
 ========================= */
 
 function save(){
@@ -402,13 +374,5 @@ localStorage.setItem("xp",state.xp);
 localStorage.setItem("level",state.level);
 localStorage.setItem("coins",state.coins);
 localStorage.setItem("hp",state.hp);
-localStorage.setItem("badges",JSON.stringify(state.badges));
 
 }
-
-/* =========================
-   INIT
-========================= */
-
-updateUI();
-showStages();
