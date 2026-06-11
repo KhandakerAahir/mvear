@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR - Ultimate Learning Game</title>
+<title>MVEAR - Learning Adventure Game</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -23,14 +23,14 @@
 <div class="stat">🙂 <span id="avatar">🙂</span></div>
 <div class="stat">⭐ XP: <span id="xp">0</span></div>
 <div class="stat">💰 Coins: <span id="coins">0</span></div>
-<div class="stat">🏆 Lv: <span id="level">1</span></div>
+<div class="stat">🏆 Level: <span id="level">1</span></div>
 
 </div>
 
 </header>
 
 <!-- =========================
-   HEALTH BAR (NEW FEATURE ❤️)
+   HEALTH BAR ❤️
 ========================= -->
 
 <div style="width:90%;max-width:600px;margin:15px auto;text-align:left;">
@@ -44,17 +44,7 @@
 </div>
 
 <!-- =========================
-   ACTION BUTTONS
-========================= -->
-
-<div class="actions">
-
-<button onclick="location.reload()">🔄 Restart</button>
-
-</div>
-
-<!-- =========================
-   GAME TITLE
+   TITLE
 ========================= -->
 
 <h2 id="title">MVEAR Adventure</h2>
@@ -68,13 +58,13 @@
 <p id="result"></p>
 
 <!-- =========================
-   REWARD DISPLAY AREA (IMPORTANT)
+   REWARD DISPLAY AREA
 ========================= -->
 
 <div id="rewardBox"></div>
 
 <!-- =========================
-   SHOP SYSTEM
+   SHOP SYSTEM 🛒
 ========================= -->
 
 <hr>
@@ -90,7 +80,7 @@
 </div>
 
 <!-- =========================
-   ROCK PAPER SCISSORS
+   ROCK PAPER SCISSORS 🎮
 ========================= -->
 
 <hr>
@@ -104,6 +94,16 @@
 <button onclick="rps('scissors')">✂️ Scissors</button>
 
 </div>
+
+<!-- =========================
+   STAGE CELEBRATION (CONFETTI)
+========================= -->
+
+<div id="celebration" class="celebration hidden">
+  <h1>🎉 STAGE COMPLETED!</h1>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
 
 <!-- =========================
    SCRIPT
