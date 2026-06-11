@@ -1,6 +1,6 @@
 
 /* =========================
-   GAME STATE
+   STATE
 ========================= */
 
 const state = {
@@ -8,9 +8,8 @@ xp: +localStorage.getItem("xp") || 0,
 level: +localStorage.getItem("level") || 1,
 coins: +localStorage.getItem("coins") || 0,
 hp: +localStorage.getItem("hp") || 100,
-maxHp: 100,
 
-world: +localStorage.getItem("world") || 0,
+world: 0,
 qIndex: 0,
 
 streak: 0,
@@ -41,13 +40,14 @@ sounds[s].play();
 ========================= */
 
 const worlds = [
+
 {
 name:"🌱 Good Habits",
 questions:[
 {q:"Best morning habit?",options:["Wake early","Sleep late","Skip breakfast","Stay lazy"],a:"Wake early"},
 {q:"Discipline means?",options:["Consistency","Chaos","Fear","Luck"],a:"Consistency"},
-{q:"Healthy routine includes?",options:["Exercise","Overeating","No sleep","Stress"],a:"Exercise"},
-{q:"Good habit is?",options:["Reading","Smoking","Gaming all day","Waste time"],a:"Reading"},
+{q:"Healthy routine includes?",options:["Exercise","Junk food","No sleep","Stress"],a:"Exercise"},
+{q:"Good habit is?",options:["Reading","Smoking","Waste time","Laziness"],a:"Reading"},
 {q:"Success needs?",options:["Practice","Avoid work","Quit","Ignore"],a:"Practice"}
 ]
 },
@@ -58,7 +58,7 @@ questions:[
 {q:"Trees give?",options:["Oxygen","Plastic","Smoke","Noise"],a:"Oxygen"},
 {q:"Pollution caused by?",options:["Humans","Stars","Clouds","Rain"],a:"Humans"},
 {q:"We should save?",options:["Water","Fire","Dust","Smoke"],a:"Water"},
-{q:"Earth is?",options:["Precious","Useless","Dangerous","Fake"],a:"Precious"},
+{q:"Earth is?",options:["Precious","Useless","Fake","Dangerous"],a:"Precious"},
 {q:"Recycle means?",options:["Reuse","Burn","Throw","Destroy"],a:"Reuse"}
 ]
 },
@@ -68,7 +68,7 @@ name:"🧭 Responsibilities",
 questions:[
 {q:"Homework is?",options:["Duty","Option","Waste","Ignore"],a:"Duty"},
 {q:"Helping family is?",options:["Responsibility","Optional","Bad","Avoid"],a:"Responsibility"},
-{q:"Ignoring work is?",options:["Wrong","Good","Smart","Funny"],a:"Wrong"},
+{q:"Ignoring work is?",options:["Wrong","Good","Funny","Smart"],a:"Wrong"},
 {q:"Blaming others is?",options:["Bad","Good","Normal","Helpful"],a:"Bad"},
 {q:"Rules should be?",options:["Followed","Ignored","Broken","Skipped"],a:"Followed"}
 ]
@@ -112,7 +112,7 @@ name:"🧠 Digital Safety",
 questions:[
 {q:"Strong password is?",options:["Safe","Weak","Open","Easy"],a:"Safe"},
 {q:"Unknown links should be?",options:["Avoided","Clicked","Shared","Trusted"],a:"Avoided"},
-{q:"Personal info should be?",options:["Protected","Shared","Ignored","Posted"],a:"Protected"},
+{q:"Personal info should be?",options:["Protected","Shared","Posted","Ignored"],a:"Protected"},
 {q:"Cyber safety is?",options:["Important","Useless","Fake","Optional"],a:"Important"},
 {q:"Strangers online?",options:["Avoid","Trust","Meet","Follow"],a:"Avoid"}
 ]
@@ -128,6 +128,7 @@ questions:[
 {q:"Junk food is?",options:["Unhealthy","Healthy","Safe","Good"],a:"Unhealthy"}
 ]
 }
+
 ];
 
 /* =========================
@@ -146,6 +147,46 @@ document.getElementById("hpFill").style.width = state.hp + "%";
 }
 
 /* =========================
+   SHOW STAGES (MENU)
+========================= */
+
+function showStages(){
+
+document.getElementById("title").innerText = "🌍 Select Stage";
+
+let html = `<div class="stage-grid">`;
+
+worlds.forEach((w,i)=>{
+
+html += `
+<button class="stage-btn" onclick="startStage(${i})">
+${w.name}
+</button>
+`;
+
+});
+
+html += `</div>`;
+
+document.getElementById("gameArea").innerHTML = html;
+
+}
+
+/* =========================
+   START STAGE
+========================= */
+
+function startStage(i){
+
+state.world = i;
+state.qIndex = 0;
+state.streak = 0;
+
+loadQuestion();
+
+}
+
+/* =========================
    LOAD QUESTION
 ========================= */
 
@@ -154,11 +195,10 @@ function loadQuestion(){
 const world = worlds[state.world];
 
 if(!world){
-gameComplete();
+showStages();
 return;
 }
 
-/* 5 question limit safety */
 if(state.qIndex >= 5){
 stageComplete();
 return;
@@ -166,22 +206,21 @@ return;
 
 const q = world.questions[state.qIndex];
 
+document.getElementById("title").innerText = world.name;
+
 document.getElementById("gameArea").innerHTML = `
 <div class="quiz-container">
 
-<div class="question-box" id="qbox"></div>
+<div class="question-box">${q.q}</div>
 
-<div class="answer-box" id="abox"></div>
+<div class="answer-box" id="answers"></div>
 
 </div>
 `;
 
-document.getElementById("qbox").innerText = q.q;
-
-/* shuffle options */
 let options = [...q.options].sort(()=>Math.random()-0.5);
 
-const box = document.getElementById("abox");
+const box = document.getElementById("answers");
 
 options.forEach(opt=>{
 
@@ -216,35 +255,23 @@ state.streak++;
 play("wrong");
 
 state.streak = 0;
-state.hp -= 25;
+state.hp -= 20;
 
 if(state.hp <= 0){
 state.hp = 0;
 gameOver();
-}
-}
-
-nextQuestion();
+return;
 }
 
-/* =========================
-   NEXT QUESTION
-========================= */
-
-function nextQuestion(){
+}
 
 state.qIndex++;
 
-if(state.streak >= 5){
-state.xp += 10;
-state.coins += 10;
-}
-
 updateLevel();
-save();
 updateUI();
+save();
 
-setTimeout(loadQuestion,200);
+setTimeout(loadQuestion,300);
 
 }
 
@@ -264,48 +291,33 @@ state.level++;
 }
 
 /* =========================
-   STAGE COMPLETE + REWARD
+   STAGE COMPLETE
 ========================= */
 
 function stageComplete(){
 
 play("complete");
 
-/* reward */
 state.coins += 50;
 state.xp += 100;
-state.hp = Math.min(100,state.hp + 30);
+state.hp = Math.min(100, state.hp + 30);
 
-/* badge */
-state.badges.push("🏆 "+worlds[state.world].name);
+state.badges.push(worlds[state.world].name);
 
 document.getElementById("gameArea").innerHTML = `
 <div class="reward-card">
-<h2>🎉 STAGE COMPLETED!</h2>
+<h2>🎉 Stage Completed!</h2>
 <p>💰 +50 Coins</p>
 <p>⭐ +100 XP</p>
 <p>❤️ +30 HP</p>
-<p>🏅 Badge Unlocked!</p>
+<p>🏅 Badge Earned!</p>
 
-<button onclick="nextWorld()">▶ Continue</button>
+<button onclick="showStages()">⬅ Back to Stages</button>
 </div>
 `;
 
 save();
 updateUI();
-
-}
-
-/* =========================
-   NEXT WORLD
-========================= */
-
-function nextWorld(){
-
-state.world++;
-state.qIndex = 0;
-
-loadQuestion();
 
 }
 
@@ -317,7 +329,7 @@ function gameOver(){
 
 document.getElementById("gameArea").innerHTML = `
 <h2 style="color:red;">💀 Game Over</h2>
-<button onclick="location.reload()">Restart</button>
+<button onclick="showStages()">Restart</button>
 `;
 
 play("wrong");
@@ -330,34 +342,24 @@ play("wrong");
 
 function buyItem(item){
 
-if(item==="life"){
-
-if(state.coins < 30) return;
+if(item==="life" && state.coins>=30){
 state.coins -= 30;
 state.hp = Math.min(100,state.hp + 30);
-
 }
 
-if(item==="skip"){
-
-if(state.coins < 20) return;
+if(item==="skip" && state.coins>=20){
 state.coins -= 20;
 state.qIndex++;
-
 loadQuestion();
-
 }
 
-if(item==="hint"){
-
-if(state.coins < 15) return;
+if(item==="hint" && state.coins>=15){
 state.coins -= 15;
 alert("💡 Think carefully!");
-
 }
 
-save();
 updateUI();
+save();
 
 }
 
@@ -400,7 +402,6 @@ localStorage.setItem("xp",state.xp);
 localStorage.setItem("level",state.level);
 localStorage.setItem("coins",state.coins);
 localStorage.setItem("hp",state.hp);
-localStorage.setItem("world",state.world);
 localStorage.setItem("badges",JSON.stringify(state.badges));
 
 }
@@ -410,4 +411,4 @@ localStorage.setItem("badges",JSON.stringify(state.badges));
 ========================= */
 
 updateUI();
-loadQuestion();
+showStages();
