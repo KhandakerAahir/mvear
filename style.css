@@ -22,10 +22,10 @@ padding-bottom:80px;
 
 background:linear-gradient(-45deg,#0b1220,#1f2937,#111827,#0b1220);
 background-size:400% 400%;
-animation:bg 12s ease infinite;
+animation:bgMove 12s ease infinite;
 }
 
-@keyframes bg{
+@keyframes bgMove{
 0%{background-position:0% 50%;}
 50%{background-position:100% 50%;}
 100%{background-position:0% 50%;}
@@ -175,7 +175,6 @@ justify-content:center;
 
 font-size:1.5rem;
 font-weight:bold;
-
 min-height:180px;
 }
 
@@ -192,7 +191,7 @@ gap:12px;
 }
 
 /* =========================
-   MCQ BUTTONS
+   MCQ BUTTONS (A/B/C/D STYLE)
 ========================= */
 
 .option-btn{
@@ -201,18 +200,23 @@ border:none;
 border-radius:12px;
 cursor:pointer;
 font-weight:bold;
-background:#22c55e;
 color:white;
 transition:.2s;
+background:#22c55e;
+text-align:left;
 }
 
 .option-btn:hover{
 transform:scale(1.03);
 }
 
-/* different colors */
-.option-btn:nth-child(2){
+/* different colors for variety */
+.option-btn:nth-child(1){
 background:#3b82f6;
+}
+
+.option-btn:nth-child(2){
+background:#22c55e;
 }
 
 .option-btn:nth-child(3){
