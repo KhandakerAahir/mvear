@@ -3,14 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Quiz RPG Boss Fight</title>
+
+<title>MVEAR Learning Game</title>
+
 <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+<!-- =========================
+   HEADER
+========================= -->
+
 <header class="header">
-<h1>🌍 QUIZ RPG</h1>
+<h1>🌍 MVEAR</h1>
 
 <div class="stats">
 <div class="stat">⭐ XP: <span id="xp">0</span></div>
@@ -19,28 +25,68 @@
 </div>
 </header>
 
-<div style="max-width:600px;margin:10px auto;">
-<p>❤️ HP</p>
-<div class="hp-bar"><div id="hpFill" class="hp-fill"></div></div>
+<!-- =========================
+   HEALTH BAR
+========================= -->
+
+<div style="max-width:600px;margin:15px auto;text-align:left;">
+<p>❤️ Health</p>
+<div class="hp-bar">
+<div id="hpFill" class="hp-fill"></div>
 </div>
+</div>
+
+<!-- =========================
+   TITLE
+========================= -->
 
 <h2 id="title">Loading...</h2>
 
+<!-- =========================
+   MAIN GAME AREA (IMPORTANT FIX)
+========================= -->
+
 <div id="gameArea"></div>
+
+<p id="result"></p>
+
+<!-- =========================
+   SHOP
+========================= -->
 
 <hr>
 
 <h3>🛒 Shop</h3>
-<button onclick="buyItem('life')">❤️ Heal</button>
-<button onclick="buyItem('skip')">⏭ Skip</button>
-<button onclick="buyItem('hint')">💡 Hint</button>
+
+<button onclick="buyItem('life')">❤️ Heal (30 coins)</button>
+<button onclick="buyItem('skip')">⏭ Skip (20 coins)</button>
+<button onclick="buyItem('hint')">💡 Hint (15 coins)</button>
+
+<!-- =========================
+   RPS GAME
+========================= -->
 
 <hr>
 
-<h3>🎮 RPS</h3>
+<h3>🎮 Rock Paper Scissors</h3>
+
 <button onclick="rps('rock')">🪨 Rock</button>
 <button onclick="rps('paper')">📄 Paper</button>
 <button onclick="rps('scissors')">✂️ Scissors</button>
+
+<!-- =========================
+   CONFETTI + CELEBRATION
+========================= -->
+
+<div id="celebration" class="celebration hidden">
+<h1>🎉 STAGE COMPLETED!</h1>
+</div>
+
+<canvas id="confettiCanvas"></canvas>
+
+<!-- =========================
+   SCRIPT
+========================= -->
 
 <script src="script.js"></script>
 
