@@ -73,13 +73,13 @@ header p {
     font-weight: bold;
 }
 
-/* ================= STAGE BUTTONS ================= */
+/* ================= STAGE MENU ================= */
 #stageMenu {
     display: grid;
     gap: 10px;
 }
 
-/* ================= BUTTONS GLOBAL ================= */
+/* ================= BUTTON BASE ================= */
 button {
     cursor: pointer;
     border: none;
@@ -88,7 +88,7 @@ button {
     transition: 0.2s ease;
 }
 
-/* Stage buttons */
+/* ================= STAGE BUTTONS ================= */
 #stageMenu button {
     padding: 14px;
     font-size: 16px;
@@ -113,7 +113,7 @@ button {
     margin-top: 10px;
 }
 
-/* MCQ buttons */
+/* MCQ BUTTONS */
 .mcq-grid button {
     padding: 14px;
     font-size: 16px;
@@ -171,7 +171,7 @@ button {
     }
 }
 
-/* ================= RESULT SCREEN ================= */
+/* ================= OVERLAY ================= */
 .overlay {
     position: fixed;
     inset: 0;
@@ -179,17 +179,11 @@ button {
     display: flex;
     justify-content: center;
     align-items: center;
-    animation: overlayFade 0.25s ease;
     z-index: 999;
 }
 
 .hidden {
     display: none;
-}
-
-@keyframes overlayFade {
-    from { opacity: 0; }
-    to { opacity: 1; }
 }
 
 /* ================= RESULT CARD ================= */
@@ -216,17 +210,23 @@ button {
 
 /* ================= STARS ================= */
 #stars {
-    font-size: 28px;
+    font-size: 30px;
     color: gold;
     margin-top: 10px;
 }
 
-/* ================= BUTTON GLOBAL EFFECT ================= */
+/* ================= GLOBAL BUTTON EFFECT ================= */
 button:active {
     transform: scale(0.95);
 }
 
-/* ================= MOBILE ================= */
+/* ================= DISABLED BUTTON ================= */
+button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* ================= MOBILE RESPONSIVE ================= */
 @media (max-width: 600px) {
 
     header h1 {
