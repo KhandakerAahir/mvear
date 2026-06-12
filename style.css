@@ -29,6 +29,7 @@ body {
     background: var(--bg);
     color: var(--text);
     text-align: center;
+    line-height: 1.4;
 }
 
 /* =========================
@@ -42,7 +43,11 @@ header {
 
 header h1 {
     font-size: 26px;
-    margin-bottom: 6px;
+}
+
+header p {
+    color: #aaa;
+    margin-top: 5px;
 }
 
 /* =========================
@@ -55,7 +60,7 @@ header h1 {
 }
 
 /* =========================
-   CARD BOX
+   CARD
 ========================= */
 .card {
     background: var(--card);
@@ -66,26 +71,20 @@ header h1 {
 }
 
 /* =========================
-   STAGE TEXT
+   QUESTION BOX
 ========================= */
-#stageInfo {
-    margin: 10px 0;
-    font-size: 16px;
-    color: #aaa;
+.game-box {
+    min-height: 180px;
 }
 
-/* =========================
-   QUESTION TEXT
-========================= */
-.game-box #question {
-    font-size: 26px;
+#question {
+    font-size: 24px;
     font-weight: bold;
-    margin-top: 20px;
-    line-height: 1.5;
+    margin-top: 15px;
 }
 
 /* =========================
-   MCQ BUTTONS (IMPORTANT)
+   MCQ GRID
 ========================= */
 .mcq-grid {
     display: grid;
@@ -94,7 +93,9 @@ header h1 {
     margin-top: 20px;
 }
 
-/* BUTTON STYLE */
+/* =========================
+   MCQ BUTTONS
+========================= */
 .mcq-grid button {
     padding: 16px;
     font-size: 18px;
@@ -107,26 +108,26 @@ header h1 {
     transition: 0.2s;
 }
 
-/* HOVER EFFECT */
 .mcq-grid button:hover {
     transform: scale(1.03);
     opacity: 0.9;
 }
 
-/* ACTIVE CLICK EFFECT */
 .mcq-grid button:active {
-    transform: scale(0.98);
+    transform: scale(0.97);
 }
 
 /* =========================
-   ANSWER COLORS (JS USE)
+   ANSWER STATES (JS CONTROLLED)
 ========================= */
 .correct {
     background: var(--correct) !important;
+    color: white;
 }
 
 .wrong {
     background: var(--wrong) !important;
+    color: white;
 }
 
 /* =========================
@@ -134,7 +135,6 @@ header h1 {
 ========================= */
 button {
     padding: 12px 18px;
-    margin-top: 10px;
     font-size: 16px;
     font-weight: bold;
     border: none;
@@ -142,6 +142,7 @@ button {
     background: var(--primary);
     color: white;
     cursor: pointer;
+    margin-top: 10px;
 }
 
 button:hover {
@@ -149,7 +150,7 @@ button:hover {
 }
 
 /* =========================
-   MOBILE SUPPORT
+   MOBILE RESPONSIVE
 ========================= */
 @media (max-width: 600px) {
 
@@ -157,7 +158,7 @@ button:hover {
         font-size: 22px;
     }
 
-    .game-box #question {
+    #question {
         font-size: 20px;
     }
 
