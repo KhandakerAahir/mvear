@@ -1,99 +1,79 @@
 const state = {
-    stage: 0,
+    stage: null,
     index: 0,
     hp: 100,
     points: 0,
-    xp: 0,
-    level: 1,
+    locked: false,
     combo: 0,
     bestCombo: 0,
-    locked: false,
     time: 15,
     timer: null
 };
 
-/* ================= STAGES ================= */
+/* ===================== STAGES ===================== */
 const stages = [
 {
-name: "Good Habits",
+name: "Good Habits 😄",
 questions: [
-{q:"Brush teeth?", options:["Once","Twice","Never","Sometimes"], a:1},
-{q:"Breakfast is?", options:["Bad","Good","Optional","Useless"], a:1}
+{ q: "Brush teeth?", options: ["Once", "Twice", "Never", "Sometimes"], a: 1 },
+{ q: "Breakfast is?", options: ["Bad", "Good", "Optional", "Useless"], a: 1 }
 ]
 },
 {
-name: "Awareness",
+name: "Awareness ⚠️",
 questions: [
-{q:"Fire is?", options:["Safe","Dangerous","Toy","Food"], a:1},
-{q:"Traffic rules?", options:["Ignore","Follow","Break","Optional"], a:1}
+{ q: "Fire is?", options: ["Safe", "Dangerous", "Toy", "Food"], a: 1 },
+{ q: "Traffic rules?", options: ["Ignore", "Follow", "Break", "Skip"], a: 1 }
 ]
 }
 ];
 
-/* ================= SOUND ================= */
-const sound = {
-    correct: new Audio("correct.mp3"),
-    wrong: new Audio("wrong.mp3")
-};
-
-/* ================= START GAME ================= */
+/* ===================== START GAME ===================== */
 function startGame() {
-    loadSave();
-
-    state.stage = 0;
+    state.stage = null;
     state.index = 0;
     state.hp = 100;
     state.points = 0;
     state.combo = 0;
-    state.time = 15;
+    state.bestCombo = 0;
 
-    document.getElementById("resultScreen").classList.add("hidden");
+    clearInterval(state.timer);
+
+    document.getElementById("resultScreen")?.classList.add("hidden");
 
     updateUI();
     showStages();
 }
 
-/* ================= STAGE MENU ================= */
+/* ===================== SHOW STAGES ===================== */
 function showStages() {
-    document.getElementById("stageTitle").innerText = "Choose Stage";
+    const menu = document.getElementById("stageMenu");
+    if (!menu) return;
 
-    document.getElementById("stageMenu").innerHTML =
-    stages.map((s, i) => {
-        let unlocked = i <= getUnlockedStage();
-        return `
-        <button ${!unlocked ? "disabled" : ""} onclick="selectStage(${i})">
-            ${s.name} ${unlocked ? "" : "🔒"}
-        </button>`;
-    }).join("");
+    document.getElementById("stageTitle").innerText = "🎮 Choose Your Stage";
+
+    menu.innerHTML = stages.map((s, i) =>
+        `<button onclick="selectStage(${i})">${s.name}</button>`
+    ).join("");
 
     document.getElementById("question").innerHTML =
-        "Select a stage to begin";
+        "👉 Select a stage to start";
 }
 
-/* ================= UNLOCK SYSTEM ================= */
-function getUnlockedStage() {
-    return parseInt(localStorage.getItem("unlock") || "0");
-}
-
-function unlockNextStage() {
-    let current = getUnlockedStage();
-    if (state.stage >= current) {
-        localStorage.setItem("unlock", state.stage + 1);
-    }
-}
-
-/* ================= SELECT STAGE ================= */
+/* ===================== SELECT STAGE ===================== */
 function selectStage(i) {
     state.stage = i;
     state.index = 0;
+    state.hp = Math.max(state.hp, 0);
     state.combo = 0;
-    state.time = 15;
 
     loadQuestion();
 }
 
-/* ================= LOAD QUESTION ================= */
+/* ===================== LOAD QUESTION ===================== */
 function loadQuestion() {
+    if (state.stage === null) return;
+
     const stage = stages[state.stage];
     const q = stage.questions[state.index];
 
@@ -104,28 +84,33 @@ function loadQuestion() {
     startTimer();
 
     const box = document.getElementById("question");
+
     box.classList.remove("fade");
     void box.offsetWidth;
     box.classList.add("fade");
 
     box.innerHTML = `
-        <div><b>${q.q}</b></div>
+        <div class="q-text">${q.q}</div>
+
         <div class="mcq-grid">
             ${q.options.map((o, i) =>
                 `<button onclick="answer(${i})">${o}</button>`
             ).join("")}
         </div>
+
         <p>⏱ Time: <span id="time">${state.time}</span>s</p>
     `;
 
     updateUI();
 }
 
-/* ================= TIMER ================= */
+/* ===================== TIMER ===================== */
 function startTimer() {
     state.timer = setInterval(() => {
         state.time--;
-        document.getElementById("time").innerText = state.time;
+
+        const t = document.getElementById("time");
+        if (t) t.innerText = state.time;
 
         if (state.time <= 0) {
             clearInterval(state.timer);
@@ -134,14 +119,17 @@ function startTimer() {
     }, 1000);
 }
 
-/* ================= TIMEOUT ================= */
+/* ===================== TIMEOUT ===================== */
 function timeout() {
     state.hp -= 10;
     state.combo = 0;
+
+    if (state.hp <= 0) return gameOver();
+
     nextQuestion();
 }
 
-/* ================= ANSWER SYSTEM ================= */
+/* ===================== ANSWER ===================== */
 function answer(i) {
     if (state.locked) return;
     state.locked = true;
@@ -152,92 +140,111 @@ function answer(i) {
     const q = stage.questions[state.index];
     const buttons = document.querySelectorAll(".mcq-grid button");
 
-    buttons[q.a].classList.add("correct");
+    buttons[q.a]?.classList.add("correct");
 
     if (i === q.a) {
         state.points += 10;
-        state.xp += 10;
         state.combo++;
-        sound.correct.play();
     } else {
-        buttons[i].classList.add("wrong");
+        buttons[i]?.classList.add("wrong");
         state.hp -= 10;
         state.combo = 0;
-        sound.wrong.play();
     }
 
     if (state.combo > state.bestCombo) {
         state.bestCombo = state.combo;
     }
 
-    checkLevelUp();
     updateUI();
 
     if (state.hp <= 0) {
-        setTimeout(gameOver, 600);
+        setTimeout(gameOver, 500);
         return;
     }
 
-    setTimeout(nextQuestion, 700);
+    setTimeout(nextQuestion, 600);
 }
 
-/* ================= LEVEL SYSTEM ================= */
-function checkLevelUp() {
-    if (state.xp >= 50) {
-        state.level++;
-        state.xp = 0;
-    }
-}
-
-/* ================= NEXT QUESTION ================= */
+/* ===================== NEXT QUESTION ===================== */
 function nextQuestion() {
     state.index++;
-    state.locked = false;
 
-    if (state.index >= stages[state.stage].questions.length) {
-        showResult();
-        return;
+    if (state.stage === null) return;
+
+    const stage = stages[state.stage];
+
+    if (state.index >= stage.questions.length) {
+        return showResult();
     }
 
     loadQuestion();
 }
 
-/* ================= RESULT SCREEN ================= */
+/* ===================== RESULT SCREEN ===================== */
 function showResult() {
-    unlockNextStage();
+    clearInterval(state.timer);
 
-    document.getElementById("resultScreen").classList.remove("hidden");
+    const screen = document.getElementById("resultScreen");
+    screen.classList.remove("hidden");
+
+    const stageName = stages[state.stage].name;
 
     document.getElementById("resultTitle").innerText =
-        stages[state.stage].name + " Complete 🎉";
+        `${stageName} Complete 🎉`;
 
     let stars = 1;
     if (state.points >= 20) stars = 2;
     if (state.points >= 40) stars = 3;
 
     document.getElementById("resultScore").innerText =
-        `Score: ${state.points} | Level: ${state.level} | Combo: ${state.bestCombo}`;
+        `Score: ${state.points} | Combo: ${state.bestCombo}`;
 
-    document.getElementById("stars").innerText = "⭐".repeat(stars);
+    document.getElementById("stars").innerText =
+        "⭐".repeat(stars);
 
+    unlockStage();
     saveGame();
 }
 
-/* ================= GAME OVER ================= */
+/* ===================== GAME OVER ===================== */
 function gameOver() {
-    document.getElementById("resultScreen").classList.remove("hidden");
+    clearInterval(state.timer);
 
-    document.getElementById("resultTitle").innerText = "💀 Game Over";
+    const screen = document.getElementById("resultScreen");
+    screen.classList.remove("hidden");
+
+    document.getElementById("resultTitle").innerText =
+        "💀 Game Over";
 
     document.getElementById("resultScore").innerText =
-        `Score: ${state.points} | Level: ${state.level}`;
+        `Score: ${state.points} | Best Combo: ${state.bestCombo}`;
 
     document.getElementById("stars").innerText = "";
 }
 
-/* ================= NEXT STAGE BUTTON ================= */
+/* ===================== UNLOCK SYSTEM ===================== */
+function unlockStage() {
+    let unlocked = parseInt(localStorage.getItem("unlock") || "0");
+
+    if (state.stage >= unlocked) {
+        localStorage.setItem("unlock", state.stage + 1);
+    }
+}
+
+/* ===================== UI ===================== */
+function updateUI() {
+    const hp = document.getElementById("hpText");
+    const points = document.getElementById("points");
+    const bar = document.getElementById("hpBar");
+
+    if (hp) hp.innerText = Math.max(0, state.hp);
+    if (points) points.innerText = state.points;
+    if (bar) bar.style.width = Math.max(0, state.hp) + "%";
+}
+
+/* ===================== NEXT STAGE BUTTON ===================== */
 function nextStage() {
-    document.getElementById("resultScreen").classList.add("hidden");
+    document.getElementById("resultScreen")?.classList.add("hidden");
 
     if (state.stage < stages.length - 1) {
         state.stage++;
@@ -252,25 +259,14 @@ function nextStage() {
     loadQuestion();
 }
 
-/* ================= UI UPDATE ================= */
-function updateUI() {
-    document.getElementById("hpText").innerText = state.hp;
-    document.getElementById("points").innerText = state.points;
-    document.getElementById("hpBar").style.width = state.hp + "%";
-}
-
-/* ================= SAVE SYSTEM ================= */
+/* ===================== SAVE ===================== */
 function saveGame() {
     localStorage.setItem("mcq_save", JSON.stringify({
-        unlock: getUnlockedStage(),
-        level: state.level
+        points: state.points,
+        hp: state.hp,
+        combo: state.bestCombo
     }));
 }
 
-function loadSave() {
-    const data = JSON.parse(localStorage.getItem("mcq_save") || "{}");
-    if (data.level) state.level = data.level;
-}
-
-/* ================= START ================= */
+/* ===================== INIT ===================== */
 startGame();
