@@ -1,6 +1,6 @@
 
 /* =========================
-   ROOT THEME
+   THEME COLORS
 ========================= */
 :root {
     --bg: #0f141b;
@@ -11,6 +11,8 @@
     --xp: #4aa3ff;
     --coin: #f1c40f;
     --hp: #2ecc71;
+
+    --danger: #e74c3c;
 }
 
 /* =========================
@@ -75,7 +77,7 @@ header {
     margin-top: 10px;
 }
 
-/* stage buttons */
+/* stage button */
 .stage {
     background: #243042;
     padding: 14px;
@@ -91,7 +93,7 @@ header {
 }
 
 /* =========================
-   QUESTION AREA
+   QUESTION TEXT
 ========================= */
 .game-box #question {
     font-size: 24px;
@@ -100,19 +102,20 @@ header {
 }
 
 /* =========================
-   ANSWER BUTTONS
+   MCQ ANSWER BUTTONS
 ========================= */
 .answer-btn {
-    font-size: 18px;
-    padding: 16px;
-    margin: 8px 0;
+    display: block;
     width: 100%;
-    border-radius: 12px;
-    border: none;
-    cursor: pointer;
-    background: #4aa3ff;
-    color: white;
+    margin: 8px 0;
+    padding: 16px;
+    font-size: 18px;
     font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--xp);
+    color: white;
     transition: 0.2s;
 }
 
@@ -126,7 +129,7 @@ header {
 }
 
 /* =========================
-   PROGRESS BARS SYSTEM
+   PROGRESS SYSTEM (XP / COIN / HP)
 ========================= */
 .stats-box {
     display: flex;
@@ -140,7 +143,7 @@ header {
     font-weight: bold;
 }
 
-/* background bar */
+/* BAR BACKGROUND */
 .bar-bg {
     width: 100%;
     height: 18px;
@@ -151,7 +154,7 @@ header {
 }
 
 /* XP BAR */
-.bar.xp {
+#xpBar {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #4aa3ff, #1e90ff);
@@ -159,7 +162,7 @@ header {
 }
 
 /* COIN BAR */
-.bar.coin {
+#coinBar {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #f1c40f, #f39c12);
@@ -167,7 +170,7 @@ header {
 }
 
 /* HP BAR */
-.bar.hp {
+#hpBar {
     height: 100%;
     width: 0%;
     background: linear-gradient(90deg, #2ecc71, #27ae60);
@@ -175,7 +178,7 @@ header {
 }
 
 /* =========================
-   PROGRESS BAR (STAGES)
+   STAGE PROGRESS BAR
 ========================= */
 .progress {
     width: 100%;
@@ -185,11 +188,11 @@ header {
     overflow: hidden;
 }
 
-.bar {
+#bar {
     height: 100%;
     width: 0%;
-    transition: width 0.4s ease;
     background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.4s ease;
 }
 
 /* =========================
@@ -209,12 +212,12 @@ header {
         grid-template-columns: 1fr;
     }
 
+    .game-box #question {
+        font-size: 20px;
+    }
+
     .answer-btn {
         font-size: 16px;
         padding: 14px;
-    }
-
-    .game-box #question {
-        font-size: 20px;
     }
 }
