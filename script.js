@@ -2,44 +2,24 @@
 /* =========================
    GAME STATE
 ========================= */
-let state = {
-    currentStage: 0,
-    currentQ: 0,
+const state = {
+    stage: 0,
+    index: 0,
     locked: false
 };
 
 /* =========================
-   STAGES + MCQ QUESTIONS
+   MCQ DATA
 ========================= */
 const stages = [
 {
 name: "Good Habits",
 questions: [
-{
-q: "Brush teeth how many times a day?",
-options: ["Once", "Twice", "Never", "Sometimes"],
-a: 1
-},
-{
-q: "Skipping breakfast is:",
-options: ["Good", "Bad", "Optional", "Best"],
-a: 1
-},
-{
-q: "Clean room means:",
-options: ["Good habit", "Bad habit", "Danger", "None"],
-a: 0
-},
-{
-q: "Sleeping late is:",
-options: ["Healthy", "Unhealthy", "Best", "Required"],
-a: 1
-},
-{
-q: "Washing hands helps:",
-options: ["Spread germs", "Remove germs", "Increase dirt", "Nothing"],
-a: 1
-}
+{ q: "Brush teeth how many times a day?", options: ["Once", "Twice", "Never", "Sometimes"], a: 1 },
+{ q: "Skipping breakfast is:", options: ["Good", "Bad", "Optional", "Best"], a: 1 },
+{ q: "Clean room means:", options: ["Good habit", "Bad habit", "Danger", "None"], a: 0 },
+{ q: "Sleeping late is:", options: ["Healthy", "Unhealthy", "Best", "Required"], a: 1 },
+{ q: "Washing hands helps:", options: ["Spread germs", "Remove germs", "Increase dirt", "Nothing"], a: 1 }
 ]
 }
 ];
@@ -48,77 +28,89 @@ a: 1
    START GAME
 ========================= */
 function startGame() {
-    state.currentStage = 0;
-    state.currentQ = 0;
+    state.stage = 0;
+    state.index = 0;
     loadQuestion();
 }
 
 /* =========================
-   LOAD QUESTION
+   LOAD QUESTION (SAFE)
 ========================= */
 function loadQuestion() {
 
-    const stage = stages[state.currentStage];
-    const q = stage.questions[state.currentQ];
+    const stage = stages[state.stage];
+
+    if (!stage) return;
+
+    const q = stage.questions[state.index];
+
+    if (!q) return;
 
     state.locked = false;
 
-    document.getElementById("stageTitle").innerText =
-        "Stage: " + stage.name;
+    document.getElementById("stageTitle").textContent =
+        `Stage: ${stage.name}`;
 
     document.getElementById("question").innerHTML = `
         <div class="q-text">${q.q}</div>
 
         <div class="mcq-grid">
-            <button onclick="answer(0)">${q.options[0]}</button>
-            <button onclick="answer(1)">${q.options[1]}</button>
-            <button onclick="answer(2)">${q.options[2]}</button>
-            <button onclick="answer(3)">${q.options[3]}</button>
+            ${q.options.map((opt, i) =>
+                `<button onclick="answer(${i})">${opt}</button>`
+            ).join("")}
         </div>
     `;
 }
 
 /* =========================
-   ANSWER SYSTEM (FIXED MCQ CORE)
+   ANSWER SYSTEM (BUG-FREE CORE)
 ========================= */
 function answer(i) {
 
     if (state.locked) return;
     state.locked = true;
 
-    const stage = stages[state.currentStage];
-    const q = stage.questions[state.currentQ];
+    const stage = stages[state.stage];
+    const q = stage.questions[state.index];
 
     const buttons = document.querySelectorAll(".mcq-grid button");
 
-    // highlight correct
+    if (!q || !buttons.length) return;
+
+    // show correct
     buttons[q.a].classList.add("correct");
 
-    // wrong answer highlight
+    // show wrong
     if (i !== q.a) {
         buttons[i].classList.add("wrong");
     }
 
-    // delay before next question
-    setTimeout(() => {
+    setTimeout(nextQuestion, 800);
+}
 
-        state.currentQ++;
+/* =========================
+   NEXT QUESTION FLOW (SAFE)
+========================= */
+function nextQuestion() {
 
-        // stage finished
-        if (state.currentQ >= stage.questions.length) {
+    const stage = stages[state.stage];
 
-            state.currentStage++;
-            state.currentQ = 0;
+    if (!stage) return;
 
-            // game finished
-            if (state.currentStage >= stages.length) {
-                document.getElementById("question").innerHTML =
-                    "<h2>🎉 ALL STAGES COMPLETED!</h2>";
-                return;
-            }
+    state.index++;
+
+    // stage complete
+    if (state.index >= stage.questions.length) {
+        state.stage++;
+        state.index = 0;
+
+        // game complete
+        if (state.stage >= stages.length) {
+            document.getElementById("question").innerHTML =
+                "<h2>🎉 ALL STAGES COMPLETED</h2>";
+            return;
         }
+    }
 
-        loadQuestion();
-
-    }, 900);
+    loadQuestion();
 }
