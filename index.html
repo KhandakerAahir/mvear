@@ -11,37 +11,35 @@
 <body>
 
 <header>
-<h1>🎮 MCQ ULTIMATE GAME</h1>
-<p>8 Stages • Timer • XP • Coins • HP System</p>
+    <h1>🎮 MCQ ULTIMATE GAME</h1>
+    <p>Choose a stage and start your challenge 🚀</p>
 </header>
 
-<!-- GAME STATS -->
+<!-- GAME CONTAINER -->
 <div class="container">
 
+    <!-- STATS DISPLAY -->
     <div class="card stats">
-        <div>⭐ XP: <span id="xp">0</span></div>
-        <div>💰 Coins: <span id="coins">0</span></div>
         <div>❤️ HP: <span id="hp">100</span></div>
+        <div>⭐ Points: <span id="points">0</span></div>
     </div>
 
     <!-- START BUTTON -->
     <div class="card">
-        <h2>Start Your Journey</h2>
-        <button onclick="startGame()">▶ Start Game</button>
+        <h2>Start Game</h2>
+        <button onclick="startGame()">▶ Start / Reset</button>
     </div>
 
-    <!-- STAGE INFO -->
+    <!-- STAGE TITLE -->
     <div class="card">
-        <h2 id="stageTitle">Stage Not Started</h2>
+        <h2 id="stageTitle">🎮 Ready to Play</h2>
     </div>
 
-    <!-- QUESTION BOX -->
+    <!-- QUESTION AREA -->
     <div class="card game-box">
-
         <div id="question">
-            <h3>Click start to begin MCQ challenge</h3>
+            <h3>Click Start to choose a stage 🎯</h3>
         </div>
-
     </div>
 
 </div>
