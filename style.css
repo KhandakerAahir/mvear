@@ -1,221 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVEAR PRO MCQ GAME</title>
 
-/* =========================
-   GLOBAL THEME
-========================= */
-:root {
-    --bg: #0f141b;
-    --card: #1b2430;
-    --text: #e6e6e6;
-    --muted: #a7b0bd;
+<link rel="stylesheet" href="style.css">
+</head>
 
-    --xp: #4aa3ff;
-    --coin: #f1c40f;
-    --hp: #2ecc71;
-}
+<body>
 
-/* =========================
-   RESET
-========================= */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+<header>
+<h2>🌍 MVEAR PRO MCQ GAME</h2>
 
-/* =========================
-   BODY
-========================= */
-body {
-    font-family: Arial, sans-serif;
-    background: var(--bg);
-    color: var(--text);
-    text-align: center;
-    line-height: 1.4;
-}
+<!-- STATS -->
+<div class="stats-box">
 
-/* =========================
-   HEADER
-========================= */
-header {
-    background: #121a24;
-    padding: 18px;
-    border-bottom: 1px solid #2a3442;
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+  <div class="stat">
+    ⭐ Level: <span id="level">1</span>
+    <div class="bar-bg"><div id="xpBar"></div></div>
+  </div>
 
-/* =========================
-   CONTAINER
-========================= */
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 15px;
-}
+  <div class="stat">
+    💰 Coins: <span id="coins">0</span>
+    <div class="bar-bg"><div id="coinBar"></div></div>
+  </div>
 
-/* =========================
-   CARDS
-========================= */
-.card {
-    background: var(--card);
-    padding: 16px;
-    margin: 12px 0;
-    border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-}
+  <div class="stat">
+    ❤️ Health: <span id="hp">100</span>
+    <div class="bar-bg"><div id="hpBar"></div></div>
+  </div>
 
-/* =========================
-   STAGE GRID
-========================= */
-.stage-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 12px;
-    margin-top: 10px;
-}
+</div>
+</header>
 
-/* stage box */
-.stage {
-    background: #243042;
-    padding: 14px;
-    border-radius: 12px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: 0.2s;
-}
+<!-- MAIN -->
+<div class="container">
 
-.stage:hover {
-    transform: scale(1.05);
-    background: #2e3d52;
-}
+<!-- STAGES -->
+<div class="card">
+<h3>📚 Select Stage</h3>
+<div id="stageGrid" class="stage-grid"></div>
+</div>
 
-/* =========================
-   QUESTION AREA
-========================= */
-.game-box #question {
-    font-size: 26px;
-    font-weight: bold;
-    margin: 20px 0;
-}
+<!-- QUESTION BOX -->
+<div class="card game-box">
 
-/* =========================
-   MCQ BUTTONS (VERY IMPORTANT)
-========================= */
-.answer-btn {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-    padding: 16px;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
-    background: var(--xp);
-    color: white;
-    transition: 0.2s;
-}
+<h3 id="stageTitle">Select a Stage</h3>
 
-.answer-btn:hover {
-    transform: scale(1.03);
-    opacity: 0.9;
-}
+<div id="question">Click a stage to start</div>
 
-.answer-btn:active {
-    transform: scale(0.97);
-}
+</div>
 
-/* =========================
-   STATS BOX (XP / COINS / HP)
-========================= */
-.stats-box {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-    margin-top: 10px;
-}
+<!-- PROGRESS -->
+<div class="card">
+<h3>📊 Progress</h3>
+<div class="progress">
+<div id="bar"></div>
+</div>
+</div>
 
-.stat {
-    font-size: 16px;
-    font-weight: bold;
-}
+<!-- BADGES -->
+<div class="card">
+<h3>🏆 Badges</h3>
+<p id="badges">None</p>
+</div>
 
-/* BAR BACKGROUND */
-.bar-bg {
-    width: 100%;
-    height: 18px;
-    background: #2a3442;
-    border-radius: 20px;
-    overflow: hidden;
-    margin-top: 6px;
-}
+</div>
 
-/* XP BAR */
-#xpBar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #4aa3ff, #1e90ff);
-    transition: width 0.4s ease;
-}
+<script src="script.js"></script>
 
-/* COIN BAR */
-#coinBar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #f1c40f, #f39c12);
-    transition: width 0.4s ease;
-}
-
-/* HP BAR */
-#hpBar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #2ecc71, #27ae60);
-    transition: width 0.4s ease;
-}
-
-/* =========================
-   PROGRESS BAR (STAGES)
-========================= */
-.progress {
-    width: 100%;
-    height: 22px;
-    background: #2a3442;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-#bar {
-    height: 100%;
-    width: 0%;
-    background: linear-gradient(90deg, #2ecc71, #27ae60);
-    transition: width 0.4s ease;
-}
-
-/* =========================
-   BADGES
-========================= */
-#badges {
-    font-weight: bold;
-    color: var(--text);
-}
-
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
-@media (max-width: 600px) {
-
-    .stage-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .game-box #question {
-        font-size: 20px;
-    }
-
-    .answer-btn {
-        font-size: 16px;
-        padding: 14px;
-    }
-}
+</body>
+</html>
