@@ -3,6 +3,8 @@
     --dark: #1e2a38;
     --bg: #f4f6fb;
     --success: #27ae60;
+    --danger: #e74c3c;
+    --warning: #f39c12;
 }
 
 /* =========================
@@ -35,6 +37,13 @@ header {
     position: sticky;
     top: 0;
     z-index: 10;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* stats */
+.stats {
+    margin-top: 6px;
+    font-size: 14px;
 }
 
 /* =========================
@@ -47,15 +56,15 @@ header {
 }
 
 /* =========================
-   CARD
+   CARDS
 ========================= */
 .card {
     background: white;
     padding: 16px;
     margin: 12px 0;
-    border-radius: 12px;
-    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
-    transition: 0.2s ease;
+    border-radius: 14px;
+    box-shadow: 0 3px 14px rgba(0,0,0,0.08);
+    transition: 0.2s;
 }
 
 .card:hover {
@@ -63,11 +72,11 @@ header {
 }
 
 /* =========================
-   STAGE GRID
+   STAGE GRID (MAP STYLE)
 ========================= */
 .stage-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
     margin-top: 10px;
 }
@@ -76,22 +85,31 @@ header {
    STAGE BUTTONS
 ========================= */
 .stage {
-    background: #e8eef7;
+    background: #e8f0ff;
     padding: 14px;
-    border-radius: 10px;
-    font-weight: bold;
+    border-radius: 12px;
     cursor: pointer;
-    transition: 0.2s ease;
+    font-weight: bold;
     border: 2px solid transparent;
+    transition: 0.2s;
+    position: relative;
 }
 
+/* hover effect */
 .stage:hover {
-    background: #d8e4ff;
+    background: #d6e6ff;
     transform: scale(1.05);
 }
 
-.stage:active {
-    transform: scale(0.97);
+/* completed badge */
+.stage::after {
+    content: "✔";
+    position: absolute;
+    top: 6px;
+    right: 8px;
+    font-size: 14px;
+    color: var(--success);
+    display: none;
 }
 
 /* =========================
@@ -101,12 +119,12 @@ button {
     padding: 10px 14px;
     margin: 6px;
     border: none;
-    border-radius: 8px;
+    border-radius: 10px;
     background: var(--primary);
     color: white;
     cursor: pointer;
     font-weight: 500;
-    transition: 0.2s ease;
+    transition: 0.2s;
 }
 
 button:hover {
@@ -123,7 +141,7 @@ button:active {
 ========================= */
 .progress {
     width: 100%;
-    height: 20px;
+    height: 22px;
     background: #ddd;
     border-radius: 20px;
     overflow: hidden;
@@ -149,9 +167,18 @@ p {
 }
 
 /* =========================
+   BADGES
+========================= */
+#badges {
+    font-weight: bold;
+    color: #444;
+}
+
+/* =========================
    RESPONSIVE
 ========================= */
 @media (max-width: 600px) {
+
     .stage-grid {
         grid-template-columns: 1fr;
     }
@@ -163,5 +190,9 @@ p {
     .card {
         margin: 10px 8px;
         padding: 14px;
+    }
+
+    .stats {
+        font-size: 12px;
     }
 }
