@@ -5,159 +5,48 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>MCQ Ultimate Game</title>
 
-<style>
-:root {
-    --bg: #0b0f16;
-    --card: #141b26;
-    --text: #e8e8e8;
-    --primary: #4aa3ff;
-    --good: #2ecc71;
-    --bad: #e74c3c;
-    --accent: #f1c40f;
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    font-family: Arial;
-    background: var(--bg);
-    color: var(--text);
-    text-align: center;
-}
-
-header {
-    padding: 15px;
-    background: #0f1624;
-    border-bottom: 1px solid #1f2a3a;
-}
-
-.container {
-    max-width: 900px;
-    margin: auto;
-    padding: 15px;
-}
-
-.card {
-    background: var(--card);
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 12px;
-}
-
-.stats {
-    display: flex;
-    justify-content: space-around;
-}
-
-.progress {
-    width: 100%;
-    height: 20px;
-    background: #2a2f3a;
-    border-radius: 20px;
-    overflow: hidden;
-}
-
-.bar {
-    height: 100%;
-    width: 100%;
-    background: linear-gradient(90deg, #2ecc71, #f1c40f, #e74c3c);
-    transition: width 0.3s;
-}
-
-.mcq-grid {
-    display: grid;
-    gap: 10px;
-}
-
-.mcq-grid button {
-    padding: 12px;
-    border: none;
-    border-radius: 10px;
-    background: var(--primary);
-    color: white;
-    font-size: 16px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.mcq-grid button:hover {
-    transform: scale(1.03);
-}
-
-.mcq-grid button:active {
-    transform: scale(0.95);
-}
-
-.correct { background: var(--good) !important; }
-.wrong { background: var(--bad) !important; }
-
-.overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.hidden { display: none; }
-
-.result-card {
-    background: var(--card);
-    padding: 20px;
-    border-radius: 12px;
-    width: 90%;
-    max-width: 400px;
-}
-
-.fade {
-    animation: fade 0.25s ease;
-}
-
-@keyframes fade {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; }
-}
-
-.star {
-    font-size: 24px;
-    color: gold;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
 <header>
-<h2>🎮 MCQ ULTIMATE GAME</h2>
+    <h1>🎮 MCQ ULTIMATE GAME</h1>
+    <p>Choose a stage, answer MCQs, survive & score ⭐</p>
 </header>
 
 <div class="container">
 
-<div class="card stats">
-    <div>❤️ HP: <span id="hpText">100</span></div>
-    <div>⭐ Points: <span id="points">0</span></div>
-</div>
+    <!-- STATS -->
+    <div class="card stats">
+        <div>❤️ HP: <span id="hpText">100</span></div>
+        <div>⭐ Points: <span id="points">0</span></div>
+    </div>
 
-<div class="card">
-    <div class="progress"><div id="hpBar" class="bar"></div></div>
-</div>
+    <!-- HEALTH BAR -->
+    <div class="card">
+        <h3>❤️ Health</h3>
+        <div class="progress">
+            <div id="hpBar" class="bar"></div>
+        </div>
+    </div>
 
-<div class="card">
-    <h3 id="stageTitle">Choose Stage</h3>
-</div>
+    <!-- STAGE TITLE -->
+    <div class="card">
+        <h2 id="stageTitle">🎮 Choose Your Stage</h2>
+    </div>
 
-<div class="card">
-    <div id="stageMenu"></div>
-</div>
+    <!-- STAGE MENU -->
+    <div class="card">
+        <div id="stageMenu"></div>
+    </div>
 
-<div class="card">
-    <div id="question">Select a stage to start</div>
-</div>
+    <!-- QUESTION AREA -->
+    <div class="card game-box">
+        <div id="question">
+            <h3>👉 Select a stage to start the game</h3>
+        </div>
+    </div>
 
 </div>
 
@@ -167,184 +56,15 @@ header {
         <h2 id="resultTitle"></h2>
         <p id="resultScore"></p>
         <div id="stars"></div>
+
         <br>
         <button onclick="nextStage()">Next / Restart</button>
+        <button onclick="startGame()">Main Menu</button>
     </div>
 </div>
 
-<script>
-const state = {
-    stage: null,
-    index: 0,
-    hp: 100,
-    points: 0,
-    locked: false
-};
-
-const stages = [
-{
-name:"Good Habits",
-questions:[
-{q:"Brush teeth?",options:["Once","Twice","Never","Sometimes"],a:1},
-{q:"Breakfast?",options:["Good","Bad","Optional","Best"],a:1}
-]
-},
-{
-name:"Awareness",
-questions:[
-{q:"Fire is?",options:["Safe","Dangerous","Toy","Food"],a:1},
-{q:"Traffic rules?",options:["Ignore","Follow","Break","Optional"],a:1}
-]
-}
-];
-
-const correctSound = new Audio("correct.mp3");
-const wrongSound = new Audio("wrong.mp3");
-
-function startGame(){
-state.stage=null;
-state.index=0;
-state.hp=100;
-state.points=0;
-
-document.getElementById("resultScreen").classList.add("hidden");
-
-updateUI();
-showStages();
-}
-
-function showStages(){
-document.getElementById("stageTitle").innerText="Choose Stage";
-
-document.getElementById("stageMenu").innerHTML =
-stages.map((s,i)=>
-`<button onclick="selectStage(${i})">${s.name}</button>`
-).join("");
-
-document.getElementById("question").innerHTML="Select a stage";
-}
-
-function selectStage(i){
-state.stage=i;
-state.index=0;
-loadQuestion();
-}
-
-function loadQuestion(){
-const stage=stages[state.stage];
-const q=stage.questions[state.index];
-
-const box=document.getElementById("question");
-box.classList.add("fade");
-
-box.innerHTML=`
-<div class="mcq-grid">
-<div><b>${q.q}</b></div>
-${q.options.map((o,i)=>
-`<button onclick="answer(${i})">${o}</button>`
-).join("")}
-</div>
-`;
-
-updateUI();
-}
-
-function answer(i){
-if(state.locked) return;
-state.locked=true;
-
-const stage=stages[state.stage];
-const q=stage.questions[state.index];
-const buttons=document.querySelectorAll(".mcq-grid button");
-
-buttons[q.a].classList.add("correct");
-
-if(i!==q.a){
-buttons[i].classList.add("wrong");
-state.hp-=10;
-state.points-=5;
-wrongSound.play();
-}else{
-state.points+=10;
-correctSound.play();
-}
-
-updateUI();
-
-if(state.hp<=0){
-setTimeout(gameOver,600);
-return;
-}
-
-setTimeout(nextQuestion,700);
-}
-
-function nextQuestion(){
-state.index++;
-state.locked=false;
-
-if(state.index>=stages[state.stage].questions.length){
-showResult();
-return;
-}
-
-loadQuestion();
-}
-
-function showResult(){
-document.getElementById("resultScreen").classList.remove("hidden");
-
-document.getElementById("resultTitle").innerText=
-stages[state.stage].name+" Complete 🎉";
-
-document.getElementById("resultScore").innerText=
-"Score: "+state.points;
-
-let stars=1;
-if(state.points>=20) stars=2;
-if(state.points>=30) stars=3;
-
-document.getElementById("stars").innerHTML="⭐".repeat(stars);
-
-saveHighScore();
-}
-
-function gameOver(){
-document.getElementById("resultScreen").classList.remove("hidden");
-document.getElementById("resultTitle").innerText="💀 Game Over";
-document.getElementById("resultScore").innerText="Score: "+state.points;
-document.getElementById("stars").innerHTML="";
-}
-
-function nextStage(){
-document.getElementById("resultScreen").classList.add("hidden");
-
-if(state.stage<stages.length-1){
-state.stage++;
-state.index=0;
-loadQuestion();
-}else{
-startGame();
-}
-}
-
-function updateUI(){
-document.getElementById("hpText").innerText=state.hp;
-document.getElementById("points").innerText=state.points;
-document.getElementById("hpBar").style.width=state.hp+"%";
-}
-
-function saveHighScore(){
-let key="mcq_stage_"+state.stage;
-let best=localStorage.getItem(key)||0;
-
-if(state.points>best){
-localStorage.setItem(key,state.points);
-}
-}
-
-startGame();
-</script>
+<!-- JS -->
+<script src="script.js"></script>
 
 </body>
 </html>
