@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR Pro Stage Game</title>
+<title>MVEAR PRO MCQ GAME</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -13,11 +13,23 @@
 <header>
 <h2>🌍 MVEAR PRO LEARNING GAME</h2>
 
-<div class="stats">
-⭐ XP: <span id="xp">0</span> |
-🏆 Level: <span id="level">1</span> |
-💰 Coins: <span id="coins">0</span> |
-❤️ HP: <span id="hp">100</span>
+<div class="stats-box">
+
+  <div class="stat">
+    ⭐ Level: <span id="level">1</span>
+    <div class="bar-bg"><div id="xpBar" class="bar xp"></div></div>
+  </div>
+
+  <div class="stat">
+    💰 Coins: <span id="coins">0</span>
+    <div class="bar-bg"><div id="coinBar" class="bar coin"></div></div>
+  </div>
+
+  <div class="stat">
+    ❤️ Health: <span id="hp">100</span>
+    <div class="bar-bg"><div id="hpBar" class="bar hp"></div></div>
+  </div>
+
 </div>
 </header>
 
@@ -25,7 +37,7 @@
 
 <!-- STAGES -->
 <div class="card">
-<h3>📚 Select Stage</h3>
+<h3>📚 Select Any Stage</h3>
 <div class="stage-grid" id="stageGrid"></div>
 </div>
 
@@ -34,18 +46,13 @@
 
 <h3 id="stageTitle">Select a Stage</h3>
 
-<p id="question">---</p>
-
-<div class="answer-box">
-    <button class="answer-btn" onclick="answer(true)">✔ TRUE / CORRECT</button>
-    <button class="answer-btn danger" onclick="answer(false)">✖ FALSE / WRONG</button>
-</div>
+<p id="question">Choose a stage to start</p>
 
 </div>
 
 <!-- PROGRESS -->
 <div class="card">
-<h3>📊 Overall Progress</h3>
+<h3>📊 Progress</h3>
 <div class="progress">
 <div id="bar" class="bar"></div>
 </div>
