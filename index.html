@@ -10,40 +10,56 @@
 
 <body>
 
+<!-- =========================
+     HEADER
+========================= -->
 <header>
     <h1>🎮 MCQ ULTIMATE GAME</h1>
-    <p>Choose a stage and start your challenge 🚀</p>
+    <p>Choose a stage, answer MCQs, survive & score ⭐</p>
 </header>
 
-<!-- GAME CONTAINER -->
+<!-- =========================
+     MAIN CONTAINER
+========================= -->
 <div class="container">
 
-    <!-- STATS DISPLAY -->
+    <!-- STATS -->
     <div class="card stats">
-        <div>❤️ HP: <span id="hp">100</span></div>
+        <div>❤️ HP: <span id="hpText">100</span></div>
         <div>⭐ Points: <span id="points">0</span></div>
     </div>
 
-    <!-- START BUTTON -->
+    <!-- HEALTH BAR -->
     <div class="card">
-        <h2>Start Game</h2>
-        <button onclick="startGame()">▶ Start / Reset</button>
+        <h3>❤️ Health Bar</h3>
+        <div class="progress">
+            <div id="hpBar" class="bar"></div>
+        </div>
     </div>
 
     <!-- STAGE TITLE -->
     <div class="card">
-        <h2 id="stageTitle">🎮 Ready to Play</h2>
+        <h2 id="stageTitle">🎮 Choose Your Stage</h2>
     </div>
 
-    <!-- QUESTION AREA -->
+    <!-- STAGE MENU BUTTONS -->
+    <div class="card">
+        <h3>📚 Stages</h3>
+        <div id="stageMenu"></div>
+    </div>
+
+    <!-- QUESTION BOX -->
     <div class="card game-box">
         <div id="question">
-            <h3>Click Start to choose a stage 🎯</h3>
+            <h3>👉 Select a stage to start the game</h3>
         </div>
     </div>
 
 </div>
 
+<!-- =========================
+     JS FILE
+========================= -->
 <script src="script.js"></script>
 
 </body>
