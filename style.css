@@ -1,16 +1,15 @@
 
 /* =========================
-   ROOT THEME (DARK GAME UI)
+   ROOT THEME (DARK GAME STYLE)
 ========================= */
 :root {
     --bg: #0b0f16;
-    --card: #151c28;
-    --text: #e6e6e6;
+    --card: #141b26;
+    --text: #e8e8e8;
 
     --primary: #4aa3ff;
     --good: #2ecc71;
     --bad: #e74c3c;
-    --warning: #f1c40f;
 }
 
 /* =========================
@@ -38,18 +37,18 @@ body {
 ========================= */
 header {
     background: #0f1624;
-    padding: 20px;
-    border-bottom: 1px solid #243246;
+    padding: 18px;
+    border-bottom: 1px solid #1f2a3a;
 }
 
 header h1 {
     font-size: 26px;
-    margin-bottom: 5px;
+    margin-bottom: 6px;
 }
 
 header p {
-    color: #aaa;
     font-size: 14px;
+    color: #aaa;
 }
 
 /* =========================
@@ -62,7 +61,7 @@ header p {
 }
 
 /* =========================
-   CARD
+   CARD BOX
 ========================= */
 .card {
     background: var(--card);
@@ -78,16 +77,15 @@ header p {
 .stats {
     display: flex;
     justify-content: space-around;
-    flex-wrap: wrap;
     font-weight: bold;
-    font-size: 16px;
+    font-size: 18px;
 }
 
 /* =========================
-   QUESTION AREA
+   GAME AREA
 ========================= */
 .game-box {
-    min-height: 200px;
+    min-height: 180px;
 }
 
 /* QUESTION TEXT */
@@ -110,7 +108,7 @@ header p {
    MCQ BUTTONS
 ========================= */
 .mcq-grid button {
-    padding: 16px;
+    padding: 15px;
     font-size: 18px;
     font-weight: bold;
     border: none;
@@ -118,16 +116,16 @@ header p {
     cursor: pointer;
     background: var(--primary);
     color: white;
-    transition: 0.2s;
+    transition: 0.2s ease;
 }
 
-/* hover */
+/* hover effect */
 .mcq-grid button:hover {
     transform: scale(1.03);
     opacity: 0.9;
 }
 
-/* click */
+/* click effect */
 .mcq-grid button:active {
     transform: scale(0.97);
 }
@@ -146,7 +144,7 @@ header p {
 }
 
 /* =========================
-   START BUTTON
+   GENERAL BUTTON (START / MENU)
 ========================= */
 button {
     padding: 12px 18px;
@@ -163,14 +161,6 @@ button {
 
 button:hover {
     opacity: 0.9;
-}
-
-/* =========================
-   TIMER WARNING EFFECT
-========================= */
-.warning {
-    color: var(--warning);
-    font-weight: bold;
 }
 
 /* =========================
