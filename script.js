@@ -7,7 +7,7 @@ let state = {
     level: 1,
     coins: 0,
     hp: 100,
-    currentStage: 0,
+    currentStage: null,
     qIndex: 0,
     stageDone: Array(8).fill(0),
     combo: 0,
@@ -15,7 +15,7 @@ let state = {
 };
 
 /* =========================
-   8 STAGES (5 QUESTIONS EACH)
+   STAGES (8 × 5 QUESTIONS)
 ========================= */
 const stages = [
 {
@@ -143,17 +143,16 @@ function selectStage(i){
 }
 
 /* =========================
-   LOAD QUESTION
+   LOAD QUESTION (SAFE FIX)
 ========================= */
 function loadQuestion(){
     const stage = stages[state.currentStage];
 
-    if(state.qIndex >= stage.questions.length){
-        completeStage();
-        return;
-    }
+    if(!stage) return;
 
     const q = stage.questions[state.qIndex];
+
+    if(!q) return;
 
     document.getElementById("question").innerHTML = `
         <b>${q.q}</b><br><br>
@@ -164,11 +163,16 @@ function loadQuestion(){
 }
 
 /* =========================
-   ANSWER SYSTEM
+   ANSWER SYSTEM (FIXED FLOW)
 ========================= */
 function answer(selected){
-    const q = stages[state.currentStage].questions[state.qIndex];
 
+    const stage = stages[state.currentStage];
+    const q = stage.questions[state.qIndex];
+
+    if(!q) return;
+
+    // correct answer
     if(selected === q.a){
         state.xp += 10 + state.combo;
         state.coins += 5;
@@ -178,12 +182,21 @@ function answer(selected){
         state.combo = 0;
     }
 
+    // game over
     if(state.hp <= 0){
         alert("Game Over!");
         location.reload();
+        return;
     }
 
+    // MOVE NEXT
     state.qIndex++;
+
+    // END STAGE CHECK
+    if(state.qIndex >= stage.questions.length){
+        completeStage();
+        return;
+    }
 
     updateUI();
     loadQuestion();
@@ -193,18 +206,19 @@ function answer(selected){
    COMPLETE STAGE
 ========================= */
 function completeStage(){
+
+    const stage = stages[state.currentStage];
+
     state.stageDone[state.currentStage] = 1;
 
     state.xp += 50;
     state.coins += 20;
 
-    const name = stages[state.currentStage].name;
-
-    if(!state.badges.includes(name)){
-        state.badges.push(name);
+    if(!state.badges.includes(stage.name)){
+        state.badges.push(stage.name);
     }
 
-    alert(name + " Completed!");
+    alert(stage.name + " Completed!");
 
     state.currentStage++;
     state.qIndex = 0;
@@ -214,34 +228,28 @@ function completeStage(){
 }
 
 /* =========================
-   UI UPDATE
+   UI UPDATE (MATCH HTML/CSS)
 ========================= */
 function updateUI(){
 
-    // XP BAR
     document.getElementById("xpBar").style.width =
         (state.xp % 100) + "%";
 
-    // COIN BAR
     document.getElementById("coinBar").style.width =
         Math.min(state.coins, 100) + "%";
 
-    // HP BAR
     document.getElementById("hpBar").style.width =
         state.hp + "%";
 
-    // TEXT VALUES
     document.getElementById("xp").innerText = state.xp;
     document.getElementById("level").innerText = Math.floor(state.xp / 100) + 1;
     document.getElementById("coins").innerText = state.coins;
     document.getElementById("hp").innerText = state.hp;
 
-    // STAGE PROGRESS BAR
     const done = state.stageDone.filter(x => x === 1).length;
     document.getElementById("bar").style.width =
         (done / stages.length) * 100 + "%";
 
-    // BADGES
     document.getElementById("badges").innerText =
         state.badges.length ? state.badges.join(", ") : "None";
 }
@@ -254,14 +262,12 @@ setInterval(() => {
 }, 3000);
 
 /* =========================
-   LOAD SAVE
+   LOAD GAME
 ========================= */
 window.onload = function () {
     const data = JSON.parse(localStorage.getItem("mvear_final_game"));
 
-    if (data) {
-        state = data;
-    }
+    if (data) state = data;
 
     loadStages();
     updateUI();
