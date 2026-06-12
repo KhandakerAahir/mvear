@@ -3,7 +3,6 @@
     --dark: #1e2a38;
     --bg: #f4f6fb;
     --success: #27ae60;
-    --danger: #e74c3c;
 }
 
 /* =========================
@@ -48,7 +47,7 @@ header {
 }
 
 /* =========================
-   CARDS
+   CARD
 ========================= */
 .card {
     background: white;
@@ -68,24 +67,27 @@ header {
 ========================= */
 .stage-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
     gap: 12px;
     margin-top: 10px;
 }
 
+/* =========================
+   STAGE BUTTONS
+========================= */
 .stage {
-    padding: 14px;
     background: #e8eef7;
+    padding: 14px;
     border-radius: 10px;
-    cursor: pointer;
     font-weight: bold;
-    transition: 0.2s;
+    cursor: pointer;
+    transition: 0.2s ease;
     border: 2px solid transparent;
 }
 
 .stage:hover {
     background: #d8e4ff;
-    transform: scale(1.03);
+    transform: scale(1.05);
 }
 
 .stage:active {
@@ -114,18 +116,6 @@ button:hover {
 
 button:active {
     transform: scale(0.97);
-}
-
-/* =========================
-   INPUTS
-========================= */
-input {
-    width: 80%;
-    max-width: 320px;
-    padding: 10px;
-    margin: 6px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
 }
 
 /* =========================
@@ -159,29 +149,11 @@ p {
 }
 
 /* =========================
-   LOGIN BOX
-========================= */
-#loginBox {
-    margin-top: 60px;
-}
-
-/* =========================
-   HIDDEN
-========================= */
-.hidden {
-    display: none;
-}
-
-/* =========================
    RESPONSIVE
 ========================= */
 @media (max-width: 600px) {
     .stage-grid {
         grid-template-columns: 1fr;
-    }
-
-    input {
-        width: 95%;
     }
 
     button {
