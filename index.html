@@ -3,20 +3,93 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MVEAR Ultimate Lite</title>
 
-<title>MVEAR Learning Game</title>
+<style>
+body{
+    font-family:Arial;
+    margin:0;
+    background:#f4f6fb;
+    text-align:center;
+}
 
-<link rel="stylesheet" href="style.css">
+header{
+    background:#1e2a38;
+    color:white;
+    padding:15px;
+}
+
+.container{
+    max-width:900px;
+    margin:auto;
+    padding:15px;
+}
+
+.card{
+    background:white;
+    padding:15px;
+    margin:10px 0;
+    border-radius:10px;
+    box-shadow:0 0 10px rgba(0,0,0,0.08);
+}
+
+button{
+    padding:10px 12px;
+    margin:5px;
+    cursor:pointer;
+    border:none;
+    border-radius:6px;
+    background:#2d89ef;
+    color:white;
+}
+
+button:hover{opacity:0.85}
+
+input, select{
+    padding:10px;
+    margin:5px;
+    width:80%;
+}
+
+.hidden{display:none}
+
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+}
+
+.stat{
+    background:white;
+    padding:8px 12px;
+    border-radius:8px;
+}
+
+.progress{
+    height:20px;
+    background:#ddd;
+    border-radius:20px;
+    overflow:hidden;
+}
+
+.bar{
+    height:100%;
+    width:0%;
+    background:green;
+}
+
+.small{
+    font-size:14px;
+    color:gray;
+}
+</style>
 </head>
 
 <body>
 
-<!-- =========================
-   HEADER
-========================= -->
-
-<header class="header">
-<h1>🌍 MVEAR</h1>
+<header>
+<h2>🌍 MVEAR Ultimate Lite</h2>
 
 <div class="stats">
 <div class="stat">⭐ XP: <span id="xp">0</span></div>
@@ -25,70 +98,316 @@
 </div>
 </header>
 
-<!-- =========================
-   HEALTH BAR
-========================= -->
+<!-- LOGIN -->
+<div id="loginBox" class="container">
+<div class="card">
+<h3>Login / Register</h3>
 
-<div style="max-width:600px;margin:15px auto;text-align:left;">
-<p>❤️ Health</p>
-<div class="hp-bar">
-<div id="hpFill" class="hp-fill"></div>
+<input id="user" placeholder="Username"><br>
+<input id="pass" type="password" placeholder="Password"><br>
+
+<button onclick="register()">Register</button>
+<button onclick="login()">Login</button>
+
+<p id="msg"></p>
 </div>
 </div>
 
-<!-- =========================
-   TITLE
-========================= -->
+<!-- GAME -->
+<div id="game" class="container hidden">
 
-<h2 id="title">Loading...</h2>
+<div class="card">
+<h3>👤 Player: <span id="player"></span></h3>
+<button onclick="logout()">Logout</button>
+</div>
 
-<!-- =========================
-   MAIN GAME AREA (IMPORTANT FIX)
-========================= -->
+<div class="card">
+<h3>❤️ Health</h3>
+<div class="progress"><div id="hpBar" class="bar"></div></div>
+</div>
 
-<div id="gameArea"></div>
+<!-- QUIZ -->
+<div class="card">
+<h3>📚 Quiz Challenge</h3>
 
-<p id="result"></p>
+<select id="subject">
+<option>Math</option>
+<option>Science</option>
+<option>Geography</option>
+</select>
 
-<!-- =========================
-   SHOP
-========================= -->
+<p id="question">Press Start</p>
 
-<hr>
+<button onclick="startQuiz()">Start Quiz</button>
+<button onclick="answer(true)">Correct</button>
+<button onclick="answer(false)">Wrong</button>
+</div>
 
+<!-- SHOP -->
+<div class="card">
 <h3>🛒 Shop</h3>
-
-<button onclick="buyItem('life')">❤️ Heal (30 coins)</button>
-<button onclick="buyItem('skip')">⏭ Skip (20 coins)</button>
-<button onclick="buyItem('hint')">💡 Hint (15 coins)</button>
-
-<!-- =========================
-   RPS GAME
-========================= -->
-
-<hr>
-
-<h3>🎮 Rock Paper Scissors</h3>
-
-<button onclick="rps('rock')">🪨 Rock</button>
-<button onclick="rps('paper')">📄 Paper</button>
-<button onclick="rps('scissors')">✂️ Scissors</button>
-
-<!-- =========================
-   CONFETTI + CELEBRATION
-========================= -->
-
-<div id="celebration" class="celebration hidden">
-<h1>🎉 STAGE COMPLETED!</h1>
+<button onclick="buy('heal')">Heal (30 coins)</button>
+<button onclick="buy('xp')">XP Boost (20 coins)</button>
+<button onclick="buy('life')">Extra Life (50 coins)</button>
 </div>
 
-<canvas id="confettiCanvas"></canvas>
+<!-- BOSS -->
+<div class="card">
+<h3>👹 Boss Challenge</h3>
+<p id="bossQ">Not started</p>
+<button onclick="startBoss()">Start Boss</button>
+<button onclick="bossAnswer(true)">Win</button>
+<button onclick="bossAnswer(false)">Lose</button>
+</div>
 
-<!-- =========================
-   SCRIPT
-========================= -->
+<!-- ACHIEVEMENTS -->
+<div class="card">
+<h3>🏆 Achievements</h3>
+<p id="achievements"></p>
+</div>
 
-<script src="script.js"></script>
+<!-- DAILY -->
+<div class="card">
+<h3>🎁 Daily Reward</h3>
+<button onclick="dailyReward()">Claim Reward</button>
+<p id="dailyMsg"></p>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="card">
+<h3>📊 Leaderboard (This Browser)</h3>
+<p id="board"></p>
+</div>
+
+</div>
+
+<script>
+let userData = {};
+let currentUser = null;
+
+let quizActive = false;
+let bossActive = false;
+
+/* ---------------- STORAGE ---------------- */
+
+function save(){
+    if(!currentUser) return;
+    localStorage.setItem("mvear_" + currentUser, JSON.stringify(userData));
+    updateLeaderboard();
+}
+
+function loadUser(name){
+    return JSON.parse(localStorage.getItem("mvear_" + name));
+}
+
+/* ---------------- AUTH ---------------- */
+
+function register(){
+    let u = user.value;
+    let p = pass.value;
+
+    if(!u || !p) return msg("Fill all fields");
+
+    if(localStorage.getItem("mvear_" + u))
+        return msg("User exists");
+
+    let data = {
+        pass:p,
+        xp:0,
+        level:1,
+        coins:50,
+        hp:100,
+        achievements:[],
+        lastDaily:""
+    };
+
+    localStorage.setItem("mvear_" + u, JSON.stringify(data));
+    msg("Registered!");
+}
+
+function login(){
+    let u = user.value;
+    let p = pass.value;
+
+    let data = loadUser(u);
+
+    if(!data) return msg("User not found");
+    if(data.pass !== p) return msg("Wrong password");
+
+    currentUser = u;
+    userData = data;
+
+    loginBox.classList.add("hidden");
+    game.classList.remove("hidden");
+
+    document.getElementById("player").innerText = u;
+
+    render();
+}
+
+/* ---------------- GAME CORE ---------------- */
+
+function addXP(x){
+    userData.xp += x;
+    userData.coins += 5;
+
+    if(userData.xp >= userData.level * 100){
+        userData.level++;
+        unlock("Level Up!");
+    }
+
+    save();
+    render();
+}
+
+function render(){
+    xp.innerText = userData.xp;
+    level.innerText = userData.level;
+    coins.innerText = userData.coins;
+
+    hpBar.style.width = userData.hp + "%";
+
+    achievements.innerText =
+        userData.achievements.join(", ") || "None";
+
+    board.innerText = getBoard();
+}
+
+/* ---------------- QUIZ ---------------- */
+
+let currentCorrect = false;
+
+function startQuiz(){
+    quizActive = true;
+
+    let questions = {
+        Math:"2 + 2 = 4?",
+        Science:"Water is H2O?",
+        Geography:"Earth is a planet?"
+    };
+
+    let q = subject.value;
+
+    question.innerText = questions[q];
+    currentCorrect = true;
+}
+
+function answer(ans){
+    if(!quizActive) return;
+
+    if(ans === currentCorrect){
+        addXP(20);
+        unlock("Quiz Master");
+    }
+
+    quizActive = false;
+}
+
+/* ---------------- SHOP ---------------- */
+
+function buy(type){
+    if(type==="heal" && userData.coins>=30){
+        userData.hp = Math.min(100,userData.hp+30);
+        userData.coins-=30;
+    }
+
+    if(type==="xp" && userData.coins>=20){
+        userData.xp+=50;
+        userData.coins-=20;
+    }
+
+    if(type==="life" && userData.coins>=50){
+        userData.hp=100;
+        userData.coins-=50;
+        unlock("Survivor");
+    }
+
+    save();
+    render();
+}
+
+/* ---------------- BOSS ---------------- */
+
+function startBoss(){
+    bossActive = true;
+    bossQ.innerText = "Boss: 10 + 5 = ?";
+}
+
+function bossAnswer(ok){
+    if(!bossActive) return;
+
+    if(ok){
+        addXP(50);
+        unlock("Boss Slayer");
+    } else {
+        userData.hp -= 20;
+    }
+
+    bossActive = false;
+    save();
+    render();
+}
+
+/* ---------------- ACHIEVEMENTS ---------------- */
+
+function unlock(name){
+    if(!userData.achievements.includes(name)){
+        userData.achievements.push(name);
+    }
+}
+
+/* ---------------- DAILY ---------------- */
+
+function dailyReward(){
+    let today = new Date().toDateString();
+
+    if(userData.lastDaily === today){
+        dailyMsg.innerText = "Already claimed today!";
+        return;
+    }
+
+    userData.lastDaily = today;
+    userData.coins += 40;
+
+    dailyMsg.innerText = "Reward claimed!";
+    save();
+    render();
+}
+
+/* ---------------- LEADERBOARD ---------------- */
+
+function getBoard(){
+    let list = [];
+
+    for(let i=0;i<localStorage.length;i++){
+        let k = localStorage.key(i);
+
+        if(k.startsWith("mvear_")){
+            let d = JSON.parse(localStorage.getItem(k));
+            list.push({name:k.replace("mvear_",""), xp:d.xp});
+        }
+    }
+
+    list.sort((a,b)=>b.xp-a.xp);
+
+    return list.map(x=>x.name+" - "+x.xp+" XP").join("\n");
+}
+
+function updateLeaderboard(){
+    board.innerText = getBoard();
+}
+
+/* ---------------- LOGOUT ---------------- */
+
+function logout(){
+    save();
+    location.reload();
+}
+
+/* helpers */
+function msg(t){ msg.innerText=t; }
+
+</script>
 
 </body>
 </html>
