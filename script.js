@@ -1,378 +1,281 @@
+let currentUser = null;
 
-/* =========================
-   STATE
-========================= */
-
-const state = {
-xp: +localStorage.getItem("xp") || 0,
-level: +localStorage.getItem("level") || 1,
-coins: +localStorage.getItem("coins") || 0,
-hp: +localStorage.getItem("hp") || 100,
-
-world: 0,
-qIndex: 0,
-streak: 0
+let state = {
+    xp: 0,
+    level: 1,
+    coins: 0,
+    hp: 100,
+    achievements: [],
+    lastDaily: ""
 };
 
 /* =========================
-   WORLDS (8 STAGES - 5 QUESTIONS EACH)
+   ELEMENTS
 ========================= */
+const loginBox = document.getElementById("loginBox");
+const game = document.getElementById("game");
 
-const worlds = [
+const xpEl = document.getElementById("xp");
+const levelEl = document.getElementById("level");
+const coinsEl = document.getElementById("coins");
+const hpBar = document.getElementById("hpBar");
 
-{
-name:"🌱 Good Habits",
-questions:[
-{q:"Best morning habit?",options:["Wake early","Sleep late","Skip breakfast","Stay lazy"],a:"Wake early"},
-{q:"Discipline means?",options:["Consistency","Chaos","Fear","Luck"],a:"Consistency"},
-{q:"Healthy routine includes?",options:["Exercise","Junk food","No sleep","Stress"],a:"Exercise"},
-{q:"Good habit is?",options:["Reading","Smoking","Waste time","Laziness"],a:"Reading"},
-{q:"Success needs?",options:["Practice","Avoid work","Quit","Ignore"],a:"Practice"}
-]
-},
+const questionEl = document.getElementById("question");
+const bossQ = document.getElementById("bossQ");
+const msgEl = document.getElementById("msg");
+const boardEl = document.getElementById("board");
+const achEl = document.getElementById("achievements");
+const dailyMsg = document.getElementById("dailyMsg");
 
-{
-name:"🌍 Awareness",
-questions:[
-{q:"Trees give?",options:["Oxygen","Plastic","Smoke","Noise"],a:"Oxygen"},
-{q:"Pollution caused by?",options:["Humans","Stars","Clouds","Rain"],a:"Humans"},
-{q:"We should save?",options:["Water","Fire","Dust","Smoke"],a:"Water"},
-{q:"Earth is?",options:["Precious","Useless","Fake","Dangerous"],a:"Precious"},
-{q:"Recycle means?",options:["Reuse","Burn","Throw","Destroy"],a:"Reuse"}
-]
-},
-
-{
-name:"🧭 Responsibilities",
-questions:[
-{q:"Homework is?",options:["Duty","Option","Waste","Ignore"],a:"Duty"},
-{q:"Helping family is?",options:["Responsibility","Optional","Bad","Avoid"],a:"Responsibility"},
-{q:"Ignoring work is?",options:["Wrong","Good","Funny","Smart"],a:"Wrong"},
-{q:"Blaming others is?",options:["Bad","Good","Normal","Helpful"],a:"Bad"},
-{q:"Rules should be?",options:["Followed","Ignored","Broken","Skipped"],a:"Followed"}
-]
-},
-
-{
-name:"📜 Rules",
-questions:[
-{q:"Traffic rules are for?",options:["Safety","Fun","Noise","Chaos"],a:"Safety"},
-{q:"Breaking rules leads to?",options:["Danger","Reward","Success","Peace"],a:"Danger"},
-{q:"Rules create?",options:["Order","Chaos","Confusion","Delay"],a:"Order"},
-{q:"School rules give?",options:["Discipline","Freedom","Confusion","Stress"],a:"Discipline"},
-{q:"Rules are?",options:["Important","Useless","Optional","Bad"],a:"Important"}
-]
-},
-
-{
-name:"❤️ Moral Values",
-questions:[
-{q:"Honesty means?",options:["Truth","Lie","Cheat","Hide"],a:"Truth"},
-{q:"Kindness is?",options:["Good","Bad","Weakness","Danger"],a:"Good"},
-{q:"Helping others is?",options:["Right","Wrong","Optional","Useless"],a:"Right"},
-{q:"Stealing is?",options:["Wrong","Right","Funny","Normal"],a:"Wrong"},
-{q:"Respect is?",options:["Important","Optional","Fake","Bad"],a:"Important"}
-]
-},
-
-{
-name:"🌿 Environment",
-questions:[
-{q:"Trees give?",options:["Clean air","Pollution","Heat","Noise"],a:"Clean air"},
-{q:"Plastic is?",options:["Harmful","Safe","Good","Magic"],a:"Harmful"},
-{q:"We should save?",options:["Nature","Waste","Smoke","Fire"],a:"Nature"},
-{q:"Global warming is?",options:["Danger","Gift","Fun","Nothing"],a:"Danger"},
-{q:"Clean environment is?",options:["Healthy","Bad","Dangerous","Useless"],a:"Healthy"}
-]
-},
-
-{
-name:"🧠 Digital Safety",
-questions:[
-{q:"Strong password is?",options:["Safe","Weak","Open","Easy"],a:"Safe"},
-{q:"Unknown links should be?",options:["Avoided","Clicked","Shared","Trusted"],a:"Avoided"},
-{q:"Personal info should be?",options:["Protected","Shared","Posted","Ignored"],a:"Protected"},
-{q:"Cyber safety is?",options:["Important","Useless","Fake","Optional"],a:"Important"},
-{q:"Strangers online?",options:["Avoid","Trust","Meet","Follow"],a:"Avoid"}
-]
-},
-
-{
-name:"💪 Health & Fitness",
-questions:[
-{q:"Exercise gives?",options:["Fitness","Weakness","Fatigue","Pain"],a:"Fitness"},
-{q:"Healthy food is?",options:["Good","Bad","Junk","Slow"],a:"Good"},
-{q:"Sleep is?",options:["Important","Useless","Optional","Waste"],a:"Important"},
-{q:"Water is needed for?",options:["Body","Fire","Smoke","Noise"],a:"Body"},
-{q:"Junk food is?",options:["Unhealthy","Healthy","Safe","Good"],a:"Unhealthy"}
-]
+/* =========================
+   STORAGE HELPERS
+========================= */
+function saveData() {
+    if (!currentUser) return;
+    localStorage.setItem("mvear_" + currentUser, JSON.stringify(state));
 }
 
-];
-
-/* =========================
-   INIT
-========================= */
-
-updateUI();
-showStages();
-
-/* =========================
-   SHOW STAGE BUTTONS
-========================= */
-
-function showStages(){
-
-document.getElementById("title").innerText = "🌍 SELECT STAGE";
-
-document.getElementById("gameArea").innerHTML = `
-<div class="stage-menu">
-
-<button onclick="startStage(0)">🌱 Good Habits</button>
-<button onclick="startStage(1)">🌍 Awareness</button>
-<button onclick="startStage(2)">🧭 Responsibilities</button>
-<button onclick="startStage(3)">📜 Rules</button>
-<button onclick="startStage(4)">❤️ Moral Values</button>
-<button onclick="startStage(5)">🌿 Environment</button>
-<button onclick="startStage(6)">🧠 Digital Safety</button>
-<button onclick="startStage(7)">💪 Health & Fitness</button>
-
-</div>
-`;
-
+function loadData(user) {
+    return JSON.parse(localStorage.getItem("mvear_" + user));
 }
 
 /* =========================
-   START STAGE
+   AUTH SYSTEM
 ========================= */
+function register() {
+    const u = user.value.trim();
+    const p = pass.value.trim();
 
-function startStage(i){
+    if (!u || !p) return setMsg("Fill all fields");
 
-state.world = i;
-state.qIndex = 0;
-state.streak = 0;
+    if (localStorage.getItem("mvear_" + u))
+        return setMsg("User already exists");
 
-loadQuestion();
+    const newUser = {
+        pass: p,
+        xp: 0,
+        level: 1,
+        coins: 50,
+        hp: 100,
+        achievements: [],
+        lastDaily: ""
+    };
 
+    localStorage.setItem("mvear_" + u, JSON.stringify(newUser));
+    setMsg("Registered successfully!");
+}
+
+function login() {
+    const u = user.value.trim();
+    const p = pass.value.trim();
+
+    const data = loadData(u);
+
+    if (!data) return setMsg("User not found");
+    if (data.pass !== p) return setMsg("Wrong password");
+
+    currentUser = u;
+
+    state.xp = data.xp;
+    state.level = data.level;
+    state.coins = data.coins;
+    state.hp = data.hp;
+    state.achievements = data.achievements || [];
+    state.lastDaily = data.lastDaily || "";
+
+    loginBox.classList.add("hidden");
+    game.classList.remove("hidden");
+
+    render();
 }
 
 /* =========================
-   LOAD QUESTION
+   GAME CORE
 ========================= */
+function addXP(amount) {
+    state.xp += amount;
+    state.coins += 5;
 
-function loadQuestion(){
+    const requiredXP = state.level * 100;
 
-const world = worlds[state.world];
+    if (state.xp >= requiredXP) {
+        state.level++;
+        unlock("Level Up!");
+    }
 
-if(!world){
-showStages();
-return;
-}
-
-if(state.qIndex >= 5){
-stageComplete();
-return;
-}
-
-const q = world.questions[state.qIndex];
-
-document.getElementById("title").innerText = world.name;
-
-document.getElementById("gameArea").innerHTML = `
-<div class="quiz-container">
-
-<div class="question-box">${q.q}</div>
-
-<div class="answer-box" id="answers"></div>
-
-</div>
-`;
-
-let options = [...q.options].sort(()=>Math.random()-0.5);
-
-const box = document.getElementById("answers");
-
-options.forEach(opt=>{
-
-const btn = document.createElement("button");
-btn.className = "option-btn";
-btn.innerText = opt;
-
-btn.onclick = ()=>checkAnswer(opt,q.a);
-
-box.appendChild(btn);
-
-});
-
+    saveData();
+    render();
 }
 
 /* =========================
-   CHECK ANSWER
+   QUIZ SYSTEM
 ========================= */
+let quizActive = false;
+let correctAnswer = false;
 
-function checkAnswer(selected, correct){
+function startQuiz() {
+    quizActive = true;
 
-if(selected === correct){
+    const questions = [
+        { q: "2 + 2 = 4?", a: true },
+        { q: "Earth is flat?", a: false },
+        { q: "Water is H2O?", a: true }
+    ];
 
-state.xp += 10;
-state.coins += 5;
-state.streak++;
+    const q = questions[Math.floor(Math.random() * questions.length)];
 
-}else{
-
-state.streak = 0;
-state.hp -= 20;
-
-if(state.hp <= 0){
-gameOver();
-return;
+    questionEl.innerText = q.q;
+    correctAnswer = q.a;
 }
 
-}
+function answer(userAns) {
+    if (!quizActive) return;
 
-state.qIndex++;
+    if (userAns === correctAnswer) {
+        addXP(20);
+        unlock("Quiz Master");
+    } else {
+        state.hp -= 10;
+    }
 
-updateLevel();
-updateUI();
-save();
-
-setTimeout(loadQuestion,200);
-
+    quizActive = false;
+    render();
 }
 
 /* =========================
-   LEVEL SYSTEM
+   BOSS SYSTEM
 ========================= */
+let bossActive = false;
 
-function updateLevel(){
-
-if(state.xp >= state.level * 50){
-
-state.xp -= state.level * 50;
-state.level++;
-
+function startBoss() {
+    bossActive = true;
+    bossQ.innerText = "Boss: 10 + 10 = ?";
+    correctAnswer = true;
 }
 
+function bossAnswer(ans) {
+    if (!bossActive) return;
+
+    if (ans === correctAnswer) {
+        addXP(50);
+        unlock("Boss Slayer");
+    } else {
+        state.hp -= 20;
+    }
+
+    bossActive = false;
+    render();
 }
 
 /* =========================
-   STAGE COMPLETE
+   SHOP
 ========================= */
+function buy(type) {
+    if (type === "heal" && state.coins >= 30) {
+        state.hp = 100;
+        state.coins -= 30;
+    }
 
-function stageComplete(){
+    if (type === "xp" && state.coins >= 20) {
+        state.xp += 40;
+        state.coins -= 20;
+    }
 
-state.coins += 50;
-state.xp += 100;
-state.hp = Math.min(100,state.hp + 30);
+    if (type === "life" && state.coins >= 50) {
+        state.hp = 100;
+        state.coins -= 50;
+        unlock("Survivor");
+    }
 
-document.getElementById("gameArea").innerHTML = `
-<div class="reward-card">
-<h2>🎉 Stage Completed!</h2>
-<p>💰 +50 Coins</p>
-<p>⭐ +100 XP</p>
-<p>❤️ +30 HP</p>
-
-<button onclick="showStages()">⬅ Back to Stages</button>
-</div>
-`;
-
-save();
-updateUI();
-
+    saveData();
+    render();
 }
 
 /* =========================
-   GAME OVER
+   DAILY REWARD
 ========================= */
+function dailyReward() {
+    const today = new Date().toDateString();
 
-function gameOver(){
+    if (state.lastDaily === today) {
+        dailyMsg.innerText = "Already claimed today!";
+        return;
+    }
 
-document.getElementById("gameArea").innerHTML = `
-<h2 style="color:red;">💀 Game Over</h2>
-<button onclick="showStages()">Restart</button>
-`;
+    state.lastDaily = today;
+    state.coins += 40;
 
+    dailyMsg.innerText = "Daily reward claimed!";
+    saveData();
+    render();
 }
 
 /* =========================
-   SHOP SYSTEM
+   ACHIEVEMENTS
 ========================= */
-
-function buyItem(item){
-
-if(item==="life" && state.coins>=30){
-state.coins -= 30;
-state.hp = Math.min(100,state.hp + 30);
-}
-
-if(item==="skip" && state.coins>=20){
-state.coins -= 20;
-state.qIndex++;
-loadQuestion();
-}
-
-if(item==="hint" && state.coins>=15){
-state.coins -= 15;
-alert("💡 Think carefully!");
-}
-
-updateUI();
-save();
-
+function unlock(name) {
+    if (!state.achievements.includes(name)) {
+        state.achievements.push(name);
+    }
 }
 
 /* =========================
-   ROCK PAPER SCISSORS
+   LEADERBOARD
 ========================= */
+function updateLeaderboard() {
+    let list = [];
 
-function rps(user){
+    for (let i = 0; i < localStorage.length; i++) {
+        let key = localStorage.key(i);
 
-const arr=["rock","paper","scissors"];
-const ai = arr[Math.floor(Math.random()*3)];
+        if (key.startsWith("mvear_")) {
+            try {
+                let data = JSON.parse(localStorage.getItem(key));
+                list.push({
+                    name: key.replace("mvear_", ""),
+                    xp: data.xp || 0
+                });
+            } catch (e) {}
+        }
+    }
 
-if(user===ai){
-alert("Draw!");
-}
-else if(
-(user==="rock"&&ai==="scissors")||
-(user==="paper"&&ai==="rock")||
-(user==="scissors"&&ai==="paper")
-){
-alert("You Win!");
-state.coins += 10;
-}else{
-alert("You Lose!");
-state.hp -= 10;
-}
+    list.sort((a, b) => b.xp - a.xp);
 
-updateUI();
-save();
-
+    boardEl.innerText =
+        list.slice(0, 5)
+            .map(x => `${x.name} - ${x.xp} XP`)
+            .join("\n");
 }
 
 /* =========================
-   UI UPDATE
+   RENDER UI
 ========================= */
+function render() {
+    xpEl.innerText = state.xp;
+    levelEl.innerText = state.level;
+    coinsEl.innerText = state.coins;
 
-function updateUI(){
+    hpBar.style.width = state.hp + "%";
 
-document.getElementById("xp").innerText = state.xp;
-document.getElementById("level").innerText = state.level;
-document.getElementById("coins").innerText = state.coins;
+    achEl.innerText =
+        state.achievements.length > 0
+            ? state.achievements.join(", ")
+            : "None";
 
-document.getElementById("hpFill").style.width = state.hp + "%";
-
+    updateLeaderboard();
 }
 
 /* =========================
-   SAVE
+   LOGOUT
 ========================= */
+function logout() {
+    saveData();
+    location.reload();
+}
 
-function save(){
-
-localStorage.setItem("xp",state.xp);
-localStorage.setItem("level",state.level);
-localStorage.setItem("coins",state.coins);
-localStorage.setItem("hp",state.hp);
-
+/* =========================
+   UI HELPERS
+========================= */
+function setMsg(text) {
+    msgEl.innerText = text;
 }
