@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR PRO MCQ GAME</title>
+<title>MCQ Game System</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,60 +11,28 @@
 <body>
 
 <header>
-<h2>🌍 MVEAR PRO MCQ GAME</h2>
-
-<!-- STATS -->
-<div class="stats-box">
-
-  <div class="stat">
-    ⭐ Level: <span id="level">1</span>
-    <div class="bar-bg"><div id="xpBar"></div></div>
-  </div>
-
-  <div class="stat">
-    💰 Coins: <span id="coins">0</span>
-    <div class="bar-bg"><div id="coinBar"></div></div>
-  </div>
-
-  <div class="stat">
-    ❤️ Health: <span id="hp">100</span>
-    <div class="bar-bg"><div id="hpBar"></div></div>
-  </div>
-
-</div>
+<h1>🎮 MCQ GAME SYSTEM</h1>
+<p>Answer questions and complete stages</p>
 </header>
 
-<!-- MAIN -->
+<!-- MAIN GAME AREA -->
 <div class="container">
 
-<!-- STAGES -->
-<div class="card">
-<h3>📚 Select Stage</h3>
-<div id="stageGrid" class="stage-grid"></div>
-</div>
+    <!-- STAGE INFO -->
+    <div class="card">
+        <h2>📚 Stage System</h2>
+        <p id="stageInfo">Click Start to begin</p>
+        <button onclick="startGame()">▶ Start Game</button>
+    </div>
 
-<!-- QUESTION BOX -->
-<div class="card game-box">
+    <!-- QUESTION BOX -->
+    <div class="card game-box">
+        <h2 id="stageTitle">MCQ Challenge</h2>
 
-<h3 id="stageTitle">Select a Stage</h3>
-
-<div id="question">Click a stage to start</div>
-
-</div>
-
-<!-- PROGRESS -->
-<div class="card">
-<h3>📊 Progress</h3>
-<div class="progress">
-<div id="bar"></div>
-</div>
-</div>
-
-<!-- BADGES -->
-<div class="card">
-<h3>🏆 Badges</h3>
-<p id="badges">None</p>
-</div>
+        <div id="question">
+            <p>Press start to load questions</p>
+        </div>
+    </div>
 
 </div>
 
