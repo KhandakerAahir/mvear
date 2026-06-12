@@ -1,11 +1,16 @@
+
+/* =========================
+   ROOT THEME
+========================= */
 :root {
     --bg: #0f141b;
     --card: #1b2430;
-    --primary: #4aa3ff;
-    --danger: #e74c3c;
     --text: #e6e6e6;
     --muted: #a7b0bd;
-    --success: #2ecc71;
+
+    --xp: #4aa3ff;
+    --coin: #f1c40f;
+    --hp: #2ecc71;
 }
 
 /* =========================
@@ -18,7 +23,7 @@
 }
 
 /* =========================
-   BODY (DARK MODE)
+   BODY
 ========================= */
 body {
     font-family: Arial, sans-serif;
@@ -34,10 +39,10 @@ body {
 header {
     background: #121a24;
     padding: 18px;
+    border-bottom: 1px solid #2a3442;
     position: sticky;
     top: 0;
     z-index: 10;
-    border-bottom: 1px solid #2a3442;
 }
 
 /* =========================
@@ -58,11 +63,6 @@ header {
     margin: 12px 0;
     border-radius: 14px;
     box-shadow: 0 4px 14px rgba(0,0,0,0.4);
-    transition: 0.2s;
-}
-
-.card:hover {
-    transform: translateY(-2px);
 }
 
 /* =========================
@@ -75,6 +75,7 @@ header {
     margin-top: 10px;
 }
 
+/* stage buttons */
 .stage {
     background: #243042;
     padding: 14px;
@@ -82,7 +83,6 @@ header {
     cursor: pointer;
     font-weight: bold;
     transition: 0.2s;
-    color: var(--text);
 }
 
 .stage:hover {
@@ -91,41 +91,33 @@ header {
 }
 
 /* =========================
-   QUESTION TEXT (BIG)
+   QUESTION AREA
 ========================= */
 .game-box #question {
-    font-size: 26px;
+    font-size: 24px;
     font-weight: bold;
-    margin: 22px 0;
-    color: var(--text);
+    margin: 20px 0;
 }
 
 /* =========================
-   ANSWER BUTTONS AREA
+   ANSWER BUTTONS
 ========================= */
-.answer-box {
-    display: flex;
-    flex-direction: column;
-    gap: 14px;
-    margin-top: 10px;
-}
-
-/* BIG GAME BUTTON */
 .answer-btn {
     font-size: 18px;
-    padding: 18px;
-    border-radius: 14px;
+    padding: 16px;
+    margin: 8px 0;
+    width: 100%;
+    border-radius: 12px;
     border: none;
     cursor: pointer;
-    background: var(--primary);
+    background: #4aa3ff;
     color: white;
     font-weight: bold;
-    transition: 0.2s ease;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    transition: 0.2s;
 }
 
 .answer-btn:hover {
-    transform: scale(1.04);
+    transform: scale(1.03);
     opacity: 0.9;
 }
 
@@ -133,13 +125,57 @@ header {
     transform: scale(0.97);
 }
 
-/* RED BUTTON */
-.answer-btn.danger {
-    background: var(--danger);
+/* =========================
+   PROGRESS BARS SYSTEM
+========================= */
+.stats-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.stat {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* background bar */
+.bar-bg {
+    width: 100%;
+    height: 18px;
+    background: #2a3442;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+/* XP BAR */
+.bar.xp {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4aa3ff, #1e90ff);
+    transition: width 0.4s ease;
+}
+
+/* COIN BAR */
+.bar.coin {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f1c40f, #f39c12);
+    transition: width 0.4s ease;
+}
+
+/* HP BAR */
+.bar.hp {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.4s ease;
 }
 
 /* =========================
-   PROGRESS BAR
+   PROGRESS BAR (STAGES)
 ========================= */
 .progress {
     width: 100%;
@@ -147,26 +183,13 @@ header {
     background: #2a3442;
     border-radius: 20px;
     overflow: hidden;
-    margin-top: 10px;
 }
 
 .bar {
     height: 100%;
     width: 0%;
-    background: linear-gradient(90deg, var(--success), #27ae60);
     transition: width 0.4s ease;
-}
-
-/* =========================
-   TEXT STYLES
-========================= */
-h2, h3 {
-    margin-bottom: 10px;
-}
-
-.stats {
-    font-size: 14px;
-    color: var(--muted);
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
 }
 
 /* =========================
@@ -178,12 +201,12 @@ h2, h3 {
 }
 
 /* =========================
-   MOBILE FIX
+   MOBILE RESPONSIVE
 ========================= */
 @media (max-width: 600px) {
 
-    .game-box #question {
-        font-size: 20px;
+    .stage-grid {
+        grid-template-columns: 1fr;
     }
 
     .answer-btn {
@@ -191,7 +214,7 @@ h2, h3 {
         padding: 14px;
     }
 
-    .stage-grid {
-        grid-template-columns: 1fr;
+    .game-box #question {
+        font-size: 20px;
     }
 }
