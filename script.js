@@ -6,6 +6,8 @@ let state = {
     coins: 0,
     hp: 100,
     achievements: [],
+    stageProgress: [0,0,0,0,0,0,0,0],
+    currentStage: null,
     lastDaily: ""
 };
 
@@ -18,70 +20,124 @@ const game = document.getElementById("game");
 const xpEl = document.getElementById("xp");
 const levelEl = document.getElementById("level");
 const coinsEl = document.getElementById("coins");
-const hpBar = document.getElementById("hpBar");
 
 const questionEl = document.getElementById("question");
-const bossQ = document.getElementById("bossQ");
+const stageTitle = document.getElementById("stageTitle");
+const bar = document.getElementById("bar");
+
 const msgEl = document.getElementById("msg");
-const boardEl = document.getElementById("board");
-const achEl = document.getElementById("achievements");
-const dailyMsg = document.getElementById("dailyMsg");
+const user = document.getElementById("user");
+const pass = document.getElementById("pass");
 
 /* =========================
-   STORAGE HELPERS
+   STAGES DATA
 ========================= */
-function saveData() {
-    if (!currentUser) return;
-    localStorage.setItem("mvear_" + currentUser, JSON.stringify(state));
+const stages = [
+{
+name:"Good Habits",
+questions:[
+{q:"Brush teeth twice a day?", a:true},
+{q:"Skipping breakfast is healthy?", a:false},
+{q:"Washing hands is important?", a:true},
+{q:"Sleeping late is good?", a:false},
+{q:"Clean room is good habit?", a:true}
+]
+},
+{
+name:"Awareness",
+questions:[
+{q:"Fire is dangerous?", a:true},
+{q:"Cross road without looking?", a:false},
+{q:"Traffic rules matter?", a:true},
+{q:"Electric wires are safe to touch?", a:false},
+{q:"Strangers can be trusted always?", a:false}
+]
+},
+{
+name:"Digital Safety",
+questions:[
+{q:"Share OTP with others?", a:false},
+{q:"Strong password is important?", a:true},
+{q:"Click unknown links?", a:false},
+{q:"Cyberbullying is harmful?", a:true},
+{q:"Same password everywhere is safe?", a:false}
+]
+},
+{
+name:"Environment",
+questions:[
+{q:"Trees give oxygen?", a:true},
+{q:"Plastic is good for nature?", a:false},
+{q:"We should save water?", a:true},
+{q:"Pollution is harmful?", a:true},
+{q:"Recycling helps environment?", a:true}
+]
+},
+{
+name:"Moral Values",
+questions:[
+{q:"Helping others is good?", a:true},
+{q:"Stealing is right?", a:false},
+{q:"Respect elders?", a:true},
+{q:"Lying is good?", a:false},
+{q:"Kindness matters?", a:true}
+]
+},
+{
+name:"Rules",
+questions:[
+{q:"We should follow rules?", a:true},
+{q:"Breaking laws is okay?", a:false},
+{q:"Traffic rules matter?", a:true},
+{q:"School rules are important?", a:true},
+{q:"Discipline is bad?", a:false}
+]
+},
+{
+name:"Responsibilities",
+questions:[
+{q:"Students should study?", a:true},
+{q:"Keeping clean is responsibility?", a:true},
+{q:"Ignoring duties is good?", a:false},
+{q:"Helping family is responsibility?", a:true},
+{q:"Helping society is important?", a:true}
+]
+},
+{
+name:"Health",
+questions:[
+{q:"Junk food is healthy?", a:false},
+{q:"Drink water daily?", a:true},
+{q:"Exercise is important?", a:true},
+{q:"Skipping sleep is good?", a:false},
+{q:"Fruits are healthy?", a:true}
+]
 }
-
-function loadData(user) {
-    return JSON.parse(localStorage.getItem("mvear_" + user));
-}
+];
 
 /* =========================
-   AUTH SYSTEM
+   LOGIN
 ========================= */
-function register() {
+function login(){
     const u = user.value.trim();
     const p = pass.value.trim();
 
-    if (!u || !p) return setMsg("Fill all fields");
+    const data = JSON.parse(localStorage.getItem("mvear_"+u));
 
-    if (localStorage.getItem("mvear_" + u))
-        return setMsg("User already exists");
-
-    const newUser = {
-        pass: p,
-        xp: 0,
-        level: 1,
-        coins: 50,
-        hp: 100,
-        achievements: [],
-        lastDaily: ""
-    };
-
-    localStorage.setItem("mvear_" + u, JSON.stringify(newUser));
-    setMsg("Registered successfully!");
-}
-
-function login() {
-    const u = user.value.trim();
-    const p = pass.value.trim();
-
-    const data = loadData(u);
-
-    if (!data) return setMsg("User not found");
-    if (data.pass !== p) return setMsg("Wrong password");
+    if(!data) return setMsg("User not found");
+    if(data.pass !== p) return setMsg("Wrong password");
 
     currentUser = u;
-
-    state.xp = data.xp;
-    state.level = data.level;
-    state.coins = data.coins;
-    state.hp = data.hp;
-    state.achievements = data.achievements || [];
-    state.lastDaily = data.lastDaily || "";
+    state = {
+        xp:data.xp || 0,
+        level:data.level || 1,
+        coins:data.coins || 0,
+        hp:data.hp || 100,
+        achievements:data.achievements || [],
+        stageProgress:data.stageProgress || [0,0,0,0,0,0,0,0],
+        currentStage:null,
+        lastDaily:data.lastDaily || ""
+    };
 
     loginBox.classList.add("hidden");
     game.classList.remove("hidden");
@@ -90,192 +146,99 @@ function login() {
 }
 
 /* =========================
-   GAME CORE
+   STAGE SYSTEM
 ========================= */
-function addXP(amount) {
-    state.xp += amount;
-    state.coins += 5;
+let qIndex = 0;
 
-    const requiredXP = state.level * 100;
+function selectStage(i){
+    state.currentStage = i;
+    qIndex = 0;
 
-    if (state.xp >= requiredXP) {
-        state.level++;
-        unlock("Level Up!");
-    }
-
-    saveData();
-    render();
+    stageTitle.innerText = stages[i].name;
+    loadQuestion();
 }
 
-/* =========================
-   QUIZ SYSTEM
-========================= */
-let quizActive = false;
-let correctAnswer = false;
+function loadQuestion(){
+    const stage = stages[state.currentStage];
 
-function startQuiz() {
-    quizActive = true;
-
-    const questions = [
-        { q: "2 + 2 = 4?", a: true },
-        { q: "Earth is flat?", a: false },
-        { q: "Water is H2O?", a: true }
-    ];
-
-    const q = questions[Math.floor(Math.random() * questions.length)];
-
-    questionEl.innerText = q.q;
-    correctAnswer = q.a;
-}
-
-function answer(userAns) {
-    if (!quizActive) return;
-
-    if (userAns === correctAnswer) {
-        addXP(20);
-        unlock("Quiz Master");
-    } else {
-        state.hp -= 10;
-    }
-
-    quizActive = false;
-    render();
-}
-
-/* =========================
-   BOSS SYSTEM
-========================= */
-let bossActive = false;
-
-function startBoss() {
-    bossActive = true;
-    bossQ.innerText = "Boss: 10 + 10 = ?";
-    correctAnswer = true;
-}
-
-function bossAnswer(ans) {
-    if (!bossActive) return;
-
-    if (ans === correctAnswer) {
-        addXP(50);
-        unlock("Boss Slayer");
-    } else {
-        state.hp -= 20;
-    }
-
-    bossActive = false;
-    render();
-}
-
-/* =========================
-   SHOP
-========================= */
-function buy(type) {
-    if (type === "heal" && state.coins >= 30) {
-        state.hp = 100;
-        state.coins -= 30;
-    }
-
-    if (type === "xp" && state.coins >= 20) {
-        state.xp += 40;
-        state.coins -= 20;
-    }
-
-    if (type === "life" && state.coins >= 50) {
-        state.hp = 100;
-        state.coins -= 50;
-        unlock("Survivor");
-    }
-
-    saveData();
-    render();
-}
-
-/* =========================
-   DAILY REWARD
-========================= */
-function dailyReward() {
-    const today = new Date().toDateString();
-
-    if (state.lastDaily === today) {
-        dailyMsg.innerText = "Already claimed today!";
+    if(qIndex >= stage.questions.length){
+        completeStage();
         return;
     }
 
-    state.lastDaily = today;
-    state.coins += 40;
+    questionEl.innerText = stage.questions[qIndex].q;
+}
 
-    dailyMsg.innerText = "Daily reward claimed!";
-    saveData();
+/* =========================
+   ANSWER SYSTEM
+========================= */
+function answer(userAns){
+    if(state.currentStage === null) return;
+
+    const stage = stages[state.currentStage];
+    const correct = stage.questions[qIndex].a;
+
+    if(userAns === correct){
+        state.xp += 10;
+        state.coins += 5;
+    }
+
+    qIndex++;
+    loadQuestion();
     render();
 }
 
 /* =========================
-   ACHIEVEMENTS
+   STAGE COMPLETE
 ========================= */
-function unlock(name) {
-    if (!state.achievements.includes(name)) {
-        state.achievements.push(name);
-    }
+function completeStage(){
+    state.stageProgress[state.currentStage] = 1;
+
+    state.xp += 50;
+    state.coins += 20;
+
+    alert("Stage Completed!");
+
+    updateProgress();
+    render();
 }
 
 /* =========================
-   LEADERBOARD
+   PROGRESS BAR
 ========================= */
-function updateLeaderboard() {
-    let list = [];
+function updateProgress(){
+    const done = state.stageProgress.filter(x=>x===1).length;
+    const percent = (done / 8) * 100;
 
-    for (let i = 0; i < localStorage.length; i++) {
-        let key = localStorage.key(i);
-
-        if (key.startsWith("mvear_")) {
-            try {
-                let data = JSON.parse(localStorage.getItem(key));
-                list.push({
-                    name: key.replace("mvear_", ""),
-                    xp: data.xp || 0
-                });
-            } catch (e) {}
-        }
-    }
-
-    list.sort((a, b) => b.xp - a.xp);
-
-    boardEl.innerText =
-        list.slice(0, 5)
-            .map(x => `${x.name} - ${x.xp} XP`)
-            .join("\n");
+    bar.style.width = percent + "%";
 }
 
 /* =========================
-   RENDER UI
+   SAVE SYSTEM
 ========================= */
-function render() {
+function save(){
+    if(!currentUser) return;
+    localStorage.setItem("mvear_"+currentUser, JSON.stringify(state));
+}
+
+/* auto save */
+setInterval(save, 3000);
+
+/* =========================
+   RENDER
+========================= */
+function render(){
     xpEl.innerText = state.xp;
     levelEl.innerText = state.level;
     coinsEl.innerText = state.coins;
 
-    hpBar.style.width = state.hp + "%";
-
-    achEl.innerText =
-        state.achievements.length > 0
-            ? state.achievements.join(", ")
-            : "None";
-
-    updateLeaderboard();
+    updateProgress();
+    save();
 }
 
 /* =========================
-   LOGOUT
+   MESSAGE
 ========================= */
-function logout() {
-    saveData();
-    location.reload();
-}
-
-/* =========================
-   UI HELPERS
-========================= */
-function setMsg(text) {
-    msgEl.innerText = text;
+function setMsg(t){
+    msgEl.innerText = t;
 }
