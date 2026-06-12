@@ -15,7 +15,7 @@ const state = {
 ========================= */
 const stages = [
 {
-name: "Good Habits",
+name: "Good Habits 😄",
 questions: [
 {q:"How many times should you brush teeth? 🪥", options:["Once","Twice","Never","Sometimes"], a:1},
 {q:"Skipping breakfast is: 🍳", options:["Good","Bad","Optional","Best"], a:1},
@@ -26,7 +26,7 @@ questions: [
 },
 
 {
-name: "Awareness",
+name: "Awareness ⚠️",
 questions: [
 {q:"Fire is: 🔥", options:["Safe","Dangerous","Toy","Food"], a:1},
 {q:"Traffic rules should be: 🚦", options:["Ignored","Followed","Broken","Optional"], a:1},
@@ -37,7 +37,7 @@ questions: [
 },
 
 {
-name: "Environment",
+name: "Environment 🌱",
 questions: [
 {q:"Trees give: 🌳", options:["Plastic","Oxygen","Smoke","Noise"], a:1},
 {q:"Plastic is: 🗑️", options:["Good","Bad","Healthy","Useful"], a:1},
@@ -48,7 +48,7 @@ questions: [
 },
 
 {
-name: "Moral Values",
+name: "Moral Values ❤️",
 questions: [
 {q:"Helping others is: 🤝", options:["Bad","Good","Useless","Wrong"], a:1},
 {q:"Stealing is: 🧑‍⚖️", options:["Right","Wrong","Good","Normal"], a:1},
@@ -59,7 +59,7 @@ questions: [
 },
 
 {
-name: "Digital Safety",
+name: "Digital Safety 🔐",
 questions: [
 {q:"OTP should be shared? 📱", options:["Yes","No","Sometimes","Maybe"], a:1},
 {q:"Strong password is: 🔑", options:["12345","Name","Mix letters","Blank"], a:2},
@@ -70,7 +70,7 @@ questions: [
 },
 
 {
-name: "Responsibilities",
+name: "Responsibilities 🧑‍🤝‍🧑",
 questions: [
 {q:"Students should: 📚", options:["Study","Play all day","Sleep only","Ignore"], a:0},
 {q:"Helping family is: 🏠", options:["Bad","Good","Optional","Wrong"], a:1},
@@ -81,7 +81,7 @@ questions: [
 },
 
 {
-name: "Rules",
+name: "Rules 📜",
 questions: [
 {q:"Rules should be: 📏", options:["Broken","Followed","Ignored","Removed"], a:1},
 {q:"Laws are: ⚖️", options:["Useless","Important","Optional","Funny"], a:1},
@@ -92,7 +92,7 @@ questions: [
 },
 
 {
-name: "Health",
+name: "Health 💪",
 questions: [
 {q:"Exercise is: 🏃", options:["Useless","Important","Danger","Optional"], a:1},
 {q:"Junk food is: 🍔", options:["Healthy","Unhealthy","Best","Required"], a:1},
@@ -104,22 +104,23 @@ questions: [
 ];
 
 /* =========================
-   START GAME (STAGE MENU)
+   START GAME
 ========================= */
 function startGame() {
     state.stage = null;
     state.index = 0;
     state.hp = 100;
     state.points = 0;
+
     showStageMenu();
 }
 
 /* =========================
-   STAGE MENU
+   SHOW STAGE MENU
 ========================= */
 function showStageMenu() {
 
-    document.getElementById("stageTitle").textContent =
+    document.getElementById("stageTitle").innerText =
         "🎮 Choose Your Stage";
 
     document.getElementById("question").innerHTML = `
@@ -150,8 +151,10 @@ function loadQuestion() {
 
     state.locked = false;
 
-    document.getElementById("stageTitle").textContent =
-        `${stage.name} | ❤️ HP: ${state.hp} | ⭐ Points: ${state.points}`;
+    updateUI();
+
+    document.getElementById("stageTitle").innerText =
+        `${stage.name}`;
 
     document.getElementById("question").innerHTML = `
         <div class="q-text">${q.q}</div>
@@ -187,11 +190,13 @@ function answer(i) {
         state.points += 10;
     }
 
+    updateUI();
+
     setTimeout(nextQuestion, 800);
 }
 
 /* =========================
-   NEXT QUESTION FLOW
+   NEXT QUESTION
 ========================= */
 function nextQuestion() {
 
@@ -205,4 +210,16 @@ function nextQuestion() {
     }
 
     loadQuestion();
+}
+
+/* =========================
+   UPDATE UI (HP BAR + POINTS)
+========================= */
+function updateUI() {
+
+    document.getElementById("hpText").innerText = state.hp;
+    document.getElementById("points").innerText = state.points;
+
+    document.getElementById("hpBar").style.width =
+        state.hp + "%";
 }
