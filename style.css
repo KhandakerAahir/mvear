@@ -1,15 +1,16 @@
 
 /* =========================
-   GLOBAL THEME
+   ROOT THEME (DARK GAME UI)
 ========================= */
 :root {
-    --bg: #0f141b;
-    --card: #1b2430;
+    --bg: #0b0f16;
+    --card: #151c28;
     --text: #e6e6e6;
 
     --primary: #4aa3ff;
-    --correct: #2ecc71;
-    --wrong: #e74c3c;
+    --good: #2ecc71;
+    --bad: #e74c3c;
+    --warning: #f1c40f;
 }
 
 /* =========================
@@ -36,18 +37,19 @@ body {
    HEADER
 ========================= */
 header {
-    background: #121a24;
+    background: #0f1624;
     padding: 20px;
-    border-bottom: 1px solid #2a3442;
+    border-bottom: 1px solid #243246;
 }
 
 header h1 {
     font-size: 26px;
+    margin-bottom: 5px;
 }
 
 header p {
     color: #aaa;
-    margin-top: 5px;
+    font-size: 14px;
 }
 
 /* =========================
@@ -67,20 +69,32 @@ header p {
     padding: 18px;
     margin: 12px 0;
     border-radius: 14px;
-    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
 }
 
 /* =========================
-   QUESTION BOX
+   STATS BAR
 ========================= */
-.game-box {
-    min-height: 180px;
+.stats {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    font-weight: bold;
+    font-size: 16px;
 }
 
-#question {
+/* =========================
+   QUESTION AREA
+========================= */
+.game-box {
+    min-height: 200px;
+}
+
+/* QUESTION TEXT */
+.q-text {
     font-size: 24px;
     font-weight: bold;
-    margin-top: 15px;
+    margin-bottom: 18px;
 }
 
 /* =========================
@@ -90,7 +104,6 @@ header p {
     display: grid;
     grid-template-columns: 1fr;
     gap: 12px;
-    margin-top: 20px;
 }
 
 /* =========================
@@ -108,11 +121,13 @@ header p {
     transition: 0.2s;
 }
 
+/* hover */
 .mcq-grid button:hover {
     transform: scale(1.03);
     opacity: 0.9;
 }
 
+/* click */
 .mcq-grid button:active {
     transform: scale(0.97);
 }
@@ -121,12 +136,12 @@ header p {
    ANSWER STATES (JS CONTROLLED)
 ========================= */
 .correct {
-    background: var(--correct) !important;
+    background: var(--good) !important;
     color: white;
 }
 
 .wrong {
-    background: var(--wrong) !important;
+    background: var(--bad) !important;
     color: white;
 }
 
@@ -143,10 +158,19 @@ button {
     color: white;
     cursor: pointer;
     margin-top: 10px;
+    transition: 0.2s;
 }
 
 button:hover {
     opacity: 0.9;
+}
+
+/* =========================
+   TIMER WARNING EFFECT
+========================= */
+.warning {
+    color: var(--warning);
+    font-weight: bold;
 }
 
 /* =========================
@@ -158,12 +182,17 @@ button:hover {
         font-size: 22px;
     }
 
-    #question {
+    .q-text {
         font-size: 20px;
     }
 
     .mcq-grid button {
         font-size: 16px;
         padding: 14px;
+    }
+
+    .stats {
+        flex-direction: column;
+        gap: 10px;
     }
 }
