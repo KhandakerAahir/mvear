@@ -1,252 +1,223 @@
-let state = {
-    xp: 0,
-    level: 1,
-    coins: 0,
-    hp: 100,
-    currentStage: null,
-    qIndex: 0,
-    stageDone: [0,0,0,0,0,0,0,0],
-    combo: 0,
-    badges: []
-};
 
 /* =========================
-   STAGES (8 LEVELS)
+   THEME COLORS
 ========================= */
-const stages = [
-{
-name:"Good Habits",
-questions:[
-{q:"Brush teeth twice a day?", a:true},
-{q:"Skipping breakfast is good?", a:false},
-{q:"Wash hands regularly?", a:true},
-{q:"Sleeping very late is healthy?", a:false},
-{q:"Clean room is good habit?", a:true}
-]
-},
-{
-name:"Awareness",
-questions:[
-{q:"Fire is dangerous?", a:true},
-{q:"Cross road without looking?", a:false},
-{q:"Traffic rules matter?", a:true},
-{q:"Electric wires are safe to touch?", a:false},
-{q:"Strangers are always safe?", a:false}
-]
-},
-{
-name:"Digital Safety",
-questions:[
-{q:"Share OTP with anyone?", a:false},
-{q:"Strong password is important?", a:true},
-{q:"Click unknown links?", a:false},
-{q:"Cyberbullying is harmful?", a:true},
-{q:"Same password everywhere safe?", a:false}
-]
-},
-{
-name:"Environment",
-questions:[
-{q:"Trees give oxygen?", a:true},
-{q:"Plastic is good for nature?", a:false},
-{q:"Save water?", a:true},
-{q:"Pollution is harmful?", a:true},
-{q:"Recycling helps?", a:true}
-]
-},
-{
-name:"Moral Values",
-questions:[
-{q:"Helping others is good?", a:true},
-{q:"Stealing is right?", a:false},
-{q:"Respect elders?", a:true},
-{q:"Lying is good?", a:false},
-{q:"Kindness matters?", a:true}
-]
-},
-{
-name:"Rules",
-questions:[
-{q:"We should follow rules?", a:true},
-{q:"Breaking laws is okay?", a:false},
-{q:"Traffic rules important?", a:true},
-{q:"School rules matter?", a:true},
-{q:"Discipline is bad?", a:false}
-]
-},
-{
-name:"Responsibilities",
-questions:[
-{q:"Students should study?", a:true},
-{q:"Keep environment clean?", a:true},
-{q:"Ignore duties?", a:false},
-{q:"Help family?", a:true},
-{q:"Help society?", a:true}
-]
-},
-{
-name:"Health",
-questions:[
-{q:"Junk food is healthy?", a:false},
-{q:"Drink water daily?", a:true},
-{q:"Exercise important?", a:true},
-{q:"Skipping sleep is good?", a:false},
-{q:"Fruits are healthy?", a:true}
-]
-}
-];
+:root {
+    --bg: #0f141b;
+    --card: #1b2430;
+    --text: #e6e6e6;
+    --muted: #a7b0bd;
 
-/* =========================
-   ELEMENTS
-========================= */
-const stageGrid = document.getElementById("stageGrid");
-const stageTitle = document.getElementById("stageTitle");
-const questionEl = document.getElementById("question");
+    --xp: #4aa3ff;
+    --coin: #f1c40f;
+    --hp: #2ecc71;
 
-const xpEl = document.getElementById("xp");
-const levelEl = document.getElementById("level");
-const coinsEl = document.getElementById("coins");
-const hpEl = document.getElementById("hp");
-const bar = document.getElementById("bar");
-const badgesEl = document.getElementById("badges");
-
-/* =========================
-   LOAD STAGES UI
-========================= */
-function loadStages(){
-    stageGrid.innerHTML = "";
-
-    stages.forEach((s,i)=>{
-        const div = document.createElement("div");
-        div.className = "stage";
-
-        div.innerText = s.name;
-
-        if(state.stageDone[i]){
-            div.innerText += " 🏆";
-        }
-
-        if(i > state.currentStage && state.currentStage !== null){
-            div.style.opacity = "0.5";
-            div.onclick = () => alert("Locked Stage!");
-        } else {
-            div.onclick = () => selectStage(i);
-        }
-
-        stageGrid.appendChild(div);
-    });
+    --danger: #e74c3c;
 }
 
 /* =========================
-   SELECT STAGE
+   RESET
 ========================= */
-function selectStage(i){
-    state.currentStage = i;
-    state.qIndex = 0;
-    state.combo = 0;
-
-    stageTitle.innerText = stages[i].name;
-
-    loadQuestion();
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 /* =========================
-   LOAD QUESTION
+   BODY
 ========================= */
-function loadQuestion(){
-    const stage = stages[state.currentStage];
+body {
+    font-family: Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    text-align: center;
+    line-height: 1.4;
+}
 
-    if(state.qIndex >= stage.questions.length){
-        completeStage();
-        return;
+/* =========================
+   HEADER
+========================= */
+header {
+    background: #121a24;
+    padding: 18px;
+    border-bottom: 1px solid #2a3442;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+/* =========================
+   CONTAINER
+========================= */
+.container {
+    max-width: 900px;
+    margin: auto;
+    padding: 15px;
+}
+
+/* =========================
+   CARDS
+========================= */
+.card {
+    background: var(--card);
+    padding: 16px;
+    margin: 12px 0;
+    border-radius: 14px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.4);
+}
+
+/* =========================
+   STAGE GRID
+========================= */
+.stage-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+}
+
+/* stage button */
+.stage {
+    background: #243042;
+    padding: 14px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.stage:hover {
+    background: #2e3d52;
+    transform: scale(1.05);
+}
+
+/* =========================
+   QUESTION TEXT
+========================= */
+.game-box #question {
+    font-size: 24px;
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+/* =========================
+   MCQ ANSWER BUTTONS
+========================= */
+.answer-btn {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 16px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: var(--xp);
+    color: white;
+    transition: 0.2s;
+}
+
+.answer-btn:hover {
+    transform: scale(1.03);
+    opacity: 0.9;
+}
+
+.answer-btn:active {
+    transform: scale(0.97);
+}
+
+/* =========================
+   PROGRESS SYSTEM (XP / COIN / HP)
+========================= */
+.stats-box {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.stat {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+/* BAR BACKGROUND */
+.bar-bg {
+    width: 100%;
+    height: 18px;
+    background: #2a3442;
+    border-radius: 20px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+/* XP BAR */
+#xpBar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #4aa3ff, #1e90ff);
+    transition: width 0.4s ease;
+}
+
+/* COIN BAR */
+#coinBar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #f1c40f, #f39c12);
+    transition: width 0.4s ease;
+}
+
+/* HP BAR */
+#hpBar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.4s ease;
+}
+
+/* =========================
+   STAGE PROGRESS BAR
+========================= */
+.progress {
+    width: 100%;
+    height: 22px;
+    background: #2a3442;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+#bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #2ecc71, #27ae60);
+    transition: width 0.4s ease;
+}
+
+/* =========================
+   BADGES
+========================= */
+#badges {
+    font-weight: bold;
+    color: var(--text);
+}
+
+/* =========================
+   MOBILE RESPONSIVE
+========================= */
+@media (max-width: 600px) {
+
+    .stage-grid {
+        grid-template-columns: 1fr;
     }
 
-    questionEl.innerText = stage.questions[state.qIndex].q;
-}
-
-/* =========================
-   ANSWER SYSTEM
-========================= */
-function answer(userAns){
-    const q = stages[state.currentStage].questions[state.qIndex];
-
-    if(userAns === q.a){
-        state.xp += 10 + state.combo;
-        state.coins += 5;
-        state.combo++;
-    } else {
-        state.hp -= 10;
-        state.combo = 0;
+    .game-box #question {
+        font-size: 20px;
     }
 
-    if(state.hp <= 0){
-        alert("Game Over!");
-        location.reload();
+    .answer-btn {
+        font-size: 16px;
+        padding: 14px;
     }
-
-    state.qIndex++;
-
-    updateUI();
-    loadQuestion();
 }
-
-/* =========================
-   COMPLETE STAGE
-========================= */
-function completeStage(){
-    state.stageDone[state.currentStage] = 1;
-
-    state.xp += 50;
-    state.coins += 20;
-
-    const name = stages[state.currentStage].name;
-
-    if(!state.badges.includes(name)){
-        state.badges.push(name);
-    }
-
-    alert(name + " Completed!");
-
-    state.currentStage++;
-    state.qIndex = 0;
-
-    updateUI();
-    loadStages();
-}
-
-/* =========================
-   UI UPDATE
-========================= */
-function updateUI(){
-    xpEl.innerText = state.xp;
-    levelEl.innerText = Math.floor(state.xp / 100) + 1;
-    coinsEl.innerText = state.coins;
-    hpEl.innerText = state.hp;
-
-    const done = state.stageDone.filter(x=>x===1).length;
-    bar.style.width = (done / stages.length) * 100 + "%";
-
-    badgesEl.innerText =
-        state.badges.length ? state.badges.join(", ") : "None";
-}
-
-/* =========================
-   SAVE SYSTEM
-========================= */
-setInterval(()=>{
-    localStorage.setItem("mvear_pro_save", JSON.stringify(state));
-}, 3000);
-
-/* =========================
-   LOAD SAVE
-========================= */
-window.onload = function(){
-    const data = JSON.parse(localStorage.getItem("mvear_pro_save"));
-
-    if(data){
-        state = data;
-    }
-
-    loadStages();
-    updateUI();
-};
