@@ -12,7 +12,7 @@
 
 <header>
     <h1>🎮 MCQ ULTIMATE GAME</h1>
-    <p>Choose a stage, answer MCQs, survive & score ⭐</p>
+    <p>8 Stages • Survival • Learning • Progress</p>
 </header>
 
 <div class="container">
@@ -25,7 +25,7 @@
 
     <!-- HEALTH BAR -->
     <div class="card">
-        <h3>❤️ Health</h3>
+        <h3>❤️ Health Bar</h3>
         <div class="progress">
             <div id="hpBar" class="bar"></div>
         </div>
@@ -41,10 +41,10 @@
         <div id="stageMenu"></div>
     </div>
 
-    <!-- QUESTION AREA -->
+    <!-- GAME AREA -->
     <div class="card game-box">
         <div id="question">
-            <h3>👉 Select a stage to start the game</h3>
+            <h3>👉 Click a stage to start the game</h3>
         </div>
     </div>
 
@@ -52,18 +52,25 @@
 
 <!-- RESULT SCREEN -->
 <div id="resultScreen" class="overlay hidden">
+
     <div class="result-card">
-        <h2 id="resultTitle"></h2>
+
+        <h2 id="resultTitle">Result</h2>
+
         <p id="resultScore"></p>
+
         <div id="stars"></div>
 
         <br>
-        <button onclick="nextStage()">Next / Restart</button>
-        <button onclick="startGame()">Main Menu</button>
+
+        <button onclick="nextStage()">Next Stage 🔓</button>
+        <button onclick="startGame()">Restart 🏠</button>
+
     </div>
+
 </div>
 
-<!-- JS -->
+<!-- SCRIPT -->
 <script src="script.js"></script>
 
 </body>
