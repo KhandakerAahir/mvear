@@ -3,7 +3,7 @@ let state = {
     level: 1,
     coins: 0,
     hp: 100,
-    currentStage: 0,
+    currentStage: null,
     qIndex: 0,
     stageDone: [0,0,0,0,0,0,0,0],
     combo: 0,
@@ -11,7 +11,7 @@ let state = {
 };
 
 /* =========================
-   STAGES DATA (8 STAGES)
+   STAGES (8 LEVELS)
 ========================= */
 const stages = [
 {
@@ -89,7 +89,7 @@ name:"Health",
 questions:[
 {q:"Junk food is healthy?", a:false},
 {q:"Drink water daily?", a:true},
-{q:"Exercise is important?", a:true},
+{q:"Exercise important?", a:true},
 {q:"Skipping sleep is good?", a:false},
 {q:"Fruits are healthy?", a:true}
 ]
@@ -111,7 +111,7 @@ const bar = document.getElementById("bar");
 const badgesEl = document.getElementById("badges");
 
 /* =========================
-   INIT STAGES UI
+   LOAD STAGES UI
 ========================= */
 function loadStages(){
     stageGrid.innerHTML = "";
@@ -120,13 +120,13 @@ function loadStages(){
         const div = document.createElement("div");
         div.className = "stage";
 
-        div.innerHTML = s.name;
+        div.innerText = s.name;
 
         if(state.stageDone[i]){
-            div.innerHTML += " 🏆";
+            div.innerText += " 🏆";
         }
 
-        if(i > state.currentStage){
+        if(i > state.currentStage && state.currentStage !== null){
             div.style.opacity = "0.5";
             div.onclick = () => alert("Locked Stage!");
         } else {
@@ -146,6 +146,7 @@ function selectStage(i){
     state.combo = 0;
 
     stageTitle.innerText = stages[i].name;
+
     loadQuestion();
 }
 
@@ -184,6 +185,7 @@ function answer(userAns){
     }
 
     state.qIndex++;
+
     updateUI();
     loadQuestion();
 }
@@ -197,13 +199,13 @@ function completeStage(){
     state.xp += 50;
     state.coins += 20;
 
-    const stageName = stages[state.currentStage].name;
+    const name = stages[state.currentStage].name;
 
-    if(!state.badges.includes(stageName)){
-        state.badges.push(stageName);
+    if(!state.badges.includes(name)){
+        state.badges.push(name);
     }
 
-    alert(stageName + " Completed!");
+    alert(name + " Completed!");
 
     state.currentStage++;
     state.qIndex = 0;
@@ -229,7 +231,7 @@ function updateUI(){
 }
 
 /* =========================
-   AUTO SAVE
+   SAVE SYSTEM
 ========================= */
 setInterval(()=>{
     localStorage.setItem("mvear_pro_save", JSON.stringify(state));
