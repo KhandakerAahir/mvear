@@ -30,15 +30,20 @@
 </div>
 
 <!-- GAME AREA -->
-<div class="card">
+<div class="card game-box">
+
 <h3 id="stageTitle">Select a Stage</h3>
+
 <p id="question">---</p>
 
-<button onclick="answer(true)">True / Correct</button>
-<button onclick="answer(false)">False / Wrong</button>
+<div class="answer-box">
+    <button class="answer-btn" onclick="answer(true)">✔ TRUE / CORRECT</button>
+    <button class="answer-btn danger" onclick="answer(false)">✖ FALSE / WRONG</button>
 </div>
 
-<!-- PROGRESS BAR -->
+</div>
+
+<!-- PROGRESS -->
 <div class="card">
 <h3>📊 Overall Progress</h3>
 <div class="progress">
