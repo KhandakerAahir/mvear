@@ -11,26 +11,29 @@
 <body>
 
 <header>
-<h1>🎮 MCQ GAME SYSTEM</h1>
-<p>Answer questions and complete stages</p>
+<h1>🎮 MCQ GAME</h1>
+<p>Answer correctly and complete all stages</p>
 </header>
 
-<!-- MAIN GAME AREA -->
+<!-- MAIN CONTAINER -->
 <div class="container">
 
-    <!-- STAGE INFO -->
+    <!-- START SECTION -->
     <div class="card">
-        <h2>📚 Stage System</h2>
-        <p id="stageInfo">Click Start to begin</p>
+        <h2>📚 MCQ System</h2>
+        <p>Click start to begin the quiz</p>
         <button onclick="startGame()">▶ Start Game</button>
     </div>
 
-    <!-- QUESTION BOX -->
-    <div class="card game-box">
-        <h2 id="stageTitle">MCQ Challenge</h2>
+    <!-- STAGE TITLE -->
+    <div class="card">
+        <h2 id="stageTitle">Stage Not Started</h2>
+    </div>
 
+    <!-- QUESTION AREA -->
+    <div class="card game-box">
         <div id="question">
-            <p>Press start to load questions</p>
+            <p>Questions will appear here</p>
         </div>
     </div>
 
