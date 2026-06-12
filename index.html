@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR 8-Stage Game</title>
+<title>MVEAR Pro Stage Game</title>
 
 <link rel="stylesheet" href="style.css">
 </head>
@@ -11,53 +11,45 @@
 <body>
 
 <header>
-<h2>🌍 MVEAR 8-Stage Learning Game</h2>
+<h2>🌍 MVEAR PRO LEARNING GAME</h2>
 
-<div>
+<div class="stats">
 ⭐ XP: <span id="xp">0</span> |
 🏆 Level: <span id="level">1</span> |
-💰 Coins: <span id="coins">0</span>
+💰 Coins: <span id="coins">0</span> |
+❤️ HP: <span id="hp">100</span>
 </div>
 </header>
 
-<!-- MAIN GAME -->
 <div class="container">
 
 <!-- STAGES -->
 <div class="card">
-<h3>📚 Choose Stage</h3>
-
-<div class="stage-grid">
-
-<div class="stage" onclick="selectStage(0)">Good Habits</div>
-<div class="stage" onclick="selectStage(1)">Awareness</div>
-<div class="stage" onclick="selectStage(2)">Digital Safety</div>
-<div class="stage" onclick="selectStage(3)">Environment</div>
-<div class="stage" onclick="selectStage(4)">Moral Values</div>
-<div class="stage" onclick="selectStage(5)">Rules</div>
-<div class="stage" onclick="selectStage(6)">Responsibilities</div>
-<div class="stage" onclick="selectStage(7)">Health</div>
-
+<h3>📚 Select Stage</h3>
+<div class="stage-grid" id="stageGrid"></div>
 </div>
 
-</div>
-
-<!-- QUESTION AREA -->
+<!-- GAME AREA -->
 <div class="card">
 <h3 id="stageTitle">Select a Stage</h3>
-
 <p id="question">---</p>
 
 <button onclick="answer(true)">True / Correct</button>
 <button onclick="answer(false)">False / Wrong</button>
 </div>
 
-<!-- PROGRESS -->
+<!-- PROGRESS BAR -->
 <div class="card">
-<h3>📊 Progress</h3>
+<h3>📊 Overall Progress</h3>
 <div class="progress">
 <div id="bar" class="bar"></div>
 </div>
+</div>
+
+<!-- BADGES -->
+<div class="card">
+<h3>🏆 Badges</h3>
+<p id="badges">None</p>
 </div>
 
 </div>
