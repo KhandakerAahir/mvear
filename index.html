@@ -3,82 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MVEAR Stage System</title>
+<title>MVEAR 8-Stage Game</title>
 
-<style>
-body{
-    font-family:Arial;
-    margin:0;
-    background:#f4f6fb;
-    text-align:center;
-}
-
-header{
-    background:#1e2a38;
-    color:white;
-    padding:15px;
-}
-
-.container{
-    max-width:900px;
-    margin:auto;
-    padding:15px;
-}
-
-.card{
-    background:white;
-    padding:15px;
-    margin:10px 0;
-    border-radius:10px;
-    box-shadow:0 0 10px rgba(0,0,0,0.08);
-}
-
-button{
-    padding:10px 12px;
-    margin:5px;
-    border:none;
-    border-radius:6px;
-    background:#2d89ef;
-    color:white;
-    cursor:pointer;
-}
-
-button:hover{opacity:0.85}
-
-.hidden{display:none}
-
-.stage-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:10px;
-}
-
-.stage{
-    padding:12px;
-    border-radius:8px;
-    background:#eee;
-    cursor:pointer;
-    font-weight:bold;
-}
-
-.locked{
-    background:#ccc;
-    cursor:not-allowed;
-}
-
-.progress{
-    height:20px;
-    background:#ddd;
-    border-radius:20px;
-    overflow:hidden;
-}
-
-.bar{
-    height:100%;
-    width:0%;
-    background:green;
-}
-</style>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -93,26 +20,15 @@ button:hover{opacity:0.85}
 </div>
 </header>
 
-<!-- LOGIN -->
-<div id="loginBox" class="container">
-<div class="card">
-<h3>Login</h3>
+<!-- MAIN GAME -->
+<div class="container">
 
-<input id="user" placeholder="Username"><br>
-<input id="pass" type="password" placeholder="Password"><br>
-
-<button onclick="login()">Login</button>
-<p id="msg"></p>
-</div>
-</div>
-
-<!-- GAME -->
-<div id="game" class="container hidden">
-
+<!-- STAGES -->
 <div class="card">
 <h3>📚 Choose Stage</h3>
 
 <div class="stage-grid">
+
 <div class="stage" onclick="selectStage(0)">Good Habits</div>
 <div class="stage" onclick="selectStage(1)">Awareness</div>
 <div class="stage" onclick="selectStage(2)">Digital Safety</div>
@@ -121,18 +37,22 @@ button:hover{opacity:0.85}
 <div class="stage" onclick="selectStage(5)">Rules</div>
 <div class="stage" onclick="selectStage(6)">Responsibilities</div>
 <div class="stage" onclick="selectStage(7)">Health</div>
-</div>
 
 </div>
 
+</div>
+
+<!-- QUESTION AREA -->
 <div class="card">
 <h3 id="stageTitle">Select a Stage</h3>
+
 <p id="question">---</p>
 
 <button onclick="answer(true)">True / Correct</button>
 <button onclick="answer(false)">False / Wrong</button>
 </div>
 
+<!-- PROGRESS -->
 <div class="card">
 <h3>📊 Progress</h3>
 <div class="progress">
@@ -142,195 +62,7 @@ button:hover{opacity:0.85}
 
 </div>
 
-<script>
-
-/* =========================
-   STATE
-========================= */
-let currentUser = null;
-
-let state = {
-    xp:0,
-    level:1,
-    coins:0,
-    hp:100,
-    stageProgress:[0,0,0,0,0,0,0,0],
-    currentStage:null
-};
-
-/* =========================
-   STAGES
-========================= */
-const stages = [
-{
-name:"Good Habits",
-questions:[
-{q:"Brush teeth twice a day?", a:true},
-{q:"Skipping breakfast is good?", a:false},
-{q:"Washing hands is important?", a:true},
-{q:"Sleeping late is healthy?", a:false},
-{q:"Clean room is good habit?", a:true}
-]
-},
-{
-name:"Awareness",
-questions:[
-{q:"Fire can be dangerous?", a:true},
-{q:"Cross road blindly is safe?", a:false},
-{q:"Traffic rules matter?", a:true},
-{q:"Electric wires are safe to touch?", a:false},
-{q:"Strangers can be trusted always?", a:false}
-]
-},
-{
-name:"Digital Safety",
-questions:[
-{q:"Share OTP with anyone?", a:false},
-{q:"Strong password is important?", a:true},
-{q:"Click unknown links?", a:false},
-{q:"Cyberbullying is harmful?", a:true},
-{q:"Use same password everywhere?", a:false}
-]
-},
-{
-name:"Environment",
-questions:[
-{q:"Trees give oxygen?", a:true},
-{q:"Plastic is good for environment?", a:false},
-{q:"We should waste water?", a:false},
-{q:"Recycling helps?", a:true},
-{q:"Pollution is bad?", a:true}
-]
-},
-{
-name:"Moral Values",
-questions:[
-{q:"Helping others is good?", a:true},
-{q:"Stealing is right?", a:false},
-{q:"Respect elders?", a:true},
-{q:"Lying is good habit?", a:false},
-{q:"Kindness matters?", a:true}
-]
-},
-{
-name:"Rules",
-questions:[
-{q:"We should follow rules?", a:true},
-{q:"Breaking laws is okay?", a:false},
-{q:"Traffic rules are important?", a:true},
-{q:"School rules matter?", a:true},
-{q:"Discipline is bad?", a:false}
-]
-},
-{
-name:"Responsibilities",
-questions:[
-{q:"Students should study?", a:true},
-{q:"Keeping clean is responsibility?", a:true},
-{q:"Ignoring duties is good?", a:false},
-{q:"Helping family is responsibility?", a:true},
-{q:"We should care community?", a:true}
-]
-},
-{
-name:"Health",
-questions:[
-{q:"Junk food is healthy?", a:false},
-{q:"Drink water daily?", a:true},
-{q:"Exercise is important?", a:true},
-{q:"Skipping sleep is good?", a:false},
-{q:"Fruits are healthy?", a:true}
-]
-}
-];
-
-/* =========================
-   LOGIN
-========================= */
-function login(){
-    const u = user.value;
-    const p = pass.value;
-
-    let data = JSON.parse(localStorage.getItem("mvear_"+u));
-
-    if(!data) return msg("User not found");
-    if(data.pass !== p) return msg("Wrong password");
-
-    currentUser = u;
-    state = {...state, ...data};
-
-    loginBox.classList.add("hidden");
-    game.classList.remove("hidden");
-}
-
-/* =========================
-   STAGE SYSTEM
-========================= */
-let qIndex = 0;
-
-function selectStage(i){
-    state.currentStage = i;
-    qIndex = 0;
-
-    loadQuestion();
-}
-
-function loadQuestion(){
-    const stage = stages[state.currentStage];
-
-    document.getElementById("stageTitle").innerText = stage.name;
-
-    if(qIndex >= stage.questions.length){
-        alert("Stage Completed!");
-
-        state.xp += 50;
-        state.coins += 20;
-        state.stageProgress[state.currentStage] = 1;
-
-        updateProgress();
-        return;
-    }
-
-    document.getElementById("question").innerText =
-        stage.questions[qIndex].q;
-}
-
-function answer(ans){
-    if(state.currentStage === null) return;
-
-    const stage = stages[state.currentStage];
-    const correct = stage.questions[qIndex].a;
-
-    if(ans === correct){
-        state.xp += 10;
-        state.coins += 5;
-    }
-
-    qIndex++;
-    loadQuestion();
-    updateProgress();
-}
-
-/* =========================
-   PROGRESS BAR
-========================= */
-function updateProgress(){
-    let done = state.stageProgress.filter(x=>x===1).length;
-    let percent = (done/8)*100;
-
-    document.getElementById("bar").style.width = percent + "%";
-}
-
-/* =========================
-   SAVE
-========================= */
-window.onbeforeunload = function(){
-    if(currentUser){
-        localStorage.setItem("mvear_"+currentUser, JSON.stringify(state));
-    }
-};
-
-</script>
+<script src="script.js"></script>
 
 </body>
 </html>
