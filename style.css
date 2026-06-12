@@ -1,7 +1,3 @@
-
-/* =========================
-   ROOT THEME
-========================= */
 :root {
     --bg: #0b0f16;
     --card: #141b26;
@@ -11,20 +7,18 @@
     --good: #2ecc71;
     --bad: #e74c3c;
     --accent: #f1c40f;
+
+    --shadow: rgba(0,0,0,0.4);
 }
 
-/* =========================
-   RESET
-========================= */
+/* ================= RESET ================= */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* =========================
-   BODY
-========================= */
+/* ================= BODY ================= */
 body {
     font-family: Arial, sans-serif;
     background: var(--bg);
@@ -33,48 +27,34 @@ body {
     line-height: 1.4;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* ================= HEADER ================= */
 header {
     background: #0f1624;
-    padding: 18px;
+    padding: 16px;
     border-bottom: 1px solid #1f2a3a;
 }
 
-header h1 {
-    font-size: 26px;
-    margin-bottom: 6px;
+header h2 {
+    font-size: 24px;
 }
 
-header p {
-    font-size: 14px;
-    color: #aaa;
-}
-
-/* =========================
-   CONTAINER
-========================= */
+/* ================= LAYOUT ================= */
 .container {
     max-width: 900px;
     margin: auto;
     padding: 15px;
 }
 
-/* =========================
-   CARD
-========================= */
+/* ================= CARD ================= */
 .card {
     background: var(--card);
-    padding: 18px;
+    padding: 16px;
     margin: 12px 0;
     border-radius: 14px;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+    box-shadow: 0 6px 18px var(--shadow);
 }
 
-/* =========================
-   STATS
-========================= */
+/* ================= STATS ================= */
 .stats {
     display: flex;
     justify-content: space-around;
@@ -82,41 +62,40 @@ header p {
     font-weight: bold;
 }
 
-/* =========================
-   GAME AREA
-========================= */
-.game-box {
-    min-height: 180px;
+/* ================= STAGE TITLE ================= */
+#stageTitle {
+    font-size: 22px;
+    font-weight: 700;
 }
 
-/* =========================
-   QUESTION TEXT
-========================= */
-.q-text {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 18px;
+/* ================= QUESTION BOX ================= */
+#question {
+    min-height: 120px;
 }
 
-/* =========================
-   STAGE BUTTONS
-========================= */
-#stageMenu {
+/* ================= MCQ GRID ================= */
+.mcq-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 10px;
+    gap: 12px;
+    margin-top: 10px;
 }
 
+/* ================= BUTTONS ================= */
+button {
+    cursor: pointer;
+    border: none;
+    border-radius: 12px;
+    transition: 0.2s ease;
+    font-weight: bold;
+}
+
+/* Stage buttons */
 #stageMenu button {
     padding: 14px;
     font-size: 16px;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
     background: var(--primary);
     color: white;
-    transition: 0.2s ease;
 }
 
 #stageMenu button:hover {
@@ -124,38 +103,24 @@ header p {
     opacity: 0.9;
 }
 
-/* =========================
-   MCQ GRID
-========================= */
-.mcq-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 12px;
-}
-
-/* =========================
-   MCQ BUTTONS
-========================= */
+/* MCQ buttons */
 .mcq-grid button {
-    padding: 15px;
-    font-size: 18px;
-    font-weight: bold;
-    border: none;
-    border-radius: 12px;
-    cursor: pointer;
+    padding: 14px;
+    font-size: 16px;
     background: var(--primary);
     color: white;
-    transition: 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
 
 .mcq-grid button:hover {
     transform: scale(1.03);
-    opacity: 0.9;
 }
 
-/* =========================
-   ANSWER STATES
-========================= */
+.mcq-grid button:active {
+    transform: scale(0.95);
+}
+
+/* ================= ANSWER STATES ================= */
 .correct {
     background: var(--good) !important;
 }
@@ -164,46 +129,112 @@ header p {
     background: var(--bad) !important;
 }
 
-/* =========================
-   HEALTH BAR
-========================= */
+/* ================= HEALTH BAR ================= */
 .progress {
     width: 100%;
     height: 22px;
     background: #2a2f3a;
     border-radius: 20px;
     overflow: hidden;
-    margin-top: 10px;
 }
 
 .bar {
     height: 100%;
     width: 100%;
-    background: linear-gradient(90deg, #2ecc71, #f1c40f, #e74c3c);
-    transition: width 0.3s ease;
+    background: linear-gradient(90deg, var(--good), var(--accent), var(--bad));
+    transition: width 0.35s ease;
 }
 
-/* =========================
-   MOBILE RESPONSIVE
-========================= */
+/* ================= FADE ANIMATION ================= */
+.fade {
+    animation: fade 0.25s ease;
+}
+
+@keyframes fade {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ================= RESULT OVERLAY ================= */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.75);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    animation: overlayFade 0.25s ease;
+}
+
+@keyframes overlayFade {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.hidden {
+    display: none;
+}
+
+/* ================= RESULT CARD ================= */
+.result-card {
+    background: var(--card);
+    padding: 22px;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 420px;
+    text-align: center;
+    box-shadow: 0 10px 30px var(--shadow);
+    animation: pop 0.25s ease;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0.85);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ================= STARS ================= */
+#stars {
+    font-size: 28px;
+    color: gold;
+    margin-top: 10px;
+}
+
+/* ================= GLOBAL BUTTON EFFECT ================= */
+button:active {
+    transform: scale(0.95);
+}
+
+/* ================= MOBILE ================= */
 @media (max-width: 600px) {
 
-    header h1 {
-        font-size: 22px;
-    }
-
-    .q-text {
+    header h2 {
         font-size: 20px;
     }
 
     .stats {
         flex-direction: column;
-        gap: 10px;
+        gap: 8px;
     }
 
-    #stageMenu button,
-    .mcq-grid button {
-        font-size: 16px;
-        padding: 14px;
+    #stageTitle {
+        font-size: 18px;
+    }
+
+    .mcq-grid button,
+    #stageMenu button {
+        font-size: 15px;
+        padding: 12px;
     }
 }
