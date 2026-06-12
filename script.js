@@ -1,4 +1,7 @@
 
+/* =========================
+   GAME STATE
+========================= */
 let state = {
     xp: 0,
     level: 1,
@@ -12,87 +15,94 @@ let state = {
 };
 
 /* =========================
-   STAGES (MCQ SYSTEM)
+   8 STAGES (5 QUESTIONS EACH)
 ========================= */
 const stages = [
 {
 name:"Good Habits",
 questions:[
-{q:"Brush teeth twice a day?", options:["Yes","No","Sometimes","Never"], a:0},
-{q:"Skipping breakfast is healthy?", options:["Yes","No","Maybe","Always"], a:1},
-{q:"Clean room is good habit?", options:["Yes","No","Dirty is best","Ignore"], a:0},
-{q:"Sleeping late is good?", options:["Yes","No","Sometimes","Always"], a:1},
-{q:"Washing hands is important?", options:["Yes","No","Never","Optional"], a:0}
+{q:"Brush teeth how many times a day?", options:["Once","Twice","Never","Sometimes"], a:1},
+{q:"Skipping breakfast is:", options:["Good","Bad","Optional","Best"], a:1},
+{q:"Clean room means:", options:["Good habit","Bad habit","Danger","None"], a:0},
+{q:"Sleeping late is:", options:["Healthy","Unhealthy","Best","Required"], a:1},
+{q:"Washing hands helps:", options:["Spread germs","Remove germs","Increase dirt","Nothing"], a:1}
 ]
 },
+
 {
 name:"Awareness",
 questions:[
-{q:"Fire is dangerous?", options:["Yes","No","Toy","Food"], a:0},
-{q:"Traffic rules should be followed?", options:["Yes","No","Sometimes","Never"], a:0},
-{q:"Strangers are always safe?", options:["Yes","No","Always","Maybe"], a:1},
-{q:"Cross road carefully?", options:["Yes","No","Run blindly","Ignore"], a:0},
-{q:"Electric wires are safe to touch?", options:["Yes","No","Always","Maybe"], a:1}
+{q:"Fire is:", options:["Safe","Dangerous","Toy","Food"], a:1},
+{q:"Traffic rules should be:", options:["Ignored","Followed","Broken","Optional"], a:1},
+{q:"Strangers are:", options:["Always safe","Sometimes risky","Always friends","Always family"], a:1},
+{q:"Cross road should be:", options:["Careless","Careful","Running","Blind"], a:1},
+{q:"Electric wires are:", options:["Safe","Dangerous","Toys","Food"], a:1}
 ]
 },
+
 {
 name:"Digital Safety",
 questions:[
-{q:"Share OTP with anyone?", options:["Yes","No","Sometimes","Maybe"], a:1},
-{q:"Strong password is important?", options:["Yes","No","Weak is fine","Optional"], a:0},
-{q:"Unknown links are safe?", options:["Yes","No","Always","Free"], a:1},
-{q:"Cyberbullying is harmful?", options:["Yes","No","Fun","Joke"], a:0},
-{q:"Same password everywhere is safe?", options:["Yes","No","Best","Always"], a:1}
+{q:"OTP should be shared?", options:["Yes","No","Sometimes","Maybe"], a:1},
+{q:"Strong password is:", options:["12345","Name","Mix letters","Blank"], a:2},
+{q:"Unknown links are:", options:["Safe","Dangerous","Games","Friends"], a:1},
+{q:"Cyberbullying is:", options:["Good","Harmful","Funny","Normal"], a:1},
+{q:"Same password everywhere is:", options:["Safe","Risky","Best","Smart"], a:1}
 ]
 },
+
 {
 name:"Environment",
 questions:[
-{q:"Trees give oxygen?", options:["Yes","No","Maybe","Never"], a:0},
-{q:"Plastic is good for nature?", options:["Yes","No","Always","Best"], a:1},
-{q:"Save water is important?", options:["Yes","No","Optional","Never"], a:0},
-{q:"Pollution is harmful?", options:["Yes","No","Good","Healthy"], a:0},
-{q:"Recycling helps?", options:["Yes","No","Useless","Bad"], a:0}
+{q:"Trees give:", options:["Plastic","Oxygen","Smoke","Noise"], a:1},
+{q:"Plastic is:", options:["Good","Bad","Healthy","Useful"], a:1},
+{q:"Saving water is:", options:["Useless","Important","Bad","Optional"], a:1},
+{q:"Pollution is:", options:["Good","Harmful","Helpful","Neutral"], a:1},
+{q:"Recycling helps:", options:["Environment","Pollution","Damage","Nothing"], a:0}
 ]
 },
+
 {
 name:"Moral Values",
 questions:[
-{q:"Helping others is good?", options:["Yes","No","Bad","Optional"], a:0},
-{q:"Stealing is right?", options:["Yes","No","Always","Good"], a:1},
-{q:"Respect elders?", options:["Yes","No","Never","Ignore"], a:0},
-{q:"Lying is good?", options:["Yes","No","Always","Best"], a:1},
-{q:"Kindness matters?", options:["Yes","No","Bad","Optional"], a:0}
+{q:"Helping others is:", options:["Bad","Good","Useless","Wrong"], a:1},
+{q:"Stealing is:", options:["Right","Wrong","Good","Normal"], a:1},
+{q:"Respect elders is:", options:["Optional","Important","Bad","Useless"], a:1},
+{q:"Lying is:", options:["Good","Bad","Helpful","Required"], a:1},
+{q:"Kindness is:", options:["Bad","Good","Weakness","Danger"], a:1}
 ]
 },
+
 {
 name:"Rules",
 questions:[
-{q:"Rules should be followed?", options:["Yes","No","Never","Optional"], a:0},
-{q:"Breaking laws is good?", options:["Yes","No","Always","Best"], a:1},
-{q:"School rules matter?", options:["Yes","No","Ignore","Never"], a:0},
-{q:"Traffic rules are important?", options:["Yes","No","Optional","Maybe"], a:0},
-{q:"Discipline is bad?", options:["Yes","No","Always","Good"], a:1}
+{q:"Rules should be:", options:["Broken","Followed","Ignored","Removed"], a:1},
+{q:"Laws are:", options:["Useless","Important","Optional","Funny"], a:1},
+{q:"Traffic rules:", options:["Not needed","Important","Danger","Game"], a:1},
+{q:"School rules:", options:["Useless","Important","Optional","Bad"], a:1},
+{q:"Discipline is:", options:["Bad","Good","Weak","None"], a:1}
 ]
 },
+
 {
 name:"Responsibilities",
 questions:[
-{q:"Students should study?", options:["Yes","No","Never","Optional"], a:0},
-{q:"Help family?", options:["Yes","No","Ignore","Always no"], a:0},
-{q:"Keep environment clean?", options:["Yes","No","Never","Bad"], a:0},
-{q:"Ignore duties?", options:["Yes","No","Always","Best"], a:1},
-{q:"Help society?", options:["Yes","No","Optional","Bad"], a:0}
+{q:"Students should:", options:["Study","Play only","Sleep only","Ignore"], a:0},
+{q:"Helping family is:", options:["Bad","Good","Optional","Wrong"], a:1},
+{q:"Clean environment:", options:["Ignore","Maintain","Destroy","Break"], a:1},
+{q:"Duty means:", options:["Responsibility","Fun","Game","Nothing"], a:0},
+{q:"Helping society is:", options:["Good","Bad","Optional","Useless"], a:0}
 ]
 },
+
 {
 name:"Health",
 questions:[
-{q:"Exercise is important?", options:["Yes","No","Never","Optional"], a:0},
-{q:"Junk food is healthy?", options:["Yes","No","Always","Best"], a:1},
-{q:"Drink water daily?", options:["Yes","No","Never","Bad"], a:0},
-{q:"Sleep is important?", options:["Yes","No","Optional","Ignore"], a:0},
-{q:"Fruits are healthy?", options:["Yes","No","Bad","Never"], a:0}
+{q:"Exercise is:", options:["Useless","Important","Danger","Optional"], a:1},
+{q:"Junk food is:", options:["Healthy","Unhealthy","Best","Required"], a:1},
+{q:"Drink water:", options:["Never","Daily","Sometimes","Rarely"], a:1},
+{q:"Sleep is:", options:["Important","Useless","Danger","Optional"], a:0},
+{q:"Fruits are:", options:["Healthy","Unhealthy","Bad","Danger"], a:0}
 ]
 }
 ];
@@ -133,7 +143,7 @@ function selectStage(i){
 }
 
 /* =========================
-   LOAD QUESTION (MCQ)
+   LOAD QUESTION
 ========================= */
 function loadQuestion(){
     const stage = stages[state.currentStage];
@@ -207,24 +217,31 @@ function completeStage(){
    UI UPDATE
 ========================= */
 function updateUI(){
+
+    // XP BAR
     document.getElementById("xpBar").style.width =
         (state.xp % 100) + "%";
 
+    // COIN BAR
     document.getElementById("coinBar").style.width =
         Math.min(state.coins, 100) + "%";
 
+    // HP BAR
     document.getElementById("hpBar").style.width =
         state.hp + "%";
 
+    // TEXT VALUES
     document.getElementById("xp").innerText = state.xp;
     document.getElementById("level").innerText = Math.floor(state.xp / 100) + 1;
     document.getElementById("coins").innerText = state.coins;
     document.getElementById("hp").innerText = state.hp;
 
-    const done = state.stageDone.filter(x=>x===1).length;
+    // STAGE PROGRESS BAR
+    const done = state.stageDone.filter(x => x === 1).length;
     document.getElementById("bar").style.width =
         (done / stages.length) * 100 + "%";
 
+    // BADGES
     document.getElementById("badges").innerText =
         state.badges.length ? state.badges.join(", ") : "None";
 }
@@ -232,17 +249,17 @@ function updateUI(){
 /* =========================
    SAVE SYSTEM
 ========================= */
-setInterval(()=>{
+setInterval(() => {
     localStorage.setItem("mvear_final_game", JSON.stringify(state));
 }, 3000);
 
 /* =========================
    LOAD SAVE
 ========================= */
-window.onload = function(){
+window.onload = function () {
     const data = JSON.parse(localStorage.getItem("mvear_final_game"));
 
-    if(data){
+    if (data) {
         state = data;
     }
 
